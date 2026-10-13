@@ -1,0 +1,436 @@
+package com.sah
+
+import android.app.Activity
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.view.Gravity
+import android.view.HapticFeedbackConstants
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.HorizontalScrollView
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
+
+class MainActivity : Activity() {
+    private val backgroundColor = Color.rgb(18, 18, 18)
+    private val cardColor = Color.rgb(30, 30, 30)
+    private val primaryColor = Color.rgb(118, 150, 86)
+    private val textColor = Color.WHITE
+    private val mutedColor = Color.rgb(160, 160, 160)
+    private val successColor = Color.rgb(134, 239, 172)
+    private val errorColor = Color.rgb(252, 165, 165)
+
+    private lateinit var game: TrainerGame
+    private lateinit var board: ChessBoardView
+    private lateinit var prompt: TextView
+    private lateinit var feedback: TextView
+    private lateinit var score: TextView
+    private lateinit var streak: TextView
+    private lateinit var bestStreak: TextView
+    private lateinit var diagonalButton: Button
+    private lateinit var lessonCard: TextView
+    private lateinit var timerLabel: TextView
+    private lateinit var answers: LinearLayout
+    private lateinit var resetButton: Button
+    private lateinit var dragonBonesOverlay: DragonBonesOverlay
+    private val modeButtons = linkedMapOf<TrainerMode, Button>()
+
+    private var feedbackSquare: Square? = null
+    private var feedbackCorrect: Boolean? = null
+    private var lessonSquare: Square? = null
+    private var timedRemaining = TIMED_SECONDS
+    private var timedFinished = false
+    private var timer: CountDownTimer? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        window.statusBarColor = backgroundColor
+        window.navigationBarColor = backgroundColor
+        game = TrainerGame()
+        savedInstanceState?.let {
+            game.restore(it)
+            timedRemaining = it.getInt(KEY_TIMED_REMAINING, TIMED_SECONDS).coerceIn(0, TIMED_SECONDS)
+            timedFinished = it.getBoolean(KEY_TIMED_FINISHED, false)
+            if (!game.state.acceptingAnswer) game.nextRound()
+        }
+        buildUi()
+        refreshUi()
+        if (game.state.mode == TrainerMode.TIMED && !timedFinished) startTimer()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        game.save(outState)
+        outState.putInt(KEY_TIMED_REMAINING, timedRemaining)
+        outState.putBoolean(KEY_TIMED_FINISHED, timedFinished)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroy() {
+        timer?.cancel()
+        super.onDestroy()
+    }
+
+    private fun buildUi() {
+        val scroll = ScrollView(this).apply {
+            fillViewport = true
+            setBackgroundColor(backgroundColor)
+            isVerticalScrollBarEnabled = false
+        }
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(16), dp(16), dp(16), dp(32))
+        }
+        scroll.addView(root, ViewGroup.LayoutParams(-1, -2))
+        setContentView(scroll)
+
+        root.addView(buildHeader())
+        dragonBonesOverlay = DragonBonesOverlay(this)
+        root.addView(dragonBonesOverlay, LinearLayout.LayoutParams(-1, dp(132)))
+        dragonBonesOverlay.attachIfModelExists()
+        root.addView(space(16))
+        root.addView(buildModes())
+        root.addView(space(12))
+
+        diagonalButton = controlButton("") { game.toggleDiagonals(); refreshUi() }.apply {
+            contentDescription = "Arată sau ascunde diagonalele tablei"
+        }
+        root.addView(diagonalButton, fullWidthParams())
+        root.addView(space(10))
+
+        lessonCard = cardText("")
+        root.addView(lessonCard, fullWidthParams())
+        root.addView(space(8))
+
+        prompt = TextView(this).apply {
+            gravity = Gravity.CENTER
+            setTextColor(textColor)
+            setTextSize(18f)
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            setPadding(dp(8), dp(8), dp(8), dp(4))
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        }
+        root.addView(prompt, fullWidthParams())
+
+        feedback = TextView(this).apply {
+            gravity = Gravity.CENTER
+            setTextColor(successColor)
+            setTextSize(13f)
+            setPadding(dp(8), 0, dp(8), dp(6))
+            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
+        }
+        root.addView(feedback, fullWidthParams())
+
+        board = ChessBoardView(this).apply {
+            setOnSquareTapped { square -> handleSquareTap(square) }
+            contentDescription = "Tabla de șah cu pătrățele accesibile"
+        }
+        val boardParams = LinearLayout.LayoutParams(-1, -2).apply {
+            gravity = Gravity.CENTER_HORIZONTAL
+            topMargin = dp(4)
+        }
+        root.addView(board, boardParams)
+        root.addView(space(16))
+
+        answers = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER
+        }
+        repeat(4) {
+            val answerButton = controlButton("") { }
+            answerButton.setTextSize(17f)
+            answerButton.contentDescription = "Variantă de răspuns"
+            answers.addView(answerButton, LinearLayout.LayoutParams(0, dp(52), 1f).apply {
+                marginStart = if (it == 0) 0 else dp(4)
+            })
+        }
+        root.addView(answers, fullWidthParams())
+        root.addView(space(12))
+
+        timerLabel = cardText("").apply { gravity = Gravity.CENTER }
+        root.addView(timerLabel, fullWidthParams())
+        root.addView(space(8))
+
+        bestStreak = TextView(this).apply {
+            gravity = Gravity.CENTER
+            setTextColor(mutedColor)
+            setTextSize(12f)
+            setPadding(0, dp(4), 0, dp(4))
+        }
+        root.addView(bestStreak, fullWidthParams())
+
+        resetButton = controlButton("↻  Resetează scorul") {
+            game.resetScore()
+            feedbackSquare = null
+            feedbackCorrect = null
+            lessonSquare = null
+            if (game.state.mode == TrainerMode.TIMED) startTimedSession()
+            refreshUi()
+        }
+        resetButton.contentDescription = "Resetează scorul și începe o rundă nouă"
+        root.addView(resetButton, fullWidthParams())
+
+        val help = TextView(this).apply {
+            gravity = Gravity.CENTER
+            setTextColor(mutedColor)
+            setTextSize(11f)
+            setPadding(0, dp(10), 0, 0)
+            text = "a1–h8 = diagonală neagră   •   a8–h1 = diagonală albă"
+        }
+        root.addView(help, fullWidthParams())
+    }
+
+    private fun buildHeader(): View {
+        val header = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val titleColumn = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = LinearLayout.LayoutParams(0, -2, 1f)
+        }
+        titleColumn.addView(TextView(this).apply {
+            text = "Antrenor Coordonate Șah"
+            setTextColor(textColor)
+            setTextSize(20f)
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            maxLines = 2
+        })
+        titleColumn.addView(TextView(this).apply {
+            text = "ÎNVAȚĂ TABLA PE DE ROST • RAPID"
+            setTextColor(Color.rgb(130, 130, 130))
+            setTextSize(10f)
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            setPadding(0, dp(2), 0, 0)
+        })
+        header.addView(titleColumn)
+
+        score = metricChip("SCOR")
+        streak = metricChip("STREAK")
+        header.addView(score, LinearLayout.LayoutParams(dp(72), dp(52)).apply { marginStart = dp(6) })
+        header.addView(streak, LinearLayout.LayoutParams(dp(78), dp(52)).apply { marginStart = dp(6) })
+        return header
+    }
+
+    private fun buildModes(): View {
+        val scroll = HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            contentDescription = "Moduri de antrenament"
+        }
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+        }
+        val modes = listOf(
+            TrainerMode.FIND to "Găsește",
+            TrainerMode.GUESS to "Ghicește",
+            TrainerMode.LEARN to "Învață diagonale",
+            TrainerMode.TIMED to "Rapid 30s",
+        )
+        modes.forEach { (mode, label) ->
+            val button = controlButton(label) { selectMode(mode) }.apply {
+                contentDescription = "Mod: $label"
+            }
+            modeButtons[mode] = button
+            row.addView(button, LinearLayout.LayoutParams(dp(if (mode == TrainerMode.LEARN) 150 else 112), dp(50)).apply {
+                marginEnd = dp(6)
+            })
+        }
+        scroll.addView(row, ViewGroup.LayoutParams(-2, -2))
+        return scroll
+    }
+
+    private fun selectMode(mode: TrainerMode) {
+        timer?.cancel()
+        timedFinished = false
+        timedRemaining = TIMED_SECONDS
+        feedbackSquare = null
+        feedbackCorrect = null
+        lessonSquare = null
+        game.setMode(mode)
+        refreshUi()
+        if (mode == TrainerMode.TIMED) startTimer()
+    }
+
+    private fun handleSquareTap(square: Square) {
+        if (game.state.mode == TrainerMode.LEARN) {
+            lessonSquare = square
+            feedbackSquare = null
+            feedbackCorrect = null
+            refreshUi()
+            return
+        }
+        if (game.state.mode == TrainerMode.TIMED && timedFinished) return
+        submit(square)
+    }
+
+    private fun submit(square: Square) {
+        val result = game.submit(square)
+        if (!result.accepted) return
+        feedbackSquare = square
+        feedbackCorrect = result.isCorrect
+        board.performHapticFeedback(
+            if (result.isCorrect) HapticFeedbackConstants.KEYBOARD_TAP else HapticFeedbackConstants.LONG_PRESS,
+        )
+        refreshUi()
+        board.postDelayed({
+            if (game.state.mode == TrainerMode.TIMED && timedFinished) return@postDelayed
+            feedbackSquare = null
+            feedbackCorrect = null
+            game.nextRound()
+            refreshUi()
+        }, FEEDBACK_DELAY_MS)
+    }
+
+    private fun startTimedSession() {
+        timer?.cancel()
+        timedRemaining = TIMED_SECONDS
+        timedFinished = false
+        game.setMode(TrainerMode.TIMED)
+        startTimer()
+    }
+
+    private fun startTimer() {
+        timer?.cancel()
+        timer = object : CountDownTimer(timedRemaining * 1_000L, 1_000L) {
+            override fun onTick(millisUntilFinished: Long) {
+                timedRemaining = ((millisUntilFinished + 999L) / 1_000L).toInt().coerceIn(0, TIMED_SECONDS)
+                refreshUi()
+            }
+
+            override fun onFinish() {
+                timedRemaining = 0
+                timedFinished = true
+                feedbackSquare = null
+                feedbackCorrect = null
+                board.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                refreshUi()
+            }
+        }.start()
+    }
+
+    private fun refreshUi() {
+        if (!::board.isInitialized) return
+        val state = game.state
+        score.text = "SCOR\n${state.correct}/${state.total}"
+        streak.text = "STREAK\n${state.streak}"
+        bestStreak.text = "Cel mai bun streak: ${state.bestStreak}"
+
+        modeButtons.forEach { (mode, button) ->
+            val selected = mode == state.mode
+            button.background = controlBackground(if (selected) primaryColor else cardColor)
+            button.setTextColor(textColor)
+            button.isSelected = selected
+        }
+
+        diagonalButton.text = if (state.showDiagonals) "✓  Ascunde diagonalele" else "◫  Arată diagonalele"
+        diagonalButton.background = controlBackground(if (state.showDiagonals) Color.rgb(238, 238, 210) else cardColor)
+        diagonalButton.setTextColor(if (state.showDiagonals) Color.rgb(58, 90, 42) else textColor)
+
+        lessonCard.visibility = if (state.mode == TrainerMode.LEARN) View.VISIBLE else View.GONE
+        lessonCard.text = lessonText()
+        prompt.text = when (state.mode) {
+            TrainerMode.FIND -> "Atinge pătrățelul: ${state.target.coordinate.uppercase()}"
+            TrainerMode.GUESS -> "Ce coordonată este marcată?"
+            TrainerMode.LEARN -> "Studiază culorile și diagonalele"
+            TrainerMode.TIMED -> if (timedFinished) "Timpul s-a terminat" else "Atinge: ${state.target.coordinate.uppercase()}"
+        }
+        feedback.text = when {
+            state.mode == TrainerMode.TIMED && timedFinished -> "Scor final: ${state.correct}/${state.total} • apasă Reset pentru o rundă nouă"
+            feedbackCorrect == true -> "Corect!"
+            feedbackCorrect == false -> "Nu. Era ${state.target.coordinate.uppercase()}."
+            else -> ""
+        }
+        feedback.setTextColor(if (feedbackCorrect == false) errorColor else successColor)
+
+        board.render(
+            mode = state.mode,
+            showDiagonals = state.showDiagonals || state.mode == TrainerMode.LEARN,
+            target = state.target,
+            feedbackSquare = feedbackSquare,
+            feedbackCorrect = feedbackCorrect,
+        )
+        board.isEnabled = state.mode != TrainerMode.TIMED || !timedFinished
+        refreshAnswerButtons(state)
+        answers.visibility = if (state.mode == TrainerMode.GUESS) View.VISIBLE else View.GONE
+        timerLabel.visibility = if (state.mode == TrainerMode.TIMED) View.VISIBLE else View.GONE
+        timerLabel.text = if (timedFinished) "Timp: 0 secunde" else "Timp rămas: $timedRemaining secunde"
+    }
+
+    private fun refreshAnswerButtons(state: TrainerState) {
+        for (index in 0 until answers.childCount) {
+            val button = answers.getChildAt(index) as Button
+            val square = state.options.getOrNull(index)
+            button.text = square?.coordinate?.uppercase() ?: "—"
+            button.contentDescription = square?.let { "Răspuns ${it.coordinate.uppercase()}" } ?: "Fără variantă"
+            button.isEnabled = square != null && state.acceptingAnswer
+            button.setOnClickListener { square?.let { submit(it) } }
+        }
+    }
+
+    private fun lessonText(): String {
+        val selected = lessonSquare?.let { "\nSelectat: ${it.coordinate.uppercase()}" } ?: ""
+        return "a1–h8: diagonală neagră\na1, b2, c3, d4, e5, f6, g7, h8\n\na8–h1: diagonală albă\na8, b7, c6, d5, e4, f3, g2, h1$selected"
+    }
+
+    private fun metricChip(label: String): TextView = TextView(this).apply {
+        gravity = Gravity.CENTER
+        setTextColor(textColor)
+        setTextSize(11f)
+        setTypeface(typeface, android.graphics.Typeface.BOLD)
+        setPadding(dp(4), 0, dp(4), 0)
+        text = "$label\n0"
+        contentDescription = label
+        background = controlBackground(cardColor)
+    }
+
+    private fun cardText(value: String): TextView = TextView(this).apply {
+        text = value
+        setTextColor(textColor)
+        setTextSize(13f)
+        setPadding(dp(14), dp(12), dp(14), dp(12))
+        background = controlBackground(cardColor)
+    }
+
+    private fun controlButton(label: String, action: () -> Unit): Button = Button(this).apply {
+        text = label
+        isAllCaps = false
+        setTextColor(textColor)
+        setTextSize(14f)
+        minHeight = dp(48)
+        minimumHeight = dp(48)
+        minWidth = 0
+        setPadding(dp(10), dp(4), dp(10), dp(4))
+        background = controlBackground(cardColor)
+        setOnClickListener { action() }
+    }
+
+    private fun controlBackground(color: Int): RippleDrawable {
+        val content = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = dp(12).toFloat()
+            setColor(color)
+        }
+        return RippleDrawable(ColorStateList.valueOf(Color.argb(70, 255, 255, 255)), content, null)
+    }
+
+    private fun fullWidthParams(): LinearLayout.LayoutParams =
+        LinearLayout.LayoutParams(-1, -2)
+
+    private fun space(heightDp: Int): View = View(this).apply {
+        layoutParams = LinearLayout.LayoutParams(1, dp(heightDp))
+    }
+
+    private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+
+    private companion object {
+        const val TIMED_SECONDS = 30
+        const val FEEDBACK_DELAY_MS = 650L
+        const val KEY_TIMED_REMAINING = "sah.timed_remaining"
+        const val KEY_TIMED_FINISHED = "sah.timed_finished"
+    }
+}

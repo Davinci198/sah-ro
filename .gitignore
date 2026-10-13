@@ -1,0 +1,12 @@
+.gradle/
+build/
+app/build/
+local.properties
+.idea/
+*.iml
+
+# Local planning notes are not part of the application source.
+task_plan.md
+findings.md
+progress.md
+.planning/
