@@ -90,7 +90,7 @@ class TrainerGame(private val random: Random = Random.Default) {
     fun restore(saved: Bundle) {
         val mode = saved.getString(KEY_MODE)?.let { runCatching { TrainerMode.valueOf(it) }.getOrNull() }
             ?: TrainerMode.FIND
-        val optionValues = saved.getIntArray(KEY_OPTIONS).orEmpty()
+        val optionValues = saved.getIntArray(KEY_OPTIONS) ?: IntArray(0)
         val options = optionValues.toList().chunked(2).mapNotNull { pair ->
             if (pair.size == 2) Square(pair[0], pair[1]).takeIf { it.isValid() } else null
         }
