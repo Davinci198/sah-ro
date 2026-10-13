@@ -70,3 +70,9 @@ gradle :app:assembleDebug
 
 Pe Termux, build-ul Gradle local rămâne intenționat nerulat conform regulii
 workspace-ului; APK-ul trebuie construit în CI dacă este nevoie de un artefact.
+
+## APK pe GitHub
+
+Workflow-ul `.github/workflows/build-apk.yml` rulează automat la fiecare push pe
+`main` și poate fi pornit manual din tab-ul **Actions**. După build, APK-ul apare
+în secțiunea **Artifacts** ca `sah-debug-apk-<commit>`, disponibil 14 zile.
