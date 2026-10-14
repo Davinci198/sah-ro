@@ -28,6 +28,7 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
 
     init {
         setBackgroundColor(Color.BLACK)
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
         for (row in 0..7) {
             for (file in 0..7) {
                 val rank = 7 - row
@@ -137,9 +138,9 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val availableWidth = MeasureSpec.getSize(widthMeasureSpec)
         val boardSize = if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED) {
-            dp(360)
+            dp(384)
         } else {
-            minOf(availableWidth, dp(480))
+            maxOf(dp(384), minOf(availableWidth, dp(480)))
         }
         setMeasuredDimension(boardSize, boardSize)
         val squareSize = boardSize / 8

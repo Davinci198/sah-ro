@@ -1,21 +1,26 @@
 package com.sah
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.InputType
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import java.text.DateFormat
+import java.util.Date
 
 class MainActivity : Activity() {
     private val backgroundColor = Color.rgb(18, 18, 18)
@@ -39,7 +44,19 @@ class MainActivity : Activity() {
     private lateinit var answers: LinearLayout
     private lateinit var resetButton: Button
     private lateinit var dragonBonesOverlay: DragonBonesOverlay
+    private lateinit var dashboardGreeting: TextView
+    private lateinit var sessionsStat: TextView
+    private lateinit var gamesStat: TextView
+    private lateinit var mistakesStat: TextView
+    private lateinit var globalBestStat: TextView
+    private lateinit var mistakesCard: TextView
+    private lateinit var historyButton: Button
+    private lateinit var learningStartButton: Button
     private val modeButtons = linkedMapOf<TrainerMode, Button>()
+
+    private lateinit var profileStore: PlayerProfileStore
+    private lateinit var historyStore: SessionHistoryStore
+    private var profile = PlayerProfile()
 
     private var feedbackSquare: Square? = null
     private var feedbackCorrect: Boolean? = null
@@ -47,12 +64,20 @@ class MainActivity : Activity() {
     private var timedRemaining = TIMED_SECONDS
     private var timedFinished = false
     private var timer: CountDownTimer? = null
+    private var timerGeneration = 0L
+    private var pendingRoundAdvance: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.statusBarColor = backgroundColor
         window.navigationBarColor = backgroundColor
-        game = TrainerGame()
+        profileStore = PlayerProfileStore(applicationContext)
+        historyStore = SessionHistoryStore(applicationContext)
+        profile = profileStore.load()
+        game = TrainerGame(
+            initialDifficulty = profile.difficultyLevel,
+            historicalMistakes = historyStore.aggregateMistakes(),
+        )
         savedInstanceState?.let {
             game.restore(it)
             timedRemaining = it.getInt(KEY_TIMED_REMAINING, TIMED_SECONDS).coerceIn(0, TIMED_SECONDS)
@@ -72,8 +97,19 @@ class MainActivity : Activity() {
     }
 
     override fun onDestroy() {
-        timer?.cancel()
+        cancelPendingRoundAdvance()
+        cancelTimer()
         super.onDestroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::dragonBonesOverlay.isInitialized) dragonBonesOverlay.resumeAnimation()
+    }
+
+    override fun onPause() {
+        if (::dragonBonesOverlay.isInitialized) dragonBonesOverlay.pauseAnimation()
+        super.onPause()
     }
 
     private fun buildUi() {
@@ -90,6 +126,8 @@ class MainActivity : Activity() {
         setContentView(scroll)
 
         root.addView(buildHeader())
+        root.addView(buildDashboard(), fullWidthParams())
+        root.addView(space(12))
         dragonBonesOverlay = DragonBonesOverlay(this)
         root.addView(dragonBonesOverlay, LinearLayout.LayoutParams(-1, dp(132)))
         dragonBonesOverlay.attachIfModelExists()
@@ -105,6 +143,9 @@ class MainActivity : Activity() {
 
         lessonCard = cardText("")
         root.addView(lessonCard, fullWidthParams())
+        learningStartButton = controlButton("Începe lecția") { selectMode(TrainerMode.LEARN) }
+        learningStartButton.contentDescription = "Începe lecția interactivă despre diagonale"
+        root.addView(learningStartButton, fullWidthParams())
         root.addView(space(8))
 
         prompt = TextView(this).apply {
@@ -128,13 +169,14 @@ class MainActivity : Activity() {
 
         board = ChessBoardView(this).apply {
             setOnSquareTapped { square -> handleSquareTap(square) }
-            contentDescription = "Tabla de șah cu pătrățele accesibile"
         }
-        val boardParams = LinearLayout.LayoutParams(-1, -2).apply {
-            gravity = Gravity.CENTER_HORIZONTAL
-            topMargin = dp(4)
+        val boardScroller = HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            contentDescription = "Tabla de șah. Fiecare pătrățel este un buton."
+            addView(board, ViewGroup.LayoutParams(dp(384), -2))
         }
-        root.addView(board, boardParams)
+        val boardParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(4) }
+        root.addView(boardScroller, boardParams)
         root.addView(space(16))
 
         answers = LinearLayout(this).apply {
@@ -165,12 +207,17 @@ class MainActivity : Activity() {
         root.addView(bestStreak, fullWidthParams())
 
         resetButton = controlButton("↻  Resetează scorul") {
+            recordSessionSnapshot()
+            cancelPendingRoundAdvance()
+            cancelTimer()
             game.resetScore()
             feedbackSquare = null
             feedbackCorrect = null
             lessonSquare = null
-            if (game.state.mode == TrainerMode.TIMED) startTimedSession()
+            timedRemaining = TIMED_SECONDS
+            timedFinished = false
             refreshUi()
+            if (game.state.mode == TrainerMode.TIMED) startTimer()
         }
         resetButton.contentDescription = "Resetează scorul și începe o rundă nouă"
         root.addView(resetButton, fullWidthParams())
@@ -184,6 +231,75 @@ class MainActivity : Activity() {
         }
         root.addView(help, fullWidthParams())
     }
+
+    private fun buildDashboard(): View {
+        val dashboard = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+        }
+        val profileRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        dashboardGreeting = TextView(this).apply {
+            setTextColor(textColor)
+            setTextSize(18f)
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            layoutParams = LinearLayout.LayoutParams(0, -2, 1f)
+        }
+        profileRow.addView(dashboardGreeting)
+        val profileButton = controlButton("Editează") { showProfileDialog() }.apply {
+            contentDescription = "Editează porecla"
+        }
+        profileRow.addView(profileButton, LinearLayout.LayoutParams(dp(104), dp(48)))
+        dashboard.addView(profileRow, fullWidthParams())
+        dashboard.addView(space(8))
+
+        val firstStats = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        sessionsStat = statCard("Sesiuni")
+        gamesStat = statCard("Jocuri")
+        firstStats.addView(sessionsStat, statParams())
+        firstStats.addView(gamesStat, statParams())
+        dashboard.addView(firstStats, fullWidthParams())
+        dashboard.addView(space(8))
+
+        val secondStats = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        mistakesStat = statCard("Greșeli")
+        globalBestStat = statCard("Cel mai bun streak")
+        secondStats.addView(mistakesStat, statParams())
+        secondStats.addView(globalBestStat, statParams())
+        dashboard.addView(secondStats, fullWidthParams())
+        dashboard.addView(space(8))
+
+        historyButton = controlButton("Istoricul sesiunilor") { showHistoryDialog() }.apply {
+            contentDescription = "Deschide istoricul sesiunilor și jocurilor"
+        }
+        dashboard.addView(historyButton, fullWidthParams())
+        dashboard.addView(space(8))
+
+        mistakesCard = cardText("")
+        dashboard.addView(mistakesCard, fullWidthParams())
+        dashboard.addView(space(8))
+
+        val learningIntro = cardText(
+            "Învață diagonalele\nAtinge pătrățelele pentru a vedea coordonata și culoarea diagonalei.",
+        )
+        dashboard.addView(learningIntro, fullWidthParams())
+        return dashboard
+    }
+
+    private fun statCard(label: String): TextView = TextView(this).apply {
+        gravity = Gravity.CENTER
+        setTextColor(textColor)
+        setTextSize(13f)
+        setPadding(dp(8), dp(12), dp(8), dp(12))
+        minHeight = dp(72)
+        text = "$label\n0"
+        contentDescription = label
+        background = controlBackground(cardColor)
+    }
+
+    private fun statParams(): LinearLayout.LayoutParams =
+        LinearLayout.LayoutParams(0, -2, 1f).apply { marginEnd = dp(4) }
 
     private fun buildHeader(): View {
         val header = LinearLayout(this).apply {
@@ -245,7 +361,9 @@ class MainActivity : Activity() {
     }
 
     private fun selectMode(mode: TrainerMode) {
-        timer?.cancel()
+        recordSessionSnapshot()
+        cancelPendingRoundAdvance()
+        cancelTimer()
         timedFinished = false
         timedRemaining = TIMED_SECONDS
         feedbackSquare = null
@@ -269,40 +387,31 @@ class MainActivity : Activity() {
     }
 
     private fun submit(square: Square) {
+        val submittedRoundId = game.state.roundId
         val result = game.submit(square)
         if (!result.accepted) return
+        recordSessionSnapshot()
         feedbackSquare = square
         feedbackCorrect = result.isCorrect
         board.performHapticFeedback(
             if (result.isCorrect) HapticFeedbackConstants.KEYBOARD_TAP else HapticFeedbackConstants.LONG_PRESS,
         )
         refreshUi()
-        board.postDelayed({
-            if (game.state.mode == TrainerMode.TIMED && timedFinished) return@postDelayed
-            feedbackSquare = null
-            feedbackCorrect = null
-            game.nextRound()
-            refreshUi()
-        }, FEEDBACK_DELAY_MS)
-    }
-
-    private fun startTimedSession() {
-        timer?.cancel()
-        timedRemaining = TIMED_SECONDS
-        timedFinished = false
-        game.setMode(TrainerMode.TIMED)
-        startTimer()
+        scheduleNextRound(submittedRoundId)
     }
 
     private fun startTimer() {
-        timer?.cancel()
+        cancelTimer()
+        val generation = timerGeneration
         timer = object : CountDownTimer(timedRemaining * 1_000L, 1_000L) {
             override fun onTick(millisUntilFinished: Long) {
+                if (generation != timerGeneration || game.state.mode != TrainerMode.TIMED) return
                 timedRemaining = ((millisUntilFinished + 999L) / 1_000L).toInt().coerceIn(0, TIMED_SECONDS)
                 refreshUi()
             }
 
             override fun onFinish() {
+                if (generation != timerGeneration || game.state.mode != TrainerMode.TIMED) return
                 timedRemaining = 0
                 timedFinished = true
                 feedbackSquare = null
@@ -313,12 +422,47 @@ class MainActivity : Activity() {
         }.start()
     }
 
+    private fun cancelTimer() {
+        timerGeneration++
+        timer?.cancel()
+        timer = null
+    }
+
+    private fun cancelPendingRoundAdvance() {
+        if (::board.isInitialized) pendingRoundAdvance?.let { board.removeCallbacks(it) }
+        pendingRoundAdvance = null
+    }
+
+    private fun scheduleNextRound(expectedRoundId: Long) {
+        cancelPendingRoundAdvance()
+        val runnable = Runnable {
+            if (game.state.roundId != expectedRoundId) return@Runnable
+            if (game.state.acceptingAnswer) return@Runnable
+            if (game.state.mode == TrainerMode.TIMED && timedFinished) return@Runnable
+            pendingRoundAdvance = null
+            feedbackSquare = null
+            feedbackCorrect = null
+            game.nextRound(expectedRoundId)
+            refreshUi()
+        }
+        pendingRoundAdvance = runnable
+        board.postDelayed(runnable, FEEDBACK_DELAY_MS)
+    }
+
     private fun refreshUi() {
         if (!::board.isInitialized) return
         val state = game.state
         score.text = "SCOR\n${state.correct}/${state.total}"
         streak.text = "STREAK\n${state.streak}"
         bestStreak.text = "Cel mai bun streak: ${state.bestStreak}"
+        dashboardGreeting.text = "Salut, ${profile.nickname.ifBlank { "Jucător" }}"
+        val history = historyStore.load()
+        val mistakes = historyStore.aggregateMistakes()
+        sessionsStat.text = "Sesiuni\n${history.size}"
+        gamesStat.text = "Jocuri\n${history.sumOf { it.total }}"
+        mistakesStat.text = "Greșeli\n${mistakes.values.sum()}"
+        globalBestStat.text = "Cel mai bun streak\n${history.maxOfOrNull { it.bestStreak } ?: 0}"
+        mistakesCard.text = topMistakesText(mistakes)
 
         modeButtons.forEach { (mode, button) ->
             val selected = mode == state.mode
@@ -359,6 +503,7 @@ class MainActivity : Activity() {
         answers.visibility = if (state.mode == TrainerMode.GUESS) View.VISIBLE else View.GONE
         timerLabel.visibility = if (state.mode == TrainerMode.TIMED) View.VISIBLE else View.GONE
         timerLabel.text = if (timedFinished) "Timp: 0 secunde" else "Timp rămas: $timedRemaining secunde"
+        learningStartButton.visibility = if (state.mode == TrainerMode.LEARN) View.GONE else View.VISIBLE
     }
 
     private fun refreshAnswerButtons(state: TrainerState) {
@@ -366,6 +511,7 @@ class MainActivity : Activity() {
             val button = answers.getChildAt(index) as Button
             val square = state.options.getOrNull(index)
             button.text = square?.coordinate?.uppercase() ?: "—"
+            button.visibility = if (square == null) View.GONE else View.VISIBLE
             button.contentDescription = square?.let { "Răspuns ${it.coordinate.uppercase()}" } ?: "Fără variantă"
             button.isEnabled = square != null && state.acceptingAnswer
             button.setOnClickListener { square?.let { submit(it) } }
@@ -373,8 +519,89 @@ class MainActivity : Activity() {
     }
 
     private fun lessonText(): String {
-        val selected = lessonSquare?.let { "\nSelectat: ${it.coordinate.uppercase()}" } ?: ""
+        val selected = lessonSquare?.let {
+            val diagonal = when {
+                DiagonalRules.isDarkDiagonal(it.file, it.rank) -> "diagonala neagră a1–h8"
+                DiagonalRules.isLightDiagonal(it.file, it.rank) -> "diagonala albă a8–h1"
+                else -> "o pătrățică din afara celor două diagonale"
+            }
+            "\nSelectat: ${it.coordinate.uppercase()} — $diagonal"
+        } ?: ""
         return "a1–h8: diagonală neagră\na1, b2, c3, d4, e5, f6, g7, h8\n\na8–h1: diagonală albă\na8, b7, c6, d5, e4, f3, g2, h1$selected"
+    }
+
+    private fun recordSessionSnapshot() {
+        if (game.state.total == 0) return
+        historyStore.upsert(game.sessionSummary())
+        if (profile.difficultyLevel != game.state.difficultyLevel) {
+            profile = profile.copy(difficultyLevel = game.state.difficultyLevel)
+            profileStore.save(profile)
+        }
+    }
+
+    private fun topMistakesText(mistakes: Map<Square, Int>): String {
+        val top = mistakes.entries.sortedByDescending { it.value }.take(3)
+        return if (top.isEmpty()) {
+            "Greșelile mele\nÎncă nu ai răspunsuri greșite. Continuă antrenamentul!"
+        } else {
+            "Greșelile mele\n" + top.joinToString("\n") { "${it.key.coordinate.uppercase()} — ${it.value} greșeli" }
+        }
+    }
+
+    private fun showProfileDialog() {
+        val input = EditText(this).apply {
+            setSingleLine(true)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+            hint = "Poreclă"
+            setText(profile.nickname)
+            selectAll()
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Porecla ta")
+            .setView(input)
+            .setNegativeButton("Anulează", null)
+            .setPositiveButton("Salvează") { _, _ ->
+                val nickname = NicknamePolicy.normalize(input.text.toString())
+                if (nickname.isBlank()) {
+                    input.error = "Introdu o poreclă"
+                    showProfileDialog()
+                } else {
+                    profile = profileStore.saveNickname(nickname)
+                    refreshUi()
+                }
+            }
+            .show()
+    }
+
+    private fun showHistoryDialog() {
+        val history = historyStore.load()
+        val message = if (history.isEmpty()) {
+            "Nu există sesiuni salvate încă. Joacă o rundă pentru a începe istoricul."
+        } else {
+            history.joinToString("\n\n") { historyLine(it) }
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Istoricul sesiunilor")
+            .setMessage(message)
+            .setNegativeButton("Închide", null)
+            .setNeutralButton("Șterge istoricul") { _, _ ->
+                AlertDialog.Builder(this)
+                    .setTitle("Ștergi istoricul?")
+                    .setMessage("Statisticile și sesiunile salvate vor fi șterse.")
+                    .setNegativeButton("Anulează", null)
+                    .setPositiveButton("Șterge") { _, _ ->
+                        historyStore.clear()
+                        refreshUi()
+                    }
+                    .show()
+            }
+            .show()
+    }
+
+    private fun historyLine(summary: SessionSummary): String {
+        val date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+            .format(Date(summary.updatedAtEpochMs))
+        return "$date • ${summary.mode.name}\nScor: ${summary.correct}/${summary.total} • streak: ${summary.bestStreak}\nNivel: ${summary.difficultyLevel}"
     }
 
     private fun metricChip(label: String): TextView = TextView(this).apply {

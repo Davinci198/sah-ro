@@ -77,11 +77,15 @@ Workflow-ul `.github/workflows/build-apk.yml` rulează automat la fiecare push p
 `main` și poate fi pornit manual din tab-ul **Actions**. După build, APK-ul apare
 în secțiunea **Artifacts** ca `sah-debug-apk-<commit>`, disponibil 14 zile.
 
-Workflow-ul `.github/workflows/release.yml` construiește `sah_ro.apk` semnat cu
+Workflow-ul `.github/workflows/release.yml` construiește `sah_ro-<versiune>.apk` și
+`sah_ro-<versiune>.aab` semnate cu
 keystore-ul ținut în secretele GitHub și se poate porni manual sau printr-un tag
 `v*`. Pentru un tag, APK-ul este atașat automat unui GitHub Release. Secretele
 necesare sunt `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`,
 `ANDROID_KEY_ALIAS` și `ANDROID_KEY_PASSWORD`.
+
+Fiecare release include și `SHA256SUMS`. Un tag precum `v1.2.3` produce
+`versionName=1.2.3` și un `versionCode` determinist.
 
 Fingerprint-ul public SHA-256 al certificatului de semnare este:
 

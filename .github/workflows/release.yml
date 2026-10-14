@@ -1,10 +1,15 @@
-name: Release APK
+name: Release APK and AAB
 
 on:
   push:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Semantic version without v, for example 1.2.3'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -37,6 +42,32 @@ jobs:
         with:
           gradle-version: '8.5'
 
+      - name: Resolve release version
+        shell: bash
+        env:
+          MANUAL_VERSION_NAME: ${{ inputs.version_name }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            version_name="${GITHUB_REF_NAME#v}"
+          else
+            version_name="$MANUAL_VERSION_NAME"
+          fi
+          if [[ ! "$version_name" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            printf 'Invalid semantic version: %s\n' "$version_name" >&2
+            exit 1
+          fi
+          IFS=. read -r major minor patch <<< "$version_name"
+          if (( major >= 2100 || minor >= 1000 || patch >= 1000 )); then
+            printf 'Version components are too large\n' >&2
+            exit 1
+          fi
+          version_code=$((major * 1000000 + minor * 1000 + patch + 1))
+          {
+            printf 'SAH_VERSION_NAME=%s\n' "$version_name"
+            printf 'SAH_VERSION_CODE=%s\n' "$version_code"
+          } >> "$GITHUB_ENV"
+          printf 'Resolved versionName=%s versionCode=%s\n' "$version_name" "$version_code"
+
       - name: Decode release keystore
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -45,7 +76,7 @@ jobs:
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/sah_ro-release.jks"
           test -s "$RUNNER_TEMP/sah_ro-release.jks"
 
-      - name: Run tests and build signed release APK
+      - name: Run tests and build signed APK and AAB
         env:
           SAH_RELEASE_STORE_FILE: ${{ runner.temp }}/sah_ro-release.jks
           SAH_RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -55,16 +86,24 @@ jobs:
           test -n "$SAH_RELEASE_STORE_PASSWORD"
           test -n "$SAH_RELEASE_KEY_ALIAS"
           test -n "$SAH_RELEASE_KEY_PASSWORD"
-          gradle testDebugUnitTest assembleRelease --no-daemon --stacktrace
+          gradle testDebugUnitTest assembleRelease bundleRelease --no-daemon --stacktrace
           mkdir -p dist
-          cp app/build/outputs/apk/release/app-release.apk dist/sah_ro.apk
-          "$ANDROID_SDK_ROOT/build-tools/34.0.0/apksigner" verify --verbose dist/sah_ro.apk
+          cp app/build/outputs/apk/release/app-release.apk "dist/sah_ro-${SAH_VERSION_NAME}.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "dist/sah_ro-${SAH_VERSION_NAME}.aab"
+          "$ANDROID_SDK_ROOT/build-tools/34.0.0/apksigner" verify --verbose --print-certs "dist/sah_ro-${SAH_VERSION_NAME}.apk"
+          jarsigner -verify -verbose -certs "dist/sah_ro-${SAH_VERSION_NAME}.aab"
 
-      - name: Upload signed APK artifact
+      - name: Generate and verify checksums
+        working-directory: dist
+        run: |
+          sha256sum "sah_ro-${SAH_VERSION_NAME}.apk" "sah_ro-${SAH_VERSION_NAME}.aab" > SHA256SUMS
+          sha256sum -c SHA256SUMS
+
+      - name: Upload signed release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: sah_ro-release-${{ github.sha }}
-          path: dist/sah_ro.apk
+          path: dist/*
           if-no-files-found: error
           retention-days: 30
 
@@ -72,4 +111,14 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/sah_ro.apk --title "sah_ro $GITHUB_REF_NAME" --generate-notes
+        run: |
+          assets=("dist/sah_ro-${SAH_VERSION_NAME}.apk" "dist/sah_ro-${SAH_VERSION_NAME}.aab" "dist/SHA256SUMS")
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "${assets[@]}" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "${assets[@]}" --verify-tag --title "sah_ro $GITHUB_REF_NAME" --generate-notes
+          fi
+
+      - name: Remove temporary signing material
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sah_ro-release.jks"

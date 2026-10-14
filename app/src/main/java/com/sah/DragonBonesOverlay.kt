@@ -15,7 +15,7 @@ class DragonBonesOverlay(context: Context) : FrameLayout(context) {
 
     init {
         visibility = View.GONE
-        contentDescription = "Animație DragonBones"
+        importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
     }
 
     fun attachIfModelExists() {
@@ -38,6 +38,14 @@ class DragonBonesOverlay(context: Context) : FrameLayout(context) {
                 }
             }
         }
+    }
+
+    fun pauseAnimation() {
+        dragonBonesView?.onPause()
+    }
+
+    fun resumeAnimation() {
+        dragonBonesView?.onResume()
     }
 
     override fun onDetachedFromWindow() {

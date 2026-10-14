@@ -13,6 +13,13 @@ val hasReleaseSigning = listOf(
     releaseKeyAlias,
     releaseKeyPassword,
 ).all { !it.isNullOrBlank() }
+val resolvedVersionCode = providers.environmentVariable("SAH_VERSION_CODE").orNull
+    ?.toIntOrNull()
+    ?.takeIf { it > 0 }
+    ?: 1
+val resolvedVersionName = providers.environmentVariable("SAH_VERSION_NAME").orNull
+    ?.takeIf { it.isNotBlank() }
+    ?: "1.0"
 
 android {
     namespace = "com.sah"
@@ -22,8 +29,8 @@ android {
         applicationId = "com.sah"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = resolvedVersionCode
+        versionName = resolvedVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
