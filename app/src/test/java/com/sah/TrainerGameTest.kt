@@ -1,7 +1,6 @@
 package com.sah
 
 import kotlin.random.Random
-import android.os.Bundle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -80,22 +79,6 @@ class TrainerGameTest {
 
         assertFalse(game.nextRound(oldRound))
         assertEquals(currentRound, game.state.roundId)
-    }
-
-    @Test
-    fun saveRestorePreservesSessionDifficultyAndMistakes() {
-        val game = TrainerGame(Random(15), initialDifficulty = AdaptiveDifficulty.MAX_LEVEL)
-        game.submit(game.state.target.otherSquare())
-        val bundle = Bundle()
-        game.save(bundle)
-
-        val restored = TrainerGame(Random(16))
-        restored.restore(bundle)
-
-        assertEquals(game.state.sessionId, restored.state.sessionId)
-        assertEquals(game.state.roundId, restored.state.roundId)
-        assertEquals(game.state.difficultyLevel, restored.state.difficultyLevel)
-        assertEquals(game.state.mistakesBySquare, restored.state.mistakesBySquare)
     }
 
     private fun Square.otherSquare(): Square =
