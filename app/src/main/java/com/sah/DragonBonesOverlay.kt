@@ -66,8 +66,8 @@ class DragonBonesOverlay(context: Context) : FrameLayout(context) {
     }
 
     private companion object {
-        const val MODEL_SKELETON = "chess/piece_ske.json"
-        const val MODEL_TEXTURE_JSON = "chess/piece_tex.json"
-        const val MODEL_TEXTURE_IMAGE = "chess/piece_tex.png"
+        const val MODEL_SKELETON = "chess/queen_ske.json"
+        const val MODEL_TEXTURE_JSON = "chess/queen_tex.json"
+        const val MODEL_TEXTURE_IMAGE = "chess/queen_tex.png"
     }
 }

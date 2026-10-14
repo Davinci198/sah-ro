@@ -1,24 +1,29 @@
 # Third-party notices
 
-## DragonBonesJS sample: dragon_boy
+## Queen mascot
 
-The files below are adapted only by filename/path from the `dragon_boy` sample
-in [DragonBones/DragonBonesJS](https://github.com/DragonBones/DragonBonesJS):
+The queen mascot assets are original project assets generated from the editable
+vector source at:
 
 ```text
-app/src/main/assets/chess/piece_ske.json
-app/src/main/assets/chess/piece_tex.json
-app/src/main/assets/chess/piece_tex.png
+app/src/main/assets/chess/queen_mascot.svg
 ```
 
-Source paths:
+The DragonBones skeleton and texture atlas were authored for this project:
 
-- `Hilo/Demos/resource/assets/dragon_boy_ske.json`
-- `Hilo/Demos/resource/assets/dragon_boy_tex.json`
-- `Hilo/Demos/resource/assets/dragon_boy_tex.png`
+```text
+app/src/main/assets/chess/queen_ske.json
+app/src/main/assets/chess/queen_tex.json
+app/src/main/assets/chess/queen_tex.png
+```
 
-Source license: MIT. Copyright (c) 2012-2025 The DragonBones team and other
-contributors.
+No third-party character artwork is bundled.
+
+## DragonBones runtime
+
+The application bundles the published DragonBones Android runtime in
+`app/libs/dragonbones-release.aar`. The runtime is distributed under the MIT
+license by the DragonBones team and other contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

@@ -28,6 +28,18 @@ Aplicația folosește controale Android native și o tablă responsive, fără i
 - dificultate adaptivă pe trei niveluri și buton pentru antrenarea greșelilor;
 - test JVM pentru regula culorilor diagonalelor și logica rundelor.
 
+## Pictograma aplicației
+
+Pictograma folosește designul cu pion alb pe fundal verde și magenta, inclusiv
+variante adaptive pentru Android 8+ și variante PNG pentru dispozitivele mai
+vechi. Sursa vectorială editabilă este:
+
+```text
+art/sah_ro_icon.svg
+```
+
+Manifestul declară `@mipmap/ic_launcher` și `@mipmap/ic_launcher_round`.
+
 ## DragonBones v1.1.0
 
 Aplicația include artefactul publicat:
@@ -41,25 +53,26 @@ Proiectul folosește Java/Kotlin target 17 pentru compatibilitate cu bytecode-ul
 publicat în AAR.
 
 Integrarea este opțională și nu afectează antrenorul dacă nu există un model
-DragonBones. Pentru a afișa animația, adaugă exportul modelului în:
+DragonBones. Pentru a afișa animația, modelul inclus folosește:
 
 ```text
-app/src/main/assets/chess/piece_ske.json
-app/src/main/assets/chess/piece_tex.json
-app/src/main/assets/chess/piece_tex.png
+app/src/main/assets/chess/queen_ske.json
+app/src/main/assets/chess/queen_tex.json
+app/src/main/assets/chess/queen_tex.png
 ```
 
 Când cele trei fișiere există, `DragonBonesOverlay` le încarcă automat și pornește
-prima animație disponibilă. Modelul inclus este `dragon_boy` din DragonBonesJS și
-are animațiile `stand`, `walk`, `jump` și `fall`. Atribuirea este în
+prima animație disponibilă. Modelul inclus este mascota originală `QueenMascot`,
+cu animația `idle`. Sursa vectorială editabilă este
+`app/src/main/assets/chess/queen_mascot.svg`, iar detaliile de proveniență sunt în
 `THIRD_PARTY_NOTICES.md`.
 
 Amprentele asset-urilor incluse:
 
 ```text
-piece_ske.json:  89961578d447697de5a26911f398635d5c2ba658b087cff2383d4382b0c36713
-piece_tex.json:  4dc7bc32d983d1c5819752bb86b707803897880ddc3c1a7033e3f4d874a88ef2
-piece_tex.png:   21cda91ab0df91093f2176a883d40a1b58b2b93e777515f5238c20cb3711b250
+queen_ske.json:  36b9e55a5ca4bd161657e8ec98e9bf159e41e22458b7de35a7b90ca6d7e097b6
+queen_tex.json:  b6c20dbdb91a29a5cc437c3a7fec919073a477667cc222723c0851a5999c6318
+queen_tex.png:   1754a8223299258c04752e1568400a985b92e583b4585b66183a37da67d1a22e
 ```
 
 ## Build
