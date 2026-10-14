@@ -24,6 +24,8 @@ Aplicația folosește controale Android native și o tablă responsive, fără i
 - feedback vizual și vibrație la răspuns;
 - stare păstrată la rotirea ecranului;
 - controale și pătrățele cu etichete pentru TalkBack;
+- profil cu poreclă, dashboard de sesiuni/jocuri, istoric și greșeli frecvente;
+- dificultate adaptivă pe trei niveluri și buton pentru antrenarea greșelilor;
 - test JVM pentru regula culorilor diagonalelor și logica rundelor.
 
 ## DragonBones v1.1.0

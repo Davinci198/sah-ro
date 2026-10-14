@@ -50,6 +50,7 @@ class MainActivity : Activity() {
     private lateinit var mistakesStat: TextView
     private lateinit var globalBestStat: TextView
     private lateinit var mistakesCard: TextView
+    private lateinit var mistakesTrainingButton: Button
     private lateinit var historyButton: Button
     private lateinit var learningStartButton: Button
     private val modeButtons = linkedMapOf<TrainerMode, Button>()
@@ -278,6 +279,13 @@ class MainActivity : Activity() {
 
         mistakesCard = cardText("")
         dashboard.addView(mistakesCard, fullWidthParams())
+        mistakesTrainingButton = controlButton("Antrenează greșelile") {
+            game.setHistoricalMistakes(historyStore.aggregateMistakes())
+            selectMode(TrainerMode.FIND)
+        }.apply {
+            contentDescription = "Antrenează coordonatele greșite cel mai des"
+        }
+        dashboard.addView(mistakesTrainingButton, fullWidthParams())
         dashboard.addView(space(8))
 
         val learningIntro = cardText(
@@ -462,13 +470,14 @@ class MainActivity : Activity() {
         gamesStat.text = "Jocuri\n${history.sumOf { it.total }}"
         mistakesStat.text = "Greșeli\n${mistakes.values.sum()}"
         globalBestStat.text = "Cel mai bun streak\n${history.maxOfOrNull { it.bestStreak } ?: 0}"
-        mistakesCard.text = topMistakesText(mistakes)
+        mistakesCard.text = "${topMistakesText(mistakes)}\nNivel adaptiv: ${state.difficultyLevel}/3"
 
         modeButtons.forEach { (mode, button) ->
             val selected = mode == state.mode
             button.background = controlBackground(if (selected) primaryColor else cardColor)
             button.setTextColor(textColor)
             button.isSelected = selected
+            button.contentDescription = "Mod: ${button.text}${if (selected) ", selectat" else ""}"
         }
 
         diagonalButton.text = if (state.showDiagonals) "✓  Ascunde diagonalele" else "◫  Arată diagonalele"
