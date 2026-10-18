@@ -87,14 +87,22 @@ class PlayTest {
         return session.play(move.from, move.to) != PlayOutcome.IGNORED
     }
 
-    /** Solves a real task screen using only the session's public API. */
+    /**
+     * Solves a real task screen using only the session's public API. The task fields
+     * are bound to locals first: the tests compile as a separate Kotlin module from
+     * the app, so the compiler cannot smart cast a property of [LessonScreen].
+     */
     private fun solveScreen(session: LessonSession, screen: LessonScreen): Boolean {
+        val tap = screen.tap
+        val stars = screen.stars
+        val quiz = screen.quiz
+        val moves = screen.moves
         when {
-            screen.tap != null -> screen.tap.steps.forEach { step ->
+            tap != null -> tap.steps.forEach { step ->
                 if (step.all) step.targets.forEach { session.tap(square(it)) }
                 else step.targets.firstOrNull()?.let { session.tap(square(it)) }
             }
-            screen.stars != null -> screen.stars.solution.forEach { uci ->
+            stars != null -> stars.solution.forEach { uci ->
                 val move = MoveGenerator.resolveUci(session.board, uci) ?: return false
                 if (session.play(move.from, move.to) == PlayOutcome.ILLEGAL) return false
             }
@@ -102,8 +110,8 @@ class PlayTest {
                 val empty = step.targets.firstOrNull { session.board.isEmpty(square(it)) }
                 if (empty != null) session.tap(square(empty))
             }
-            screen.quiz != null -> session.answer(screen.quiz.answer)
-            screen.moves != null -> screen.moves.steps.forEach { step ->
+            quiz != null -> session.answer(quiz.answer)
+            moves != null -> moves.steps.forEach { step ->
                 if (!session.solved) playStep(session, step)
             }
             else -> return false

@@ -65,7 +65,10 @@ class ContentAssetTest {
 
     @Test
     fun quizAnswersAreInRange() {
-        assertTrue(screens.all { it.quiz == null || it.quiz.answer in it.quiz.options.indices })
+        assertTrue(screens.all { screen ->
+            val quiz = screen.quiz
+            quiz == null || quiz.answer in quiz.options.indices
+        })
         assertTrue(screens.filter { it.quiz != null }.all { LessonTexts.quizOptions(book, it.quiz!!, Language.RO).size >= 2 })
     }
 
