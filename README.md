@@ -40,39 +40,23 @@ art/sah_ro_icon.svg
 
 Manifestul declară `@mipmap/ic_launcher` și `@mipmap/ic_launcher_round`.
 
-## DragonBones v1.1.0
+## Mascota DragonBones (scoată în v1.2.1)
 
-Aplicația include artefactul publicat:
+Aplicația nu mai include runtime-ul DragonBones și mascota reginei. Motivul:
+biblioteca apela `GLSurfaceView.onPause()` de pe firul GL, iar main thread-ul
+aștepta firul GL în `surfaceDestroyed()` — un deadlock care producea ANR și
+uciderea procesului de fiecare dată când un ecran acoperea `MainActivity`
+(Lecții, Puzzle-uri). Randarea GL rămânea activă în fundal.
+
+Eliminat în v1.2.1:
 
 ```text
 app/libs/dragonbones-release.aar
-SHA-256: 639238ed2d6d2c68fb7f4954c809475aaee25e4c5eeaebfcc690f53d7f775807
-```
-
-Proiectul folosește Java/Kotlin target 17 pentru compatibilitate cu bytecode-ul
-publicat în AAR.
-
-Integrarea este opțională și nu afectează antrenorul dacă nu există un model
-DragonBones. Pentru a afișa animația, modelul inclus folosește:
-
-```text
+app/src/main/assets/chess/queen_mascot.svg
 app/src/main/assets/chess/queen_ske.json
 app/src/main/assets/chess/queen_tex.json
 app/src/main/assets/chess/queen_tex.png
-```
-
-Când cele trei fișiere există, `DragonBonesOverlay` le încarcă automat și pornește
-prima animație disponibilă. Modelul inclus este mascota originală `QueenMascot`,
-cu animația `idle`. Sursa vectorială editabilă este
-`app/src/main/assets/chess/queen_mascot.svg`, iar detaliile de proveniență sunt în
-`THIRD_PARTY_NOTICES.md`.
-
-Amprentele asset-urilor incluse:
-
-```text
-queen_ske.json:  36b9e55a5ca4bd161657e8ec98e9bf159e41e22458b7de35a7b90ca6d7e097b6
-queen_tex.json:  b6c20dbdb91a29a5cc437c3a7fec919073a477667cc222723c0851a5999c6318
-queen_tex.png:   1754a8223299258c04752e1568400a985b92e583b4585b66183a37da67d1a22e
+app/src/main/java/com/sah/DragonBonesOverlay.kt
 ```
 
 ## Build

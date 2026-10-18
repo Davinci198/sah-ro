@@ -44,7 +44,6 @@ class MainActivity : Activity() {
     private lateinit var timerLabel: TextView
     private lateinit var answers: LinearLayout
     private lateinit var resetButton: Button
-    private lateinit var dragonBonesOverlay: DragonBonesOverlay
     private lateinit var dashboardGreeting: TextView
     private lateinit var sessionsStat: TextView
     private lateinit var gamesStat: TextView
@@ -104,16 +103,6 @@ class MainActivity : Activity() {
         super.onDestroy()
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (::dragonBonesOverlay.isInitialized) dragonBonesOverlay.resumeAnimation()
-    }
-
-    override fun onPause() {
-        if (::dragonBonesOverlay.isInitialized) dragonBonesOverlay.pauseAnimation()
-        super.onPause()
-    }
-
     private fun buildUi() {
         val scroll = ScrollView(this).apply {
             setFillViewport(true)
@@ -130,10 +119,6 @@ class MainActivity : Activity() {
         root.addView(buildHeader())
         root.addView(buildDashboard(), fullWidthParams())
         root.addView(space(12))
-        dragonBonesOverlay = DragonBonesOverlay(this)
-        root.addView(dragonBonesOverlay, LinearLayout.LayoutParams(-1, dp(132)))
-        dragonBonesOverlay.attachIfModelExists()
-        root.addView(space(16))
         root.addView(buildModes())
         root.addView(space(12))
         root.addView(buildContent(), fullWidthParams())

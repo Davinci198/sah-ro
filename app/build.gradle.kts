@@ -70,6 +70,5 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/dragonbones-release.aar"))
     testImplementation("junit:junit:4.13.2")
 }
