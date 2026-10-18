@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".LessonActivity"
+            android:exported="false"
+            android:label="@string/lesson_title" />
+        <activity
+            android:name=".PuzzleActivity"
+            android:exported="false"
+            android:label="@string/puzzle_title" />
     </application>
 
 </manifest>

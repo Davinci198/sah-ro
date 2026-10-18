@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">sah_ro</string>
+    <string name="lesson_title">Lecții</string>
+    <string name="puzzle_title">Puzzle-uri</string>
 </resources>

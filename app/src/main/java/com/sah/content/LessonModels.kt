@@ -38,7 +38,7 @@ data class Marks(
     val hasContent: Boolean get() = good.isNotEmpty() || bad.isNotEmpty() || focus.isNotEmpty()
 }
 
-/** One tap step: tap every square in [targets] (in order unless [all]). */
+/** One tap step: with [all] false any single target solves it. */
 data class TapStep(
     val targets: List<String>,
     val all: Boolean = false,
@@ -46,18 +46,26 @@ data class TapStep(
     val fact: String? = null,
 )
 
-/** `tap` challenge: `steps` plus squares that must never be tapped. */
+/**
+ * `tap`: a sequence of tap steps. [ignore] squares swallow the tap without
+ * feedback, and under [strict] a wrong tap after the first step restarts the
+ * whole sequence.
+ */
 data class TapTask(
     val steps: List<TapStep> = emptyList(),
     val ignore: List<String> = emptyList(),
     val wrong: String? = null,
+    val strict: Boolean = false,
 )
 
 /**
- * One move step. [accept] holds every accepted UCI move; [reply] is a forced
- * opponent answer, [rule] the validation rule (`mate`, `see_win`, `check`,
- * `stop_mate`, `castle`, `mate_in:N`, …), [sf] marks engine-checked steps,
- * [unique] requires the exact move, [subset]/[lure] widen or trap the solution.
+ * One move step. [accept] holds every accepted UCI move (a 5th character pins the
+ * promotion piece); [reply] is the opponent's forced answer, played automatically.
+ *
+ * [rule], [unique], [sf], [subset] and [lure] are the book's own review notes —
+ * the shipped app never reads them, so this port grades on [accept] alone and
+ * keeps the notes only to show why a screen exists. `accept` fixes the grading:
+ * an empty list accepts any legal move.
  */
 data class MoveStep(
     val accept: List<String> = emptyList(),
@@ -72,6 +80,22 @@ data class MoveStep(
 /** `moves` challenge: play the accepted move(s), optionally with a forced reply. */
 data class MoveTask(
     val steps: List<MoveStep> = emptyList(),
+    val wrong: String? = null,
+)
+
+/**
+ * `stars`: a puzzle against the clock of [max] moves. The learner has to move a
+ * piece onto every square of [stars] — in any order, as long as the piece (or the
+ * squares) allow it — within [max] own moves. [only] pins the first move to that
+ * square, so only one piece can start; every later move must start where the
+ * previous one ended. [solution] is the book's optimal line; [wrong] is the key of
+ * the "out of moves" text, when the screen overrides it.
+ */
+data class StarsTask(
+    val stars: List<String> = emptyList(),
+    val max: Int = 0,
+    val solution: List<String> = emptyList(),
+    val only: String? = null,
     val wrong: String? = null,
 )
 
@@ -90,21 +114,16 @@ data class Quiz(
 data class PlayTask(val goal: String, val limit: Int)
 
 /**
- * `stars`: collect the star squares, scored by how many moves the solution took.
- * [stars] lists the target squares in reveal order (it may be shorter than
- * [max]); [solution] is the optimal UCI line.
+ * One lesson screen. Only the fields relevant to [type] are populated.
+ *
+ * [fen] is never null: the script only writes it when the position changes, and
+ * [LessonRepository] carries the last one forward within a lesson, exactly like
+ * the shipped app. A screen before the first `fen` would get an empty board.
  */
-data class StarsTask(
-    val stars: List<String> = emptyList(),
-    val max: Int = 0,
-    val solution: List<String> = emptyList(),
-)
-
-/** One lesson screen. Only the fields relevant to [type] are populated. */
 data class LessonScreen(
     val type: ScreenType,
     val textKey: String,
-    val fen: String? = null,
+    val fen: String = "",
     val marks: Marks? = null,
     val arrows: List<Arrow> = emptyList(),
     val dotsFrom: String? = null,
@@ -115,9 +134,7 @@ data class LessonScreen(
     val quiz: Quiz? = null,
     val play: PlayTask? = null,
     val stars: StarsTask? = null,
-) {
-    val hasBoard: Boolean get() = fen != null
-}
+)
 
 /** A lesson = a numbered sequence of screens at a difficulty [level] (1..4). */
 data class Lesson(

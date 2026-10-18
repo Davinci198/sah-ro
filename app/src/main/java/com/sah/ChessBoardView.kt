@@ -8,6 +8,11 @@ import android.graphics.drawable.RippleDrawable
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.Button
+import com.sah.chess.ChessBoard
+import com.sah.chess.Pieces
+
+/** Highlight kinds the piece board understands. */
+enum class BoardMark { SELECTED, TARGET, GOOD, BAD, FOCUS, LAST, CHECK }
 
 class ChessBoardView(context: Context) : ViewGroup(context) {
     private val density = resources.displayMetrics.density
@@ -18,6 +23,9 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
     private val selectedCorrect = Color.rgb(34, 197, 94)
     private val selectedWrong = Color.rgb(239, 68, 68)
     private val highlightTarget = Color.WHITE
+    private val selectedAccent = Color.rgb(255, 199, 71)
+    private val lastMoveColor = Color.rgb(120, 160, 220)
+    private val checkColor = Color.rgb(255, 96, 96)
     private val buttons = ArrayList<Button>(64)
     private var showDiagonals = true
     private var mode = TrainerMode.FIND
@@ -101,6 +109,79 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
         buttons.forEach { it.isEnabled = enabled }
+    }
+
+    /**
+     * Draws a real position instead of the coordinate trainer: every square shows
+     * the piece standing on it, [marks] highlight the interesting squares.
+     *
+     * The caller decides priorities by putting a single mark per square into the
+     * map; the board only paints it.
+     */
+    fun renderPosition(fen: String, marks: Map<Square, BoardMark> = emptyMap()) {
+        val board = ChessBoard.fromFen(fen)
+        buttons.forEachIndexed { index, button ->
+            val file = index % 8
+            val rank = 7 - index / 8
+            val square = Square(file, rank)
+            val dark = DiagonalRules.isDarkSquare(file, rank)
+            val piece = board.pieceAt(square)
+            val borderColor = when (marks[square]) {
+                BoardMark.SELECTED -> selectedAccent
+                BoardMark.TARGET -> highlightTarget
+                BoardMark.GOOD -> selectedCorrect
+                BoardMark.BAD -> selectedWrong
+                BoardMark.FOCUS -> lightDiagonal
+                BoardMark.LAST -> lastMoveColor
+                BoardMark.CHECK -> checkColor
+                null -> Color.TRANSPARENT
+            }
+            val borderWidth = if (borderColor == Color.TRANSPARENT) 0 else dp(3)
+            button.text = pieceGlyph(piece)
+            button.setTextColor(if (piece.isUpperCase()) Color.WHITE else Color.rgb(24, 24, 24))
+            button.textSize = 22f
+            button.isEnabled = true
+            button.background = rippleBackground(if (dark) darkSquare else lightSquare, borderColor, borderWidth)
+            button.contentDescription = positionDescription(square, dark, piece)
+        }
+        invalidate()
+    }
+
+    private fun pieceGlyph(piece: Char): String = when (piece) {
+        'K' -> "♔"
+        'Q' -> "♕"
+        'R' -> "♖"
+        'B' -> "♗"
+        'N' -> "♘"
+        'P' -> "♙"
+        'k' -> "♚"
+        'q' -> "♛"
+        'r' -> "♜"
+        'b' -> "♝"
+        'n' -> "♞"
+        'p' -> "♟"
+        else -> ""
+    }
+
+    private fun positionDescription(square: Square, dark: Boolean, piece: Char): String {
+        val color = if (dark) "negru" else "alb"
+        val name = when (Pieces.typeOf(piece)) {
+            Pieces.PAWN -> "pion"
+            Pieces.KNIGHT -> "cal"
+            Pieces.BISHOP -> "nebun"
+            Pieces.ROOK -> "turn"
+            Pieces.QUEEN -> "regină"
+            Pieces.KING -> "rege"
+            else -> "gol"
+        }
+        val owner = when {
+            Pieces.isWhite(piece) -> "alb"
+            Pieces.isBlack(piece) -> "negru"
+            else -> ""
+        }
+        val content = if (piece == Pieces.EMPTY) "Pătrățel ${square.coordinate}, $color, gol" else
+            "Pătrățel ${square.coordinate}, $color, $name $owner"
+        return content
     }
 
     private fun visibleLabel(square: Square, mode: TrainerMode): String = when {

@@ -36,17 +36,30 @@ object LessonRepository {
         lessons = map.objectList("lessons").map(::parseLesson),
     )
 
-    private fun parseLesson(map: Map<String, Any?>): Lesson = Lesson(
-        n = map.int("n") ?: 0,
-        titleKey = map.string("title").orEmpty(),
-        level = map.int("level") ?: 1,
-        screens = map.objectList("screens").map(::parseScreen),
-    )
+    /**
+     * The script only writes `fen` on the screens whose position changes; every
+     * other screen keeps the last position of its lesson (an empty board for a
+     * lesson whose first screen has no `fen`). The shipped app parses the same
+     * way, which is why so few screens carry a position.
+     */
+    private fun parseLesson(map: Map<String, Any?>): Lesson {
+        var fen = ""
+        val screens = map.objectList("screens").map { screen ->
+            screen.string("fen")?.let { fen = it }
+            parseScreen(screen, fen)
+        }
+        return Lesson(
+            n = map.int("n") ?: 0,
+            titleKey = map.string("title").orEmpty(),
+            level = map.int("level") ?: 1,
+            screens = screens,
+        )
+    }
 
-    private fun parseScreen(map: Map<String, Any?>): LessonScreen = LessonScreen(
+    private fun parseScreen(map: Map<String, Any?>, fen: String): LessonScreen = LessonScreen(
         type = ScreenType.fromToken(map.string("t")),
         textKey = map.string("text").orEmpty(),
-        fen = map.string("fen"),
+        fen = fen,
         marks = parseMarks(map.objectOrNull("marks")),
         arrows = parseArrows(map.arrayOrNull("arrows")),
         dotsFrom = map.string("dotsFrom"),
@@ -95,6 +108,7 @@ object LessonRepository {
             },
             ignore = map.stringList("ignore"),
             wrong = map.string("wrong"),
+            strict = map.boolean("strict") ?: false,
         )
     }
 
@@ -149,6 +163,8 @@ object LessonRepository {
             stars = stars,
             max = map.int("max") ?: stars.size,
             solution = map.stringList("solution"),
+            only = map.string("only"),
+            wrong = map.string("wrong"),
         )
     }
 }
@@ -161,15 +177,6 @@ object LessonTexts {
 
     fun title(book: LessonBook, titleKey: String, language: Language): String =
         book.strings[titleKey]?.of(language) ?: titleKey
-
-    /** The "wrong answer" feedback for the screen, if the script defines one. */
-    fun wrongFeedback(book: LessonBook, screen: LessonScreen, language: Language): String? {
-        val key = screen.moves?.wrong ?: screen.tap?.wrong ?: screen.quiz?.wrong ?: return null
-        return book.strings[key]?.of(language) ?: key
-    }
-
-    fun tapStepText(book: LessonBook, step: TapStep, language: Language): String? =
-        step.text?.let { book.strings[it]?.of(language) ?: it }
 
     fun quizOptions(book: LessonBook, quiz: Quiz, language: Language): List<String> =
         quiz.options.map { book.strings[it]?.of(language) ?: it }
