@@ -27,11 +27,29 @@ import org.junit.Test
 /**
  * The in-process analysis engine: profile constants, win% / accuracy curves, the
  * category table, SEE, motif detection and the full `analyze` pipeline. The
- * pipeline group runs on a short think budget so the suite stays fast.
+ * pipeline group pins the engine to a fixed depth with a deadline that can never
+ * expire, so its numbers are identical on every machine.
  */
 class AnalysisTest {
 
-    private val fast = EngineProfile.CARBALLO.copy(quickMillis = 40, deepMillis = 60, checkMillis = 80)
+    /**
+     * The pipeline is exercised with a deterministic engine: [PINNED_DEPTH] plies and a
+     * deadline that cannot expire. A profile's wall-clock budget would let a slower
+     * machine abort the search mid-iteration, and every number downstream of the
+     * search (win%, classification, accuracy) would move with it.
+     */
+    private fun pinnedEngine(): HeuristicEngine = HeuristicEngine(PINNED_PROFILE, maxDepth = PINNED_DEPTH)
+
+    private companion object {
+        const val PINNED_MILLIS = 3_600_000
+        const val PINNED_DEPTH = 2
+
+        val PINNED_PROFILE: EngineProfile = EngineProfile.CARBALLO.copy(
+            quickMillis = PINNED_MILLIS,
+            deepMillis = PINNED_MILLIS,
+            checkMillis = PINNED_MILLIS,
+        )
+    }
 
     private fun uci(text: String): ChessMove = ChessMove.fromUci(text) ?: error("bad uci $text")
 
@@ -272,7 +290,7 @@ class AnalysisTest {
     @Test
     fun foolsMatePipelineGradesTheFinalMate() {
         val fools = listOf("f2f3", "e7e5", "g2g4", "d8h4")
-        val analysis = GameAnalyzer(HeuristicEngine(fast)).use { it.analyze(ChessBoard.START_FEN, fools) }
+        val analysis = GameAnalyzer(pinnedEngine()).use { it.analyze(ChessBoard.START_FEN, fools) }
         assertEquals(4, analysis.plies.size)
         assertEquals(listOf("f3", "e5", "g4", "Qh4#"), analysis.plies.map { it.san })
         assertEquals(MoveCategory.BEST, analysis.plies[3].category)
@@ -289,7 +307,7 @@ class AnalysisTest {
     @Test
     fun scholarMatePipelineRecognisesTheMate() {
         val scholars = listOf("e2e4", "e7e5", "f1c4", "b8c6", "d1h5", "g8f6", "h5f7")
-        val game = GameAnalyzer(HeuristicEngine(fast)).use { it.analyze(ChessBoard.START_FEN, scholars) }
+        val game = GameAnalyzer(pinnedEngine()).use { it.analyze(ChessBoard.START_FEN, scholars) }
         assertEquals(7, game.plies.size)
         assertEquals("Qxf7#", game.plies[6].san)
         assertEquals(100.0, game.plies[6].winAfter, 0.0)
@@ -317,7 +335,7 @@ class AnalysisTest {
         assertEquals(0, OpeningLines.bookPlies("4k3/8/8/8/8/8/8/4K3 w - - 0 1", facts.map { it.san }, book))
         assertEquals(0, OpeningLines.bookPlies(ChessBoard.START_FEN, facts.map { it.san }, null))
 
-        val game = GameAnalyzer(HeuristicEngine(fast), book = book).use { it.analyze(ChessBoard.START_FEN, ruy) }
+        val game = GameAnalyzer(pinnedEngine(), book = book).use { it.analyze(ChessBoard.START_FEN, ruy) }
         assertEquals(16, game.plies.size)
         assertEquals(bookEnd, game.bookEndPly)
         assertEquals(bookEnd, game.plies.count { it.isBook })
@@ -338,7 +356,7 @@ class AnalysisTest {
     @Test
     fun analyseReportsMonotonicProgress() {
         val finalized = ArrayList<Int>()
-        val game = GameAnalyzer(HeuristicEngine(fast), onProgress = { finalized.add(it.finalized) })
+        val game = GameAnalyzer(pinnedEngine(), onProgress = { finalized.add(it.finalized) })
             .use { it.analyze(ChessBoard.START_FEN, listOf("e2e4", "e7e5", "g1f3")) }
         assertEquals(3, game.plies.size)
         assertTrue(finalized.isNotEmpty())
