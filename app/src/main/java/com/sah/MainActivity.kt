@@ -2,6 +2,7 @@ package com.sah
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -134,6 +135,8 @@ class MainActivity : Activity() {
         dragonBonesOverlay.attachIfModelExists()
         root.addView(space(16))
         root.addView(buildModes())
+        root.addView(space(12))
+        root.addView(buildContent(), fullWidthParams())
         root.addView(space(12))
 
         diagonalButton = controlButton("") { game.toggleDiagonals(); refreshUi() }.apply {
@@ -366,6 +369,34 @@ class MainActivity : Activity() {
         }
         scroll.addView(row, ViewGroup.LayoutParams(-2, -2))
         return scroll
+    }
+
+    /** Entry points for the ported Checkmate content: the lesson book and puzzles. */
+    private fun buildContent(): View {
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(12), dp(10), dp(12), dp(12))
+            background = controlBackground(cardColor)
+        }
+        card.addView(
+            TextView(this).apply {
+                text = "Conținut Checkmate"
+                setTextColor(textColor)
+                setTextSize(13f)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(dp(2), 0, dp(2), dp(8))
+            },
+            fullWidthParams(),
+        )
+        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        row.addView(controlButton("Lecții (64)") {
+            startActivity(Intent(this, LessonActivity::class.java))
+        }, LinearLayout.LayoutParams(0, -2, 1f).apply { marginEnd = dp(6) })
+        row.addView(controlButton("Puzzle-uri") {
+            startActivity(Intent(this, PuzzleActivity::class.java))
+        }, LinearLayout.LayoutParams(0, -2, 1f))
+        card.addView(row, fullWidthParams())
+        return card
     }
 
     private fun selectMode(mode: TrainerMode) {
