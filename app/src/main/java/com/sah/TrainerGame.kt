@@ -11,13 +11,6 @@ enum class TrainerMode {
     TIMED,
 }
 
-data class Square(val file: Int, val rank: Int) {
-    val coordinate: String
-        get() = DiagonalRules.coordinate(file, rank)
-
-    fun isValid(): Boolean = DiagonalRules.isValidSquare(file, rank)
-}
-
 data class AnswerResult(
     val isCorrect: Boolean,
     val accepted: Boolean,

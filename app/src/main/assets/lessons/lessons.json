@@ -1,0 +1,1214 @@
+{
+  "version": 1,
+  "sections": [
+    {
+      "n": 1,
+      "title": "les_sec_1",
+      "lessons": [
+        {
+          "n": 1,
+          "title": "les_1_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_1_1", "fen": "8/8/8/8/8/8/8/8 w - - 0 1"},
+            {"t": "talk", "text": "les_1_2", "marks": {"good": ["h1"]}},
+            {"t": "talk", "text": "les_1_3", "marks": {"focus": ["a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4"]}},
+            {"t": "talk", "text": "les_1_4", "marks": {"focus": ["e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"]}},
+            {"t": "talk", "text": "les_1_5", "marks": {"focus": ["a1", "b2", "c3", "d4", "e5", "f6", "g7", "h8"]}},
+            {"t": "task", "text": "les_1_6", "tap": {"steps": [{"targets": ["a8", "h1"]}]}},
+            {"t": "task", "text": "les_1_7", "marks": {"focus": ["d4"]},
+              "tap": {"steps": [{"targets": ["a4", "b4", "c4", "e4", "f4", "g4", "h4"]}], "ignore": ["d4"]}},
+            {"t": "task", "text": "les_1_8", "marks": {"focus": ["d4"]},
+              "tap": {"steps": [{"targets": ["d1", "d2", "d3", "d5", "d6", "d7", "d8"]}], "ignore": ["d4"]}},
+            {"t": "exam", "text": "les_1_9", "marks": {"focus": ["h1"]},
+              "tap": {"steps": [{"targets": ["g2", "f3", "e4", "d5", "c6", "b7", "a8"], "all": true}], "ignore": ["h1"]}},
+            {"t": "summary", "text": "les_1_10"}
+          ]
+        },
+        {
+          "n": 2,
+          "title": "les_2_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_2_1", "fen": "8/8/8/8/8/8/8/8 w - - 0 1"},
+            {"t": "talk", "text": "les_2_2", "marks": {"focus": ["e4"]}},
+            {"t": "talk", "text": "les_2_3", "marks": {"good": ["a1", "h8"]}},
+            {"t": "task", "text": "les_2_4", "tap": {"steps": [{"targets": ["d5"]}]}},
+            {"t": "task", "text": "les_2_5", "tap": {"steps": [{"targets": ["h3"]}]}},
+            {"t": "task", "text": "les_2_6", "tap": {"steps": [{"targets": ["c7"]}]}},
+            {"t": "exam", "text": "les_2_7",
+              "tap": {"strict": true, "steps": [
+                {"text": "les_2_7a", "targets": ["b6"]},
+                {"text": "les_2_7b", "targets": ["f2"]},
+                {"text": "les_2_7c", "targets": ["g7"]},
+                {"text": "les_2_7d", "targets": ["a4"]},
+                {"text": "les_2_7e", "targets": ["e5"]}
+              ]}},
+            {"t": "summary", "text": "les_2_8"}
+          ]
+        },
+        {
+          "n": 3,
+          "title": "les_3_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_3_1", "fen": "8/8/8/8/3R4/8/8/8 w - - 0 1", "dotsFrom": "d4"},
+            {"t": "talk", "text": "les_3_2", "fen": "8/8/3P4/8/3R4/8/8/8 w - - 0 1", "dotsFrom": "d4"},
+            {"t": "talk", "text": "les_3_3", "fen": "8/3n4/8/8/3R4/8/8/8 w - - 0 1", "demo": ["d4d7"]},
+            {"t": "task", "text": "les_3_4", "fen": "8/8/8/8/8/8/8/R7 w - - 0 1",
+              "stars": {"stars": ["a8", "h8"], "max": 2, "solution": ["a1a8", "a8h8"]}},
+            {"t": "task", "text": "les_3_5", "fen": "8/8/8/8/8/8/8/7R w - - 0 1",
+              "stars": {"stars": ["h5", "c5", "c8"], "max": 3, "solution": ["h1h5", "h5c5", "c5c8"]}},
+            {"t": "task", "text": "les_3_6", "fen": "8/8/8/P7/8/8/8/R7 w - - 0 1",
+              "stars": {"only": "a1", "stars": ["a8"], "max": 3, "solution": ["a1b1", "b1b8", "b8a8"]}},
+            {"t": "exam", "text": "les_3_7", "fen": "8/8/3p2p1/8/8/8/6p1/3R4 w - - 0 1",
+              "stars": {"stars": ["d6", "g6", "g2"], "max": 3, "solution": ["d1d6", "d6g6", "g6g2"]}},
+            {"t": "summary", "text": "les_3_8", "fen": "8/8/8/8/3R4/8/8/8 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 4,
+          "title": "les_4_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_4_1", "fen": "8/8/8/8/3B4/8/8/8 w - - 0 1", "dotsFrom": "d4"},
+            {"t": "talk", "text": "les_4_2", "fen": "8/8/8/8/8/8/8/2B2B2 w - - 0 1", "marks": {"focus": ["c1", "f1"]}},
+            {"t": "task", "text": "les_4_3", "fen": "8/8/8/8/8/8/8/2B5 w - - 0 1",
+              "stars": {"stars": ["h6", "f8"], "max": 2, "solution": ["c1h6", "h6f8"]}},
+            {"t": "task", "text": "les_4_4", "fen": "8/8/8/8/8/8/8/5B2 w - - 0 1",
+              "stars": {"stars": ["b5", "e8", "h5"], "max": 3, "solution": ["f1b5", "b5e8", "e8h5"]}},
+            {"t": "task", "text": "les_4_5", "fen": "8/8/8/8/8/3P4/8/1B6 w - - 0 1",
+              "stars": {"only": "b1", "stars": ["h7"], "max": 3, "solution": ["b1a2", "a2g8", "g8h7"]}},
+            {"t": "exam", "text": "les_4_6", "fen": "3p4/8/8/p5p1/8/8/8/2B5 w - - 0 1",
+              "stars": {"stars": ["d8", "a5", "g5"], "max": 3, "solution": ["c1g5", "g5d8", "d8a5"]}},
+            {"t": "summary", "text": "les_4_7", "fen": "8/8/8/8/3B4/8/8/8 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 5,
+          "title": "les_5_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_5_1", "fen": "8/8/8/8/3Q4/8/8/8 w - - 0 1", "dotsFrom": "d4"},
+            {"t": "talk", "text": "les_5_2", "demo": ["d4h8", "h8h1", "h1a8"]},
+            {"t": "task", "text": "les_5_3", "fen": "8/8/8/8/8/8/8/3Q4 w - - 0 1",
+              "stars": {"stars": ["h5", "e8"], "max": 2, "solution": ["d1h5", "h5e8"]}},
+            {"t": "task", "text": "les_5_4", "fen": "8/8/8/8/8/8/1Q6/8 w - - 0 1",
+              "stars": {"stars": ["h8", "h2", "b8"], "max": 3, "solution": ["b2h8", "h8h2", "h2b8"]}},
+            {"t": "task", "text": "les_5_5", "fen": "8/8/8/8/8/8/PP6/Q7 w - - 0 1",
+              "stars": {"only": "a1", "stars": ["h8", "a8"], "max": 3, "solution": ["a1h1", "h1h8", "h8a8"]}},
+            {"t": "exam", "text": "les_5_6", "fen": "r7/8/8/8/8/5p2/8/3Q3p w - - 0 1",
+              "stars": {"stars": ["a8", "f3", "h1"], "max": 3, "solution": ["d1f3", "f3h1", "h1a8"]}},
+            {"t": "summary", "text": "les_5_7", "fen": "8/8/8/8/3Q4/8/8/8 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 6,
+          "title": "les_6_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_6_1", "fen": "8/8/8/8/3N4/8/8/8 w - - 0 1", "dotsFrom": "d4"},
+            {"t": "talk", "text": "les_6_2", "fen": "8/8/8/8/8/8/PPPP4/1N6 w - - 0 1", "demo": ["b1c3"]},
+            {"t": "talk", "text": "les_6_3", "fen": "8/8/8/8/3N4/8/8/8 w - - 0 1", "demo": ["d4f5", "f5d6", "d6b5"]},
+            {"t": "task", "text": "les_6_4", "fen": "8/8/8/8/8/8/8/1N6 w - - 0 1",
+              "stars": {"stars": ["c3", "d5"], "max": 2, "solution": ["b1c3", "c3d5"]}},
+            {"t": "task", "text": "les_6_5", "fen": "8/8/8/8/8/8/8/6N1 w - - 0 1",
+              "stars": {"stars": ["g3"], "max": 2, "solution": ["g1e2", "e2g3"]}},
+            {"t": "task", "text": "les_6_6", "fen": "8/8/8/8/8/8/8/1N6 w - - 0 1",
+              "stars": {"stars": ["b3", "d4"], "max": 3, "solution": ["b1d2", "d2b3", "b3d4"]}},
+            {"t": "task", "text": "les_6_7", "fen": "8/8/1p3p2/3p4/4N3/8/8/8 w - - 0 1",
+              "stars": {"stars": ["f6", "d5", "b6"], "max": 3, "solution": ["e4f6", "f6d5", "d5b6"]}},
+            {"t": "exam", "text": "les_6_8", "fen": "8/8/2p5/p3p3/8/8/8/6N1 w - - 0 1",
+              "stars": {"stars": ["e5", "c6", "a5"], "max": 4, "solution": ["g1f3", "f3e5", "e5c6", "c6a5"]}},
+            {"t": "summary", "text": "les_6_9", "fen": "8/8/8/8/3N4/8/8/8 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 7,
+          "title": "les_7_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_7_1", "fen": "8/8/8/8/4K3/8/8/8 w - - 0 1", "dotsFrom": "e4"},
+            {"t": "talk", "text": "les_7_2", "fen": "8/8/8/4p3/4K3/8/8/8 w - - 0 1", "demo": ["e4e5"]},
+            {"t": "task", "text": "les_7_3", "fen": "8/8/8/8/8/8/8/4K3 w - - 0 1",
+              "stars": {"stars": ["e3"], "max": 2, "solution": ["e1e2", "e2e3"]}},
+            {"t": "task", "text": "les_7_4", "fen": "8/8/8/8/8/8/8/4K3 w - - 0 1",
+              "stars": {"stars": ["c3", "e3"], "max": 4, "solution": ["e1d2", "d2c3", "c3d3", "d3e3"]}},
+            {"t": "task", "text": "les_7_5", "fen": "8/8/8/8/8/8/1P6/K7 w - - 0 1",
+              "stars": {"only": "a1", "stars": ["c3"], "max": 3, "solution": ["a1b1", "b1c2", "c2c3"]}},
+            {"t": "exam", "text": "les_7_6", "fen": "8/8/2p1p3/8/3K4/8/8/8 w - - 0 1",
+              "stars": {"stars": ["c6", "e6"], "max": 4, "solution": ["d4d5", "d5c6", "c6d6", "d6e6"]}},
+            {"t": "summary", "text": "les_7_7", "fen": "8/8/8/8/4K3/8/8/8 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 8,
+          "title": "les_8_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_8_1", "fen": "8/8/8/8/8/4P3/8/8 w - - 0 1", "demo": ["e3e4", "e4e5"]},
+            {"t": "talk", "text": "les_8_2", "fen": "8/8/8/8/8/8/3P4/8 w - - 0 1", "demo": ["d2d4"]},
+            {"t": "talk", "text": "les_8_3", "fen": "8/8/8/4p3/4P3/8/8/8 w - - 0 1", "marks": {"bad": ["e5"]}},
+            {"t": "task", "text": "les_8_4", "fen": "8/8/8/8/8/8/4P3/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e2e4"]}], "wrong": "les_8_4w"}},
+            {"t": "task", "text": "les_8_5", "fen": "8/8/8/8/8/4P3/8/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e3e4"]}]}},
+            {"t": "task", "text": "les_8_6", "fen": "8/8/8/2p1p3/2P1P3/8/6P1/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["g2g3", "g2g4"]}]}},
+            {"t": "exam", "text": "les_8_7", "fen": "8/8/8/8/8/7P/2P2P2/8 w - - 0 1",
+              "stars": {"stars": ["c4", "f4", "h4"], "max": 3, "solution": ["c2c4", "f2f4", "h3h4"]}},
+            {"t": "summary", "text": "les_8_8", "fen": "8/8/8/8/8/8/3P4/8 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 9,
+          "title": "les_9_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_9_1", "fen": "8/8/8/3nbr2/4P3/8/8/8 w - - 0 1", "marks": {"good": ["d5", "f5"], "bad": ["e5"]}},
+            {"t": "talk", "text": "les_9_2", "fen": "8/8/8/5r2/4P3/8/8/8 w - - 0 1", "demo": ["e4f5"]},
+            {"t": "task", "text": "les_9_3", "fen": "8/8/8/3np3/4P3/8/8/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e4d5"]}]}},
+            {"t": "task", "text": "les_9_4", "fen": "8/8/8/8/r1b5/1P6/8/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["b3a4"]}], "wrong": "les_9_4w"}},
+            {"t": "task", "text": "les_9_5", "fen": "8/8/8/4n3/3P4/8/1P4P1/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d4e5"]}], "wrong": "les_9_5w"}},
+            {"t": "exam", "text": "les_9_6", "fen": "8/8/8/3p4/2p5/1p6/P7/8 w - - 0 1",
+              "stars": {"stars": ["b3", "c4", "d5"], "max": 3, "solution": ["a2b3", "b3c4", "c4d5"]}},
+            {"t": "summary", "text": "les_9_7", "fen": "8/8/8/3n1r2/4P3/8/8/8 w - - 0 1", "marks": {"good": ["d5", "f5"]}}
+          ]
+        },
+        {
+          "n": 10,
+          "title": "les_10_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_10_1", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"},
+            {"t": "talk", "text": "les_10_2", "marks": {"focus": ["a1", "h1", "a8", "h8", "b1", "g1", "b8", "g8", "c1", "f1", "c8", "f8"]}},
+            {"t": "talk", "text": "les_10_3", "marks": {"focus": ["d1", "d8", "e1", "e8"]}},
+            {"t": "talk", "text": "les_10_4", "demo": ["e2e4", "e7e5"]},
+            {"t": "task", "text": "les_10_5", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1",
+              "place": {"steps": [{"piece": "Q", "targets": ["d1"]}]}},
+            {"t": "task", "text": "les_10_6", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQ1BNR w kq - 0 1",
+              "place": {"steps": [{"piece": "K", "targets": ["e1"]}]}},
+            {"t": "exam", "text": "les_10_7", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/8 w kq - 0 1",
+              "place": {"steps": [
+                {"piece": "R", "targets": ["a1", "h1"]},
+                {"piece": "R", "targets": ["a1", "h1"]},
+                {"piece": "N", "targets": ["b1", "g1"]},
+                {"piece": "N", "targets": ["b1", "g1"]},
+                {"piece": "B", "targets": ["c1", "f1"]},
+                {"piece": "B", "targets": ["c1", "f1"]},
+                {"piece": "Q", "targets": ["d1"]},
+                {"piece": "K", "targets": ["e1"]}
+              ]}},
+            {"t": "summary", "text": "les_10_8", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"}
+          ]
+        }
+      ]
+    },
+    {
+      "n": 2,
+      "title": "les_sec_2",
+      "lessons": [
+        {
+          "n": 11,
+          "title": "les_11_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_11_1", "fen": "4k3/8/8/8/8/8/8/4R1K1 b - - 0 1", "marks": {"bad": ["e8"]}, "arrows": [["e1", "e8", "bad"]]},
+            {"t": "talk", "text": "les_11_2"},
+            {"t": "talk", "text": "les_11_3", "fen": "4r1k1/8/8/8/8/8/8/3K4 w - - 0 1", "marks": {"bad": ["e1", "e2"]}},
+            {"t": "task", "text": "les_11_4", "fen": "4k3/8/8/8/8/8/8/R3K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["a1a8"], "rule": "check"}]}},
+            {"t": "task", "text": "les_11_5", "fen": "4k3/8/8/8/8/8/8/3QK3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d1d8", "d1d7", "d1h5", "d1a4", "d1e2"], "rule": "check"}]}},
+            {"t": "task", "text": "les_11_6", "fen": "4k3/8/8/8/4N3/8/8/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e4d6", "e4f6"], "rule": "check"}]}},
+            {"t": "exam", "text": "les_11_7", "fen": "3qk3/3p1p2/8/8/5B2/2N5/8/R5K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["a1e1"], "rule": "check"}]}},
+            {"t": "summary", "text": "les_11_8", "fen": "4k3/8/8/8/8/8/8/4R1K1 b - - 0 1", "marks": {"bad": ["e8"]}}
+          ]
+        },
+        {
+          "n": 12,
+          "title": "les_12_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_12_1", "fen": "4r1k1/8/8/8/8/8/8/4K3 w - - 0 1", "marks": {"bad": ["e1"]}, "arrows": [["e8", "e1", "bad"]]},
+            {"t": "talk", "text": "les_12_2", "demo": ["e1d2"]},
+            {"t": "talk", "text": "les_12_3", "fen": "4r1k1/8/8/8/8/8/8/2B1K3 w - - 0 1", "demo": ["c1e3"]},
+            {"t": "talk", "text": "les_12_4", "fen": "4r1k1/8/8/8/B7/8/8/4K3 w - - 0 1", "demo": ["a4e8"]},
+            {"t": "task", "text": "les_12_5", "fen": "4r1k1/8/8/8/8/8/8/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e1d1", "e1d2", "e1f1", "e1f2"], "rule": "legal"}]}},
+            {"t": "task", "text": "les_12_6", "fen": "4r1k1/8/8/8/8/8/3N4/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d2e4"], "rule": "block"}], "wrong": "les_12_6w"}},
+            {"t": "task", "text": "les_12_7", "fen": "4r1k1/8/8/7Q/8/8/8/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["h5e8"], "rule": "capture:e8"}], "wrong": "les_12_7w"}},
+            {"t": "exam", "text": "les_12_8", "fen": "k7/8/8/8/3Q4/8/5nPP/6RK w - - 0 1",
+              "moves": {"steps": [{"accept": ["d4f2"], "rule": "legal"}]}},
+            {"t": "summary", "text": "les_12_9", "fen": "4r1k1/8/8/8/8/8/8/4K3 w - - 0 1", "marks": {"bad": ["e1"]}}
+          ]
+        },
+        {
+          "n": 13,
+          "title": "les_13_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_13_1", "fen": "3R2k1/5ppp/8/8/8/8/8/6K1 b - - 0 1", "marks": {"bad": ["g8"]}},
+            {"t": "talk", "text": "les_13_2", "fen": "3R2k1/5pp1/8/8/8/8/8/6K1 b - - 0 1", "marks": {"good": ["h7"]}},
+            {"t": "talk", "text": "les_13_3", "fen": "6k1/5ppp/8/8/8/8/8/3R2K1 w - - 0 1", "demo": ["d1d8"]},
+            {"t": "task", "text": "les_13_4", "fen": "k7/1Q6/1K6/8/8/8/8/8 b - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 0, "fact": "mate"}},
+            {"t": "task", "text": "les_13_5", "fen": "k7/1Q6/8/8/8/8/8/6K1 b - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 1, "fact": "mate", "wrong": "les_13_5w"}},
+            {"t": "task", "text": "les_13_6", "fen": "k7/8/1K6/8/8/8/8/6Q1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["g1g8"], "rule": "mate"}]}},
+            {"t": "exam", "text": "les_13_7", "fen": "k7/8/K7/8/8/8/8/7R w - - 0 1",
+              "moves": {"steps": [{"accept": ["h1h8"], "rule": "mate"}]}},
+            {"t": "summary", "text": "les_13_8", "fen": "3R2k1/5ppp/8/8/8/8/8/6K1 b - - 0 1", "marks": {"bad": ["g8"]}}
+          ]
+        },
+        {
+          "n": 14,
+          "title": "les_14_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_14_1", "fen": "k7/8/1Q6/8/8/8/8/6K1 b - - 0 1", "marks": {"focus": ["a8"], "bad": ["a7", "b7", "b8"]}},
+            {"t": "talk", "text": "les_14_2", "fen": "k7/8/8/1Q6/8/8/8/6K1 w - - 0 1", "demo": ["b5b6"]},
+            {"t": "talk", "text": "les_14_3", "fen": "k7/8/1Q6/8/8/8/8/6K1 b - - 0 1", "marks": {"focus": ["a8"]}},
+            {"t": "task", "text": "les_14_4", "fen": "8/8/8/8/8/5k2/5p2/5K2 w - - 0 1",
+              "quiz": {"options": ["les_q_checkmate", "les_q_stalemate", "les_q_neither"], "answer": 1, "fact": "status"}},
+            {"t": "task", "text": "les_14_5", "fen": "7k/6Q1/6K1/8/8/8/8/8 b - - 0 1",
+              "quiz": {"options": ["les_q_checkmate", "les_q_stalemate", "les_q_neither"], "answer": 0, "fact": "status"}},
+            {"t": "task", "text": "les_14_6", "fen": "7k/8/6K1/8/8/8/8/Q7 b - - 0 1",
+              "quiz": {"options": ["les_q_checkmate", "les_q_stalemate", "les_q_neither"], "answer": 2, "fact": "status", "wrong": "les_14_6w"}},
+            {"t": "exam", "text": "les_14_7", "fen": "k7/P7/1K6/8/8/8/8/8 b - - 0 1",
+              "quiz": {"options": ["les_q_checkmate", "les_q_stalemate", "les_q_neither"], "answer": 1, "fact": "status"}},
+            {"t": "summary", "text": "les_14_8", "fen": "k7/8/1Q6/8/8/8/8/6K1 b - - 0 1"}
+          ]
+        },
+        {
+          "n": 15,
+          "title": "les_15_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_15_1", "fen": "4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1", "demo": ["e1g1"]},
+            {"t": "talk", "text": "les_15_2", "demo": ["e1c1"]},
+            {"t": "talk", "text": "les_15_3", "arrows": [["e1", "g1", "good"], ["h1", "f1", "good"]]},
+            {"t": "task", "text": "les_15_4", "fen": "r3k2r/pppq1ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPPQ1PPP/R3K2R w KQkq - 0 1",
+              "moves": {"steps": [{"accept": ["e1g1"]}], "wrong": "les_15_4w"}},
+            {"t": "task", "text": "les_15_5", "fen": "r3k2r/pppq1ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPPQ1PPP/R3K2R w KQkq - 0 1",
+              "moves": {"steps": [{"accept": ["e1c1"]}], "wrong": "les_15_5w"}},
+            {"t": "exam", "text": "les_15_6", "fen": "r3k2r/pppq1ppp/2np1n2/2b1p3/2B1P3/2NP1N2/PPPQ1PPP/R4RK1 b kq - 1 1",
+              "moves": {"steps": [{"accept": ["e8c8"]}], "wrong": "les_15_6w"}},
+            {"t": "summary", "text": "les_15_7", "fen": "2kr3r/8/8/8/8/8/8/R4RK1 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 16,
+          "title": "les_16_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_16_1", "fen": "4k3/8/8/8/8/8/8/R3K2R w - - 0 1", "marks": {"bad": ["e1"]}},
+            {"t": "talk", "text": "les_16_2", "fen": "4r1k1/8/8/8/8/8/8/R3K2R w KQ - 0 1", "marks": {"bad": ["e1"]}, "arrows": [["e8", "e1", "bad"]]},
+            {"t": "talk", "text": "les_16_3", "fen": "5rk1/8/8/8/8/8/8/R3K2R w KQ - 0 1", "marks": {"bad": ["f1"]}, "arrows": [["f8", "f1", "bad"]]},
+            {"t": "talk", "text": "les_16_4", "fen": "4k3/8/8/8/8/8/8/R3KB1R w KQ - 0 1", "marks": {"bad": ["f1"]}},
+            {"t": "task", "text": "les_16_5", "fen": "4k3/8/8/8/8/8/8/R3K1NR w KQ - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 1, "fact": "castle_K"}},
+            {"t": "task", "text": "les_16_6", "fen": "6k1/8/8/8/8/8/8/R3K2R w Q - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 1, "fact": "castle_K"}},
+            {"t": "task", "text": "les_16_7", "fen": "4k3/8/b7/8/8/8/8/R3K2R w KQ - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 1, "fact": "castle_K", "wrong": "les_16_7w"}},
+            {"t": "task", "text": "les_16_8", "fen": "r3k3/8/8/8/8/8/8/R3K2R w KQ - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 0, "fact": "castle_Q", "wrong": "les_16_8w"}},
+            {"t": "exam", "text": "les_16_9", "fen": "4k3/8/8/8/4b3/8/8/R3K2R w KQ - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 0, "fact": "castle_Q"}},
+            {"t": "summary", "text": "les_16_10", "fen": "4k3/8/8/8/4b3/8/8/R3K2R w KQ - 0 1", "arrows": [["e4", "b1", "bad"]]}
+          ]
+        },
+        {
+          "n": 17,
+          "title": "les_17_title",
+          "level": 1,
+          "screens": [
+            {"t": "talk", "text": "les_17_1", "fen": "8/4P3/8/8/8/8/k7/4K3 w - - 0 1", "demo": ["e7e8q"]},
+            {"t": "talk", "text": "les_17_2", "fen": "4k3/8/8/8/8/8/1QQ5/4K3 w - - 0 1"},
+            {"t": "talk", "text": "les_17_3", "fen": "4r2k/3P4/8/8/8/8/8/4K3 w - - 0 1", "demo": ["d7e8q"]},
+            {"t": "task", "text": "les_17_4", "fen": "8/1P6/8/8/8/k7/8/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["b7b8"], "rule": "promote"}]}},
+            {"t": "task", "text": "les_17_5", "fen": "2r4k/1P6/8/8/8/8/8/K7 w - - 0 1",
+              "moves": {"steps": [{"accept": ["b7c8"]}], "wrong": "les_17_5w"}},
+            {"t": "task", "text": "les_17_6", "fen": "1n6/1P3P1k/8/8/8/8/8/K7 w - - 0 1",
+              "moves": {"steps": [{"accept": ["f7f8"], "rule": "promote"}]}},
+            {"t": "exam", "text": "les_17_7", "fen": "6k1/3P1ppp/8/8/8/8/8/6K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d7d8q", "d7d8r"], "rule": "mate"}]}},
+            {"t": "summary", "text": "les_17_8", "fen": "3Q2k1/5ppp/8/8/8/8/8/6K1 b - - 0 1"}
+          ]
+        },
+        {
+          "n": 18,
+          "title": "les_18_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_18_1", "fen": "4k3/3p4/8/4P3/8/8/8/4K3 b - - 0 1", "demo": ["d7d5"]},
+            {"t": "talk", "text": "les_18_2", "fen": "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", "demo": ["e5d6"]},
+            {"t": "talk", "text": "les_18_3", "fen": "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", "arrows": [["e5", "d6", "good"]]},
+            {"t": "task", "text": "les_18_4", "fen": "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", "arrows": [["d7", "d5", "focus"]],
+              "moves": {"steps": [{"accept": ["e5d6"], "rule": "ep"}]}},
+            {"t": "task", "text": "les_18_5", "fen": "4k3/8/8/pP6/8/8/8/4K3 w - a6 0 1", "arrows": [["a7", "a5", "focus"]],
+              "moves": {"steps": [{"accept": ["b5a6"], "rule": "ep"}]}},
+            {"t": "task", "text": "les_18_6", "fen": "4k3/8/8/3pP3/8/8/8/4K3 w - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 1, "fact": "ep", "wrong": "les_18_6w"}},
+            {"t": "exam", "text": "les_18_7", "fen": "7k/2n5/8/3pP3/4K3/8/8/8 w - d6 0 1",
+              "moves": {"steps": [{"accept": ["e5d6"], "rule": "ep"}], "wrong": "les_18_7w"}},
+            {"t": "summary", "text": "les_18_8", "fen": "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1", "arrows": [["e5", "d6", "good"]]}
+          ]
+        },
+        {
+          "n": 19,
+          "title": "les_19_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_19_1", "fen": "8/8/4k3/8/8/2B5/8/4K3 w - - 0 1"},
+            {"t": "talk", "text": "les_19_2", "fen": "r1bqkbnr/pppppppp/2n5/8/8/5N2/PPPPPPPP/RNBQKB1R w KQkq - 2 2", "demo": ["f3g1", "c6b8", "g1f3", "b8c6", "f3g1", "c6b8", "g1f3", "b8c6"]},
+            {"t": "talk", "text": "les_19_3", "fen": "4k3/8/8/2r5/8/8/5R2/4K3 w - - 0 1"},
+            {"t": "talk", "text": "les_19_4", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"},
+            {"t": "task", "text": "les_19_5", "fen": "8/8/3k4/8/8/2N5/8/4K3 w - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 1, "fact": "can_win"}},
+            {"t": "task", "text": "les_19_6", "fen": "8/8/3k4/8/8/8/8/R3K3 w - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 0, "fact": "can_win"}},
+            {"t": "exam", "text": "les_19_7", "fen": "8/8/3k4/8/8/2B5/3N4/4K3 w - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 0, "fact": "can_win"}},
+            {"t": "summary", "text": "les_19_8", "fen": "k7/8/1Q6/8/8/8/8/6K1 b - - 0 1"}
+          ]
+        },
+        {
+          "n": 20,
+          "title": "les_20_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_20_1", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "demo": ["g1f3"]},
+            {"t": "talk", "text": "les_20_2", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "demo": ["e2e4"]},
+            {"t": "talk", "text": "les_20_3"},
+            {"t": "task", "text": "les_20_4", "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2", "arrows": [["g1", "f3", "focus"]],
+              "quiz": {"options": ["les_20_4a", "les_20_4b", "les_20_4c"], "answer": 0, "fact": "san:g1f3", "wrong": "les_20_4w"}},
+            {"t": "task", "text": "les_20_5", "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+              "moves": {"steps": [{"accept": ["f1c4"], "rule": "san:♗c4"}], "wrong": "les_20_5w"}},
+            {"t": "talk", "text": "les_20_6", "fen": "r1bqkbnr/pppn1ppp/3p4/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R w KQkq - 1 4", "arrows": [["f3", "e5", "focus"], ["d4", "e5", "focus"]]},
+            {"t": "task", "text": "les_20_7",
+              "moves": {"steps": [{"accept": ["d4e5"], "rule": "san:dxe5"}], "wrong": "les_20_7w"}},
+            {"t": "talk", "text": "les_20_8", "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4", "demo": ["e1g1"]},
+            {"t": "talk", "text": "les_20_9", "fen": "rnbqkb1r/ppp2ppp/4pn2/3p4/3P4/4PN2/PPP2PPP/RNBQKB1R w KQkq - 0 4", "arrows": [["b1", "d2", "focus"], ["f3", "d2", "focus"]]},
+            {"t": "exam", "text": "les_20_10",
+              "moves": {"steps": [{"accept": ["b1d2"], "rule": "san:♘bd2"}], "wrong": "les_20_10w"}},
+            {"t": "summary", "text": "les_20_11", "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3"}
+          ]
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "les_sec_3",
+      "lessons": [
+        {
+          "n": 21,
+          "title": "les_21_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_21_1", "fen": "7k/1R6/8/8/8/8/8/R5K1 w - - 0 1", "demo": ["a1a8"]},
+            {"t": "talk", "text": "les_21_2", "fen": "8/8/8/8/6k1/8/8/RR5K w - - 0 1", "demo": ["a1a3", "g4g5", "b1b5", "g5g6", "a3a6", "g6g7", "b5b7", "g7g8", "a6a8"]},
+            {"t": "talk", "text": "les_21_3", "fen": "8/8/8/8/2k5/1R6/R7/6K1 w - - 0 1", "arrows": [["b3", "h3", "good"]], "marks": {"bad": ["b3"]}},
+            {"t": "task", "text": "les_21_4", "fen": "8/8/8/8/6k1/8/8/RR5K w - - 0 1",
+              "play": {"goal": "mate", "limit": 12}},
+            {"t": "task", "text": "les_21_5", "fen": "8/8/2k5/8/8/8/8/R5RK w - - 0 1",
+              "play": {"goal": "mate", "limit": 14}},
+            {"t": "exam", "text": "les_21_6", "fen": "8/8/8/3k4/8/8/8/R5RK w - - 0 1",
+              "play": {"goal": "mate", "limit": 15}},
+            {"t": "summary", "text": "les_21_7", "fen": "R5k1/1R6/8/8/8/8/8/7K b - - 0 1"}
+          ]
+        },
+        {
+          "n": 22,
+          "title": "les_22_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_22_1", "fen": "8/8/8/4k3/8/8/8/3QK3 w - - 0 1", "demo": ["d1d7", "e5f6", "e1d2", "f6g5"]},
+            {"t": "talk", "text": "les_22_2", "fen": "7k/3Q4/6K1/8/8/8/8/8 w - - 0 1", "demo": ["d7g7"]},
+            {"t": "talk", "text": "les_22_3", "fen": "7k/3Q4/6K1/8/8/8/8/8 w - - 0 1", "marks": {"good": ["g7", "h7", "g8"]}},
+            {"t": "task", "text": "les_22_4", "fen": "4k3/8/8/8/8/8/8/3QK3 w - - 0 1",
+              "play": {"goal": "mate", "limit": 16}},
+            {"t": "task", "text": "les_22_5", "fen": "8/8/8/4k3/8/8/8/3QK3 w - - 0 1",
+              "play": {"goal": "mate", "limit": 16}},
+            {"t": "exam", "text": "les_22_6", "fen": "8/8/8/8/3k4/8/8/1Q5K w - - 0 1",
+              "play": {"goal": "mate", "limit": 20}},
+            {"t": "summary", "text": "les_22_7", "fen": "7k/6Q1/6K1/8/8/8/8/8 b - - 0 1"}
+          ]
+        },
+        {
+          "n": 23,
+          "title": "les_23_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_23_1", "fen": "k7/8/1K6/8/8/8/8/2Q5 w - - 0 1", "demo": ["c1c7"]},
+            {"t": "talk", "text": "les_23_2", "fen": "k7/8/1K6/8/8/8/8/2Q5 w - - 0 1", "marks": {"focus": ["a8"]}},
+            {"t": "task", "text": "les_23_3", "fen": "k7/8/1K6/8/8/8/8/2Q5 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c1c8"], "rule": "mate"}], "wrong": "les_23_w"}},
+            {"t": "task", "text": "les_23_4", "fen": "7k/5K2/8/8/8/8/8/6Q1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["g1g7", "g1g8", "g1h1", "g1h2"], "rule": "mate"}], "wrong": "les_23_w"}},
+            {"t": "task", "text": "les_23_5", "fen": "k7/2Q5/8/1K6/8/8/8/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c7a5", "c7a7", "c7b7", "c7b8", "c7c1", "c7c2", "c7c3", "c7c4", "c7c5", "c7c6", "c7c8", "c7d6", "c7d7", "c7d8", "c7e5", "c7e7", "c7f4", "c7f7", "c7g3", "c7g7", "c7h2", "c7h7"], "rule": "no_stalemate"}], "wrong": "les_23_w"}},
+            {"t": "exam", "text": "les_23_6", "fen": "k7/8/8/1K6/8/8/8/2Q5 w - - 0 1",
+              "play": {"goal": "mate", "limit": 12}},
+            {"t": "summary", "text": "les_23_7", "fen": "k7/2Q5/1K6/8/8/8/8/8 b - - 0 1", "marks": {"focus": ["a8"]}}
+          ]
+        },
+        {
+          "n": 24,
+          "title": "les_24_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_24_1", "fen": "8/8/8/2k5/8/8/8/1R2K3 w - - 0 1", "demo": ["b1d1"]},
+            {"t": "talk", "text": "les_24_2", "fen": "4k3/8/4K3/8/8/8/8/R7 w - - 0 1", "demo": ["a1a8"]},
+            {"t": "talk", "text": "les_24_3", "fen": "3k4/8/4K3/8/8/8/8/7R w - - 0 1", "demo": ["h1h7", "d8e8", "h7h8"]},
+            {"t": "talk", "text": "les_24_4", "fen": "8/8/8/2k5/8/8/8/1R2K3 w - - 0 1", "arrows": [["e1", "e4", "focus"]]},
+            {"t": "task", "text": "les_24_5", "fen": "3k4/8/4K3/8/8/8/8/7R w - - 0 1",
+              "play": {"goal": "mate", "limit": 10}},
+            {"t": "task", "text": "les_24_6", "fen": "8/8/8/8/8/2k5/8/R3K3 w - - 0 1",
+              "play": {"goal": "mate", "limit": 26}},
+            {"t": "exam", "text": "les_24_7", "fen": "8/8/8/2k5/8/8/8/1R2K3 w - - 0 1",
+              "play": {"goal": "mate", "limit": 30}},
+            {"t": "summary", "text": "les_24_8", "fen": "R3k3/8/4K3/8/8/8/8/8 b - - 0 1"}
+          ]
+        }
+      ]
+    },
+    {
+      "n": 4,
+      "title": "les_sec_4",
+      "lessons": [
+        {
+          "n": 25,
+          "title": "les_25_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_25_1", "fen": "8/8/8/8/1PNBRQK1/8/8/8 w - - 0 1"},
+            {"t": "talk", "text": "les_25_2", "fen": "4k3/8/8/3r4/8/4N3/8/4K3 w - - 0 1", "demo": ["e3d5"]},
+            {"t": "talk", "text": "les_25_3", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"},
+            {"t": "task", "text": "les_25_4", "fen": "4k3/8/8/1p1r4/8/2N5/8/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c3d5"], "rule": "capture:d5"}], "wrong": "les_25_4w"}},
+            {"t": "task", "text": "les_25_5", "fen": "4k3/r7/7r/2q5/8/4B3/8/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e3c5"], "rule": "capture:c5"}], "wrong": "les_25_5w"}},
+            {"t": "task", "text": "les_25_6", "fen": "4k3/8/2n5/8/8/5b2/8/R3K3 w - - 0 1",
+              "quiz": {"options": ["les_q_white", "les_q_black", "les_q_equal"], "answer": 1, "fact": "material", "wrong": "les_25_6w"}},
+            {"t": "exam", "text": "les_25_7", "fen": "k7/8/8/2q1r3/3P4/8/8/K7 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d4c5"], "rule": "capture:c5"}], "wrong": "les_25_7w"}},
+            {"t": "summary", "text": "les_25_8", "fen": "8/8/8/8/1PNBRQK1/8/8/8 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 26,
+          "title": "les_26_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_26_1", "fen": "4k3/8/8/3n4/8/8/8/3RK3 w - - 0 1", "demo": ["d1d5"]},
+            {"t": "talk", "text": "les_26_2", "fen": "2r1k3/8/8/8/8/2N5/8/4K3 w - - 0 1", "marks": {"bad": ["c3"]}, "arrows": [["c8", "c3", "bad"]]},
+            {"t": "task", "text": "les_26_3", "fen": "4k3/8/2p5/3n3b/8/8/8/3QK3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d1h5"], "rule": "see_win"}], "wrong": "les_26_3w"}},
+            {"t": "task", "text": "les_26_4", "fen": "4k3/8/8/6p1/1r3b2/3N4/8/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d3b4"], "rule": "see_win"}], "wrong": "les_26_4w"}},
+            {"t": "task", "text": "les_26_5", "fen": "2r1k3/8/8/8/8/2N5/8/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c3a2", "c3a4", "c3b1", "c3b5", "c3d1", "c3d5", "c3e2", "c3e4"], "rule": "safe:c3"}], "wrong": "les_26_5w"}},
+            {"t": "exam", "text": "les_26_6", "fen": "3k4/2p2p2/3p4/4p3/2B3n1/5N2/8/3QK3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c4f7"], "rule": "see_win"}], "wrong": "les_26_6w"}},
+            {"t": "summary", "text": "les_26_7", "fen": "4k3/8/8/3n4/8/8/8/3RK3 w - - 0 1", "arrows": [["d1", "d5", "good"]]}
+          ]
+        },
+        {
+          "n": 27,
+          "title": "les_27_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_27_1", "fen": "4k3/8/5n2/3p4/8/2N5/6B1/4K3 w - - 0 1", "marks": {"focus": ["d5"]},
+              "arrows": [["c3", "d5", "good"], ["g2", "d5", "good"], ["f6", "d5", "bad"]]},
+            {"t": "talk", "text": "les_27_2", "demo": ["c3d5", "f6d5", "g2d5"]},
+            {"t": "talk", "text": "les_27_3", "fen": "4k3/8/2p5/3p4/8/8/8/3QK3 w - - 0 1", "arrows": [["d1", "d5", "bad"], ["c6", "d5", "bad"]]},
+            {"t": "task", "text": "les_27_4", "fen": "4k3/8/2n5/4p3/8/2B2N2/8/4K3 w - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 0, "fact": "see:f3e5", "wrong": "les_27_4w"}},
+            {"t": "task", "text": "les_27_5", "fen": "4k3/8/3p4/4p3/8/5N2/8/4K3 w - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 1, "fact": "see:f3e5", "wrong": "les_27_5w"}},
+            {"t": "task", "text": "les_27_6", "fen": "r3k3/pp6/2n5/3p4/3P4/2N2B2/PP6/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c3d5", "f3d5"], "rule": "see_win"}]}},
+            {"t": "exam", "text": "les_27_7", "fen": "4k3/8/2n5/4p3/8/2B2N2/8/4QK2 w - - 0 1",
+              "moves": {"steps": [{"accept": ["f3e5", "c3e5"], "rule": "see_win"}], "wrong": "les_27_7w"}},
+            {"t": "summary", "text": "les_27_8", "fen": "4k3/8/5n2/3p4/8/2N5/6B1/4K3 w - - 0 1", "marks": {"focus": ["d5"]}}
+          ]
+        },
+        {
+          "n": 28,
+          "title": "les_28_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_28_1", "fen": "4k3/1p6/2n5/1B6/8/8/8/4K3 w - - 0 1", "demo": ["b5c6", "b7c6"]},
+            {"t": "talk", "text": "les_28_2", "fen": "3qk3/8/8/8/8/8/8/R2QK3 w - - 0 1"},
+            {"t": "talk", "text": "les_28_3", "fen": "4k3/8/4p3/3r4/8/4N3/8/4K3 w - - 0 1", "demo": ["e3d5", "e6d5"]},
+            {"t": "task", "text": "les_28_4", "fen": "3qk3/8/8/8/8/8/8/R2QK3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d1d8"], "rule": "capture:d8"}], "wrong": "les_28_4w"}},
+            {"t": "task", "text": "les_28_5", "fen": "4k3/7p/6r1/8/4B3/8/8/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e4g6"], "rule": "capture:g6"}]}},
+            {"t": "task", "text": "les_28_6", "fen": "4k3/8/4p3/3r4/8/4N3/8/4K3 w - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 0, "fact": "see:e3d5", "wrong": "les_28_6w"}},
+            {"t": "exam", "text": "les_28_7", "fen": "rk6/8/8/8/8/8/1PPP4/R3K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["a1a8"], "rule": "capture:a8"}], "wrong": "les_28_7w"}},
+            {"t": "summary", "text": "les_28_8", "fen": "4k3/1p6/2n5/1B6/8/8/8/4K3 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 29,
+          "title": "les_29_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_29_1", "fen": "5bk1/pp3ppp/8/8/8/2N5/P1P2PPP/6K1 b - - 0 1", "demo": ["f8b4"]},
+            {"t": "talk", "text": "les_29_2", "fen": "6k1/pp3ppp/8/8/1b6/2N5/P1P2PPP/6K1 w - - 1 2", "marks": {"bad": ["c3"]}, "arrows": [["b4", "c3", "bad"]]},
+            {"t": "task", "text": "les_29_3", "fen": "6k1/pp3ppp/5n2/4p3/3N4/1B6/PP3PPP/6K1 w - - 0 2", "arrows": [["e6", "e5", "focus"]],
+              "tap": {"steps": [{"targets": ["d4"], "fact": "hanging"}], "wrong": "les_29_3w"}},
+            {"t": "task", "text": "les_29_4",
+              "moves": {"steps": [{"accept": ["d4b5", "d4c2", "d4e2", "d4f3", "d4f5"], "rule": "safe:d4"}], "wrong": "les_29_4w"}},
+            {"t": "talk", "text": "les_29_5", "fen": "4r1k1/pp3ppp/8/8/8/2N5/PP3PPP/6K1 w - - 0 2", "arrows": [["d8", "e8", "focus"], ["e8", "e1", "bad"]]},
+            {"t": "task", "text": "les_29_6",
+              "moves": {"steps": [{"accept": ["c3e2", "c3e4", "f2f3", "f2f4", "g1f1", "g2g3", "g2g4", "h2h3", "h2h4"], "rule": "stop_mate"}], "wrong": "les_29_6w"}},
+            {"t": "exam", "text": "les_29_7", "fen": "r4rk1/ppp2ppp/2nb4/3p4/3P3q/2P5/PP1N1PPP/R1BQ1RK1 w - - 0 1", "arrows": [["d8", "h4", "focus"]],
+              "moves": {"steps": [{"accept": ["d2f3", "f2f4", "g2g3", "h2h3"], "unique": true}], "wrong": "les_29_7w"}},
+            {"t": "summary", "text": "les_29_8", "fen": "4r1k1/pp3ppp/8/8/8/2N5/PP3PPP/6K1 w - - 0 2"}
+          ]
+        }
+      ]
+    },
+    {
+      "n": 5,
+      "title": "les_sec_5",
+      "lessons": [
+        {
+          "n": 30,
+          "title": "les_30_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_30_1", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "marks": {"focus": ["d4", "e4", "d5", "e5"]}},
+            {"t": "talk", "text": "les_30_2", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "demo": ["e2e4", "e7e5"]},
+            {"t": "talk", "text": "les_30_3", "fen": "8/8/8/4N3/8/8/8/7N w - - 0 1", "marks": {"good": ["d3", "f3", "c4", "g4", "c6", "g6", "d7", "f7"], "bad": ["f2", "g3"]}},
+            {"t": "task", "text": "les_30_4", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+              "moves": {"steps": [{"accept": ["e2e4", "d2d4"], "sf": true}], "wrong": "les_30_4w"}},
+            {"t": "task", "text": "les_30_5", "fen": "rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+              "moves": {"steps": [{"accept": ["d2d4"], "sf": true}], "wrong": "les_30_5w"}},
+            {"t": "exam", "text": "les_30_6", "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+              "moves": {"steps": [{"accept": ["e7e5", "d7d5"], "sf": true}], "wrong": "les_30_6w"}},
+            {"t": "summary", "text": "les_30_7", "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2", "marks": {"focus": ["d4", "e4", "d5", "e5"]}}
+          ]
+        },
+        {
+          "n": 31,
+          "title": "les_31_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_31_1", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "demo": ["e2e4", "e7e5", "g1f3", "b8c6", "f1c4", "f8c5"]},
+            {"t": "talk", "text": "les_31_2", "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4", "arrows": [["c4", "f7", "focus"]]},
+            {"t": "talk", "text": "les_31_3"},
+            {"t": "task", "text": "les_31_4", "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+              "moves": {"steps": [{"accept": ["g1f3", "b1c3"], "sf": true}], "wrong": "les_31_4w"}},
+            {"t": "task", "text": "les_31_5", "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+              "moves": {"steps": [{"accept": ["f1c4", "f1b5"], "sf": true}], "wrong": "les_31_5w"}},
+            {"t": "task", "text": "les_31_6", "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+              "moves": {"steps": [{"accept": ["b1c3"], "sf": true}], "wrong": "les_31_6w"}},
+            {"t": "exam", "text": "les_31_7", "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+              "moves": {"steps": [{"accept": ["b8c6"], "sf": true}], "wrong": "les_31_7w"}},
+            {"t": "summary", "text": "les_31_8", "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4"}
+          ]
+        },
+        {
+          "n": 32,
+          "title": "les_32_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_32_1", "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4", "demo": ["e1g1"]},
+            {"t": "talk", "text": "les_32_2", "fen": "r1bq1rk1/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQ1RK1 w - - 1 6", "marks": {"good": ["f2", "g2", "h2", "f7", "g7", "h7"]}},
+            {"t": "task", "text": "les_32_3", "fen": "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+              "moves": {"steps": [{"accept": ["e1g1"], "rule": "castle"}]}},
+            {"t": "task", "text": "les_32_4", "fen": "r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQ1RK1 b kq - 0 5",
+              "moves": {"steps": [{"accept": ["e8g8"], "rule": "castle"}]}},
+            {"t": "task", "text": "les_32_5", "fen": "rnbqk2r/ppp1bppp/4pn2/3p4/3P1B2/2N5/PPPQPPPP/R3KBNR w KQkq - 2 5",
+              "moves": {"steps": [{"accept": ["e1c1"], "rule": "castle"}]}},
+            {"t": "exam", "text": "les_32_6", "fen": "r3kbnr/pppqpppp/2n5/3p1b2/2PP4/2N1PN2/PP3PPP/R1BQKB1R b KQkq - 0 5",
+              "moves": {"steps": [{"accept": ["e8c8"], "rule": "castle"}]}},
+            {"t": "summary", "text": "les_32_7", "fen": "r1bq1rk1/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQ1RK1 w - - 1 6"}
+          ]
+        },
+        {
+          "n": 33,
+          "title": "les_33_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_33_1", "fen": "rnbqkbnr/pppp1ppp/8/8/3pP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3", "demo": ["d1d4", "b8c6"]},
+            {"t": "talk", "text": "les_33_2", "fen": "r1bqkbnr/pppp1ppp/2n5/8/3QP3/8/PPP2PPP/RNB1KBNR w KQkq - 1 4", "demo": ["d4e3", "g8f6"]},
+            {"t": "talk", "text": "les_33_3", "fen": "r1bqkb1r/pppp1ppp/2n2n2/8/4P3/4Q3/PPP2PPP/RNB1KBNR w KQkq - 3 5"},
+            {"t": "task", "text": "les_33_4", "fen": "r1bqkbnr/pppp1ppp/2n5/8/3QP3/8/PPP2PPP/RNB1KBNR w KQkq - 1 4", "arrows": [["c6", "d4", "bad"]],
+              "moves": {"steps": [{"accept": ["d4e3", "d4c4", "d4d3", "d4a4", "d4d2", "d4d1"], "rule": "safe:d4", "subset": true, "sf": true}], "wrong": "les_33_4w"}},
+            {"t": "task", "text": "les_33_5", "fen": "rnb1kbnr/ppp1pppp/8/3q4/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3",
+              "moves": {"steps": [{"accept": ["b1c3"], "sf": true}], "wrong": "les_33_5w"}},
+            {"t": "exam", "text": "les_33_6", "fen": "rnbqkbnr/pppp1ppp/8/8/3QP3/8/PPP2PPP/RNB1KBNR b KQkq - 0 3",
+              "moves": {"steps": [{"accept": ["b8c6"], "sf": true}], "wrong": "les_33_6w"}},
+            {"t": "summary", "text": "les_33_7", "fen": "r1bqkbnr/pppp1ppp/2n5/8/3QP3/8/PPP2PPP/RNB1KBNR w KQkq - 1 4", "arrows": [["c6", "d4", "good"]]}
+          ]
+        },
+        {
+          "n": 34,
+          "title": "les_34_title",
+          "level": 2,
+          "screens": [
+            {"t": "talk", "text": "les_34_1", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "demo": ["e2e4", "e7e5", "f1c4", "b8c6", "d1h5", "g8f6", "h5f7"]},
+            {"t": "talk", "text": "les_34_2", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "demo": ["f2f3", "e7e5", "g2g4", "d8h4"]},
+            {"t": "talk", "text": "les_34_3", "fen": "r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 3 3", "marks": {"bad": ["f7"]}, "arrows": [["h5", "f7", "bad"], ["c4", "f7", "bad"]]},
+            {"t": "task", "text": "les_34_4", "fen": "r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 3 3",
+              "moves": {"steps": [{"accept": ["g7g6", "d8e7", "d8f6", "g8h6"], "rule": "stop_mate", "subset": true, "sf": true}], "wrong": "les_34_4w"}},
+            {"t": "task", "text": "les_34_5", "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4",
+              "moves": {"steps": [{"accept": ["h5f7"], "rule": "mate"}]}},
+            {"t": "task", "text": "les_34_6", "fen": "rnbqkbnr/pppp1ppp/8/4p3/6P1/5P2/PPPPP2P/RNBQKBNR b KQkq - 0 2",
+              "moves": {"steps": [{"accept": ["d8h4"], "rule": "mate"}]}},
+            {"t": "exam", "text": "les_34_7", "fen": "rnbqk1nr/pppp1ppp/8/2b1p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR b KQkq - 3 3",
+              "moves": {"steps": [{"accept": ["g8f6", "d8f6", "d8e7"], "rule": "stop_mate", "subset": true, "sf": true}], "wrong": "les_34_7w"}},
+            {"t": "summary", "text": "les_34_8", "fen": "r1bqkbnr/pppp1p1p/2n3p1/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 4", "arrows": [["g6", "h5", "good"]]}
+          ]
+        }
+      ]
+    },
+    {
+      "n": 6,
+      "title": "les_sec_6",
+      "lessons": [
+        {
+          "n": 35,
+          "title": "les_35_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_35_1", "fen": "4k3/8/8/3r4/8/2N5/8/R3K3 w - - 0 1", "arrows": [["a1", "a8", "focus"], ["c3", "d5", "good"]]},
+            {"t": "talk", "text": "les_35_2", "demo": ["c3d5"]},
+            {"t": "talk", "text": "les_35_3", "fen": "4k3/8/3n4/8/4P3/8/8/4K3 w - - 0 1", "demo": ["e4e5"]},
+            {"t": "task", "text": "les_35_4", "fen": "3k4/8/8/8/8/5N2/1B6/1R2K2Q w - - 0 1",
+              "moves": {"steps": [{"accept": ["b1d1", "b2f6", "h1h4", "h1h8"], "rule": "check"}]}},
+            {"t": "task", "text": "les_35_5", "fen": "4k3/8/2p5/1n1p4/4n1b1/2N2B2/8/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c3e4", "f3e4", "f3g4"], "rule": "see_win"}], "wrong": "les_35_5w"}},
+            {"t": "task", "text": "les_35_6", "fen": "6k1/5ppp/8/8/8/8/1Q3PPP/4R1K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["b2b8", "e1e8"], "rule": "mate"}], "wrong": "les_35_6w"}},
+            {"t": "exam", "text": "les_35_7", "fen": "r3k2r/ppp2ppp/2n5/1B1q4/3P4/2N2N2/PPP2PPP/R2QK2R w KQkq - 0 1",
+              "moves": {"steps": [{"accept": ["c3d5"], "unique": true}], "wrong": "les_35_7w"}},
+            {"t": "summary", "text": "les_35_8", "fen": "4k3/8/8/3r4/8/2N5/8/R3K3 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 36,
+          "title": "les_36_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_36_1", "fen": "4k3/8/8/8/1n6/8/8/3QK3 w - - 0 1", "demo": ["d1a4", "e8f7", "a4b4"]},
+            {"t": "talk", "text": "les_36_2", "fen": "4k3/8/3n1n2/8/4P3/8/8/4K3 w - - 0 1", "demo": ["e4e5"]},
+            {"t": "task", "text": "les_36_3", "fen": "r5k1/6pp/8/8/8/8/5PPP/3Q2K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d1d5"], "unique": true}], "wrong": "les_36_3w"}},
+            {"t": "task", "text": "les_36_4", "fen": "6k1/5ppp/8/n5b1/8/8/5PPP/3R2K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d1d5"], "unique": true}], "wrong": "les_36_4w"}},
+            {"t": "task", "text": "les_36_5", "fen": "r5k1/5ppp/8/3p4/8/2N1R2P/5PP1/6K1 b - - 0 1",
+              "moves": {"steps": [{"accept": ["d5d4"], "unique": true}], "wrong": "les_36_5w"}},
+            {"t": "exam", "text": "les_36_6", "fen": "4k3/ppp5/1n6/r7/8/8/PP3PPP/3Q2K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d1e1"], "unique": true}], "wrong": "les_36_6w"}},
+            {"t": "summary", "text": "les_36_7", "fen": "4k3/8/8/8/1n6/8/8/3QK3 w - - 0 1", "arrows": [["d1", "a4", "good"]]}
+          ]
+        },
+        {
+          "n": 37,
+          "title": "les_37_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_37_1", "fen": "r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1", "demo": ["b5c7", "e8e7", "c7a8"]},
+            {"t": "talk", "text": "les_37_2", "fen": "r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1", "marks": {"good": ["c7"]}},
+            {"t": "task", "text": "les_37_3", "fen": "2q3k1/5ppp/8/3N4/8/8/5PPP/6K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d5e7"], "unique": true}], "wrong": "les_37_3w"}},
+            {"t": "task", "text": "les_37_4", "fen": "6k1/5pp1/1r3r1p/8/8/2N4P/5PP1/R5K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c3d5"], "unique": true}], "wrong": "les_37_4w"}},
+            {"t": "task", "text": "les_37_5", "fen": "6k1/5ppp/8/8/3n4/2Q5/5PPP/6K1 b - - 0 1",
+              "moves": {"steps": [{"accept": ["d4e2"], "unique": true}], "wrong": "les_37_5w"}},
+            {"t": "exam", "text": "les_37_6", "fen": "1r3k2/6pp/8/4N3/8/8/6PP/6K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e5d7"], "unique": true}], "wrong": "les_37_6w"}},
+            {"t": "summary", "text": "les_37_7", "fen": "r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1", "marks": {"good": ["c7"]}}
+          ]
+        },
+        {
+          "n": 38,
+          "title": "les_38_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_38_1", "fen": "4k3/1p6/2n5/1B6/8/8/8/4K3 w - - 0 1", "marks": {"focus": ["c6"]}, "arrows": [["b5", "e8", "bad"]]},
+            {"t": "talk", "text": "les_38_2", "fen": "3qk3/8/8/3n4/8/8/8/3RK3 w - - 0 1", "marks": {"focus": ["d5"]}, "arrows": [["d1", "d8", "bad"]]},
+            {"t": "task", "text": "les_38_3", "fen": "4k3/1p6/2n5/1B6/8/8/8/4K3 b - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 1, "fact": "can_move:c6", "wrong": "les_38_3w"}},
+            {"t": "task", "text": "les_38_4", "fen": "4k3/1p6/2n5/8/8/8/8/4KB2 w - - 0 1",
+              "moves": {"steps": [{"accept": ["f1b5"], "rule": "pin:c6"}], "wrong": "les_38_4w"}},
+            {"t": "task", "text": "les_38_5", "fen": "6k1/5q2/8/8/8/1P6/4B3/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e2c4"], "rule": "pin:f7"}], "wrong": "les_38_5w"}},
+            {"t": "exam", "text": "les_38_6", "fen": "4k3/8/8/8/4q3/8/8/R4K2 w - - 0 1",
+              "moves": {"steps": [{"accept": ["a1e1"], "rule": "pin:e4"}], "wrong": "les_38_6w"}},
+            {"t": "summary", "text": "les_38_7", "fen": "4k3/1p6/2n5/1B6/8/8/8/4K3 w - - 0 1", "arrows": [["b5", "e8", "bad"]]}
+          ]
+        },
+        {
+          "n": 39,
+          "title": "les_39_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_39_1", "fen": "4k3/1p6/2n5/1B6/3P4/8/8/4K3 w - - 0 1", "demo": ["d4d5"]},
+            {"t": "talk", "text": "les_39_2", "fen": "4k3/3n4/8/1B2b3/8/8/8/4RK2 w - - 0 1", "marks": {"focus": ["d7"]}, "arrows": [["b5", "e8", "bad"]]},
+            {"t": "task", "text": "les_39_3", "fen": "3k4/pp4p1/5n2/8/4P2B/8/PP6/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e4e5"], "unique": true}], "wrong": "les_39_3w"}},
+            {"t": "task", "text": "les_39_4", "fen": "4k3/1p6/8/3p4/1b6/2N5/PP6/4K3 b - - 0 1",
+              "moves": {"steps": [{"accept": ["d5d4"], "unique": true}], "wrong": "les_39_4w"}},
+            {"t": "task", "text": "les_39_5", "fen": "4k3/3n4/8/1B2b3/8/8/8/4RK2 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e1e5"], "rule": "capture:e5"}]}},
+            {"t": "exam", "text": "les_39_6", "fen": "4k3/ppp5/3p4/4n3/8/8/5P2/4RK2 w - - 0 1",
+              "moves": {"steps": [{"accept": ["f2f4"], "unique": true}], "wrong": "les_39_6w"}},
+            {"t": "summary", "text": "les_39_7", "fen": "4k3/1p6/2n5/1B6/3P4/8/8/4K3 w - - 0 1", "arrows": [["d4", "d5", "good"]]}
+          ]
+        },
+        {
+          "n": 40,
+          "title": "les_40_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_40_1", "fen": "r3k3/8/8/8/8/8/8/6KR w - - 0 1", "demo": ["h1h8", "e8d7", "h8a8"]},
+            {"t": "talk", "text": "les_40_2", "fen": "8/6q1/8/8/3k4/8/8/2B1K3 w - - 0 1", "demo": ["c1b2", "d4c4", "b2g7"]},
+            {"t": "task", "text": "les_40_3", "fen": "8/8/8/r3k3/8/8/8/5K1R w - - 0 1",
+              "moves": {"steps": [{"accept": ["h1h5"], "unique": true}], "wrong": "les_40_3w"}},
+            {"t": "task", "text": "les_40_4", "fen": "r5k1/5ppp/2r5/8/8/3B1P1P/6P1/3R2K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d3e4"], "unique": true}], "wrong": "les_40_4w"}},
+            {"t": "task", "text": "les_40_5", "fen": "6k1/5ppp/8/8/8/8/1Q3K2/7r b - - 0 1",
+              "moves": {"steps": [{"accept": ["h1h2"], "unique": true}], "wrong": "les_40_5w"}},
+            {"t": "exam", "text": "les_40_6", "fen": "6r1/8/8/3k4/8/1P6/8/4KB2 w - - 0 1",
+              "moves": {"steps": [{"accept": ["f1c4"], "unique": true}], "wrong": "les_40_6w"}},
+            {"t": "summary", "text": "les_40_7", "fen": "r3k3/8/8/8/8/8/8/6KR w - - 0 1", "arrows": [["h8", "a8", "good"]]}
+          ]
+        },
+        {
+          "n": 41,
+          "title": "les_41_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_41_1", "fen": "3qk3/8/7r/8/3N4/8/8/3RK3 w - - 0 1", "demo": ["d4f5", "d8b6", "f5h6"]},
+            {"t": "talk", "text": "les_41_2", "fen": "1q6/6k1/8/8/3N4/8/1B6/6K1 w - - 0 1", "demo": ["d4c6", "g7g8", "c6b8"]},
+            {"t": "task", "text": "les_41_3", "fen": "3q2k1/5ppp/8/3B4/8/8/5PPP/3R2K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d5f7"], "unique": true}], "wrong": "les_41_3w"}},
+            {"t": "task", "text": "les_41_4", "fen": "4r1k1/5ppp/8/4n3/1Q6/8/5PPP/4K3 b - - 0 1",
+              "moves": {"steps": [{"accept": ["e5c6", "e5d3"], "unique": true}], "wrong": "les_41_4w"}},
+            {"t": "exam", "text": "les_41_5", "fen": "4k3/8/1q6/8/8/4N3/8/4R2K w - - 0 1",
+              "moves": {"steps": [{"accept": ["e3c4", "e3d5"], "unique": true}], "wrong": "les_41_5w"}},
+            {"t": "summary", "text": "les_41_6", "fen": "1q6/6k1/8/8/3N4/8/1B6/6K1 w - - 0 1", "arrows": [["b2", "g7", "bad"]]}
+          ]
+        },
+        {
+          "n": 42,
+          "title": "les_42_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_42_1", "fen": "4k3/8/8/8/4N3/8/8/4R1K1 w - - 0 1", "demo": ["e4f6"]},
+            {"t": "talk", "text": "les_42_2", "fen": "4k3/8/5N2/8/8/8/8/4R1K1 b - - 0 1", "arrows": [["e1", "e8", "bad"], ["f6", "e8", "bad"]]},
+            {"t": "task", "text": "les_42_3", "fen": "4k3/8/8/8/4N3/8/8/4R1K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e4d6", "e4f6"], "rule": "double_check"}], "wrong": "les_42_3w"}},
+            {"t": "task", "text": "les_42_4", "fen": "3qkb2/3p1p2/8/8/4N3/8/8/4R1K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e4d6", "e4f6"], "rule": "mate"}], "wrong": "les_42_4w"}},
+            {"t": "exam", "text": "les_42_5", "fen": "4r1k1/8/8/4n3/8/8/3P1P2/3QKB2 b - - 0 1",
+              "moves": {"steps": [{"accept": ["e5d3", "e5f3"], "rule": "mate"}], "wrong": "les_42_5w"}},
+            {"t": "summary", "text": "les_42_6", "fen": "3qkb2/3p1p2/5N2/8/8/8/8/4R1K1 b - - 0 1"}
+          ]
+        },
+        {
+          "n": 43,
+          "title": "les_43_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_43_1", "fen": "4k3/1p6/2n5/1B2p3/8/5N2/8/4K3 w - - 0 1", "demo": ["b5c6", "b7c6", "f3e5"]},
+            {"t": "talk", "text": "les_43_2", "fen": "6k1/5ppp/3n4/8/2b1P3/8/5PPP/2R3K1 w - - 0 1", "arrows": [["d6", "c4", "focus"], ["c1", "c4", "good"]]},
+            {"t": "task", "text": "les_43_3", "fen": "6k1/5ppp/5n2/3b2B1/8/8/5PPP/3R2K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["g5f6"], "reply": "g7f6", "sf": true}, {"accept": ["d1d5"], "unique": true}], "wrong": "les_43_3w"}},
+            {"t": "task", "text": "les_43_4", "fen": "6k1/5ppp/3n4/8/2b1P3/8/5PPP/2R3K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e4e5"], "unique": true}], "wrong": "les_43_4w"}},
+            {"t": "exam", "text": "les_43_5", "fen": "3r2k1/5ppp/8/8/3B2b1/5N2/5PPP/6K1 b - - 0 1",
+              "moves": {"steps": [{"accept": ["g4f3"], "reply": "g2f3", "sf": true}, {"accept": ["d8d4"], "unique": true}], "wrong": "les_43_5w"}},
+            {"t": "summary", "text": "les_43_6", "fen": "4k3/1p6/2n5/1B2p3/8/5N2/8/4K3 w - - 0 1", "arrows": [["b5", "c6", "good"], ["f3", "e5", "good"]]}
+          ]
+        },
+        {
+          "n": 44,
+          "title": "les_44_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_44_1", "fen": "3r2k1/5ppp/8/8/3b4/8/5PPP/3RR1K1 w - - 0 1", "demo": ["d1d4", "d8d4", "e1e8"]},
+            {"t": "talk", "text": "les_44_2", "fen": "3r2k1/5ppp/8/8/3b4/8/5PPP/3RR1K1 w - - 0 1", "marks": {"bad": ["d8"]}, "arrows": [["d8", "d4", "focus"], ["e1", "e8", "good"]]},
+            {"t": "task", "text": "les_44_3", "fen": "2r3k1/pp3ppp/8/8/2n5/8/5PPP/2R1R1K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c1c4"], "reply": "c8c4", "unique": true, "lure": true}, {"accept": ["e1e8"], "rule": "mate"}], "wrong": "les_44_3w"}},
+            {"t": "task", "text": "les_44_4", "fen": "2r1r1k1/5ppp/8/2N5/8/8/PP3PPP/2R3K1 b - - 0 1",
+              "moves": {"steps": [{"accept": ["c8c5"], "reply": "c1c5", "unique": true, "lure": true}, {"accept": ["e8e1"], "rule": "mate"}], "wrong": "les_44_4w"}},
+            {"t": "exam", "text": "les_44_5", "fen": "3q2k1/5ppp/8/8/3n4/8/5PPP/3RR1K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d1d4"], "reply": "d8d4", "unique": true, "lure": true}, {"accept": ["e1e8"], "rule": "mate"}], "wrong": "les_44_5w"}},
+            {"t": "summary", "text": "les_44_6", "fen": "3r2k1/5ppp/8/8/3b4/8/5PPP/3RR1K1 w - - 0 1", "marks": {"bad": ["d8"]}}
+          ]
+        },
+        {
+          "n": 45,
+          "title": "les_45_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_45_1", "fen": "3r2k1/1Q3ppp/8/8/7q/4P3/r4PP1/R2R2K1 w - - 0 28", "arrows": [["a8", "a2", "focus"], ["a1", "a2", "bad"], ["d8", "d1", "bad"]]},
+            {"t": "talk", "text": "les_45_2", "demo": ["d1d8", "h4d8", "a1a2"]},
+            {"t": "talk", "text": "les_45_3", "fen": "3r2k1/1Q3ppp/8/8/7q/4P3/r4PP1/R2R2K1 w - - 0 28", "arrows": [["d1", "d8", "good"]]},
+            {"t": "task", "text": "les_45_4", "fen": "2r5/4Rqkp/5p2/5Q2/3P4/PP5P/6P1/6K1 b - - 0 33", "arrows": [["e1", "e7", "focus"]],
+              "moves": {"steps": [{"accept": ["c8c1"], "reply": "g1h2", "unique": true}, {"accept": ["f7e7"], "unique": true}], "wrong": "les_45_4w"}},
+            {"t": "task", "text": "les_45_5", "fen": "3r1qk1/5p2/5Q1p/8/1R6/7P/2P2PP1/6K1 b - - 0 31", "arrows": [["b1", "b4", "focus"]],
+              "moves": {"steps": [{"accept": ["d8d1"], "reply": "g1h2", "unique": true}, {"accept": ["f8b4"], "unique": true}], "wrong": "les_45_5w"}},
+            {"t": "exam", "text": "les_45_6", "fen": "6k1/5pp1/rq4p1/R1Q3P1/2p1P2P/1p2P3/1K6/8 w - - 0 39", "arrows": [["a8", "a6", "focus"]],
+              "moves": {"steps": [{"accept": ["c5c8"], "reply": "g8h7", "unique": true}, {"accept": ["a5a6"], "unique": true}], "wrong": "les_45_6w"}},
+            {"t": "summary", "text": "les_45_7", "fen": "3r2k1/1Q3ppp/8/8/7q/4P3/r4PP1/R2R2K1 w - - 0 28", "arrows": [["d1", "d8", "good"]]}
+          ]
+        },
+        {
+          "n": 46,
+          "title": "les_46_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_46_1", "fen": "3q2k1/8/8/4N3/8/8/8/6KR w - - 0 1", "demo": ["h1h8", "g8h8", "e5f7", "h8g7", "f7d8"]},
+            {"t": "talk", "text": "les_46_2", "fen": "3q2k1/8/8/4N3/8/8/8/6KR w - - 0 1", "marks": {"focus": ["h8"]}, "arrows": [["e5", "f7", "good"]]},
+            {"t": "task", "text": "les_46_3", "fen": "1k2q3/8/8/3N4/8/8/7P/R5K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["a1a8"], "reply": "b8a8", "unique": true, "lure": true}, {"accept": ["d5c7"], "unique": true}], "wrong": "les_46_3w"}},
+            {"t": "task", "text": "les_46_4", "fen": "r5k1/7p/8/8/3n4/8/8/1K2Q3 b - - 0 1",
+              "moves": {"steps": [{"accept": ["a8a1"], "reply": "b1a1", "unique": true, "lure": true}, {"accept": ["d4c2"], "unique": true}], "wrong": "les_46_4w"}},
+            {"t": "exam", "text": "les_46_5", "fen": "6k1/6p1/3q4/6N1/8/8/P7/6KR w - - 0 1",
+              "moves": {"steps": [{"accept": ["h1h8"], "reply": "g8h8", "unique": true, "lure": true}, {"accept": ["g5f7"], "unique": true}], "wrong": "les_46_5w"}},
+            {"t": "summary", "text": "les_46_6", "fen": "3q2k1/8/8/4N3/8/8/8/6KR w - - 0 1", "marks": {"focus": ["h8"]}}
+          ]
+        },
+        {
+          "n": 47,
+          "title": "les_47_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_47_1", "fen": "4k3/8/8/8/8/8/bPP5/2K5 w - - 0 1", "demo": ["b2b3", "e8d7", "c1b2", "d7c6", "b2a2"]},
+            {"t": "talk", "text": "les_47_2", "fen": "4k3/8/8/8/8/1P6/b1P5/2K5 b - - 0 1", "marks": {"bad": ["a2"]}},
+            {"t": "task", "text": "les_47_3", "fen": "4k3/ppp5/8/7n/8/4P3/1B3PPP/2K5 w - - 0 1",
+              "moves": {"steps": [{"accept": ["g2g4"], "sf": true}], "wrong": "les_47_3w"}},
+            {"t": "task", "text": "les_47_4", "fen": "2k5/Bpp3pp/8/8/8/8/6PP/6K1 b - - 0 1",
+              "moves": {"steps": [{"accept": ["b7b6"], "unique": true}], "wrong": "les_47_4w"}},
+            {"t": "exam", "text": "les_47_5", "fen": "4k3/ppp5/8/8/8/8/PP3PPb/5K2 w - - 0 1",
+              "moves": {"steps": [{"accept": ["g2g3"], "unique": true}], "wrong": "les_47_5w"}},
+            {"t": "summary", "text": "les_47_6", "fen": "4k3/8/8/8/8/1P6/b1P5/2K5 b - - 0 1", "marks": {"bad": ["a2"]}}
+          ]
+        },
+        {
+          "n": 48,
+          "title": "les_48_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_48_1", "fen": "5rk1/5p1p/8/8/8/8/q2Q1PPP/6K1 w - - 0 1", "demo": ["d2g5", "g8h8", "g5f6", "h8g8", "f6g5"]},
+            {"t": "talk", "text": "les_48_2", "fen": "5rk1/5p1p/8/8/8/8/q2Q1PPP/6K1 w - - 0 1", "arrows": [["d2", "g5", "good"], ["g5", "f6", "good"]]},
+            {"t": "task", "text": "les_48_3", "fen": "6k1/6p1/8/8/8/8/rq3PPP/4Q1K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e1e8"], "reply": "g8h7", "unique": true}, {"accept": ["e8h5"], "reply": "h7g8", "unique": true}, {"accept": ["h5e8", "h5d5"], "unique": true}], "wrong": "les_48_3w"}},
+            {"t": "task", "text": "les_48_4", "fen": "6k1/3q1ppp/Q7/8/8/8/5P1P/5RK1 b - - 0 1",
+              "moves": {"steps": [{"accept": ["d7g4"], "reply": "g1h1", "unique": true}, {"accept": ["g4f3"], "reply": "h1g1", "unique": true}, {"accept": ["f3g4"], "unique": true}], "wrong": "les_48_4w"}},
+            {"t": "exam", "text": "les_48_5", "fen": "1k6/1p6/8/8/8/8/PPP3qr/1K1Q4 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d1d8"], "reply": "b8a7", "unique": true}, {"accept": ["d8a5"], "reply": "a7b8", "unique": true}, {"accept": ["a5d8", "a5e5"], "unique": true}], "wrong": "les_48_5w"}},
+            {"t": "summary", "text": "les_48_6", "fen": "5rk1/5p1p/8/8/8/8/q2Q1PPP/6K1 w - - 0 1"}
+          ]
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "title": "les_sec_7",
+      "lessons": [
+        {
+          "n": 49,
+          "title": "les_49_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_49_1", "fen": "6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1", "demo": ["a1a8"]},
+            {"t": "talk", "text": "les_49_2", "fen": "6k1/5pp1/7p/8/8/8/5PPP/R5K1 w - - 0 1", "demo": ["a1a8", "g8h7"]},
+            {"t": "task", "text": "les_49_3", "fen": "6k1/5ppp/8/8/8/8/1q3PPP/4R1K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e1e8"], "rule": "mate"}], "wrong": "les_49_3w"}},
+            {"t": "task", "text": "les_49_4", "fen": "3r2k1/5ppp/8/8/8/Q7/5PPP/6K1 b - - 0 1",
+              "moves": {"steps": [{"accept": ["d8d1"], "rule": "mate"}], "wrong": "les_49_4w"}},
+            {"t": "task", "text": "les_49_5", "fen": "3r2k1/5ppp/8/8/8/8/R4PPP/6K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["a2a1", "a2a8", "a2d2", "a2e2", "f2f3", "f2f4", "g1f1", "g2g3", "g2g4", "h2h3", "h2h4"], "rule": "stop_mate"}], "wrong": "les_49_5w"}},
+            {"t": "exam", "text": "les_49_6", "fen": "2r3k1/5ppp/8/8/8/8/1Q3PPP/2R3K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c1c8"], "rule": "mate"}], "wrong": "les_49_6w"}},
+            {"t": "summary", "text": "les_49_7", "fen": "6k1/5pp1/7p/8/8/8/5PPP/R5K1 w - - 0 1", "marks": {"good": ["h7"]}}
+          ]
+        },
+        {
+          "n": 50,
+          "title": "les_50_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_50_1", "fen": "5rk1/5pp1/8/7Q/8/3B4/5PPP/6K1 w - - 0 1", "demo": ["h5h7"]},
+            {"t": "talk", "text": "les_50_2", "fen": "6k1/5p1p/5PpQ/8/8/8/5PPP/6K1 w - - 0 1", "demo": ["h6g7"]},
+            {"t": "task", "text": "les_50_3", "fen": "5rk1/5ppp/8/6NQ/8/8/5PPP/6K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["h5h7"], "rule": "mate"}], "wrong": "les_50_3w"}},
+            {"t": "task", "text": "les_50_4", "fen": "6k1/5ppp/3b4/7q/8/8/5PP1/5RK1 b - - 0 1",
+              "moves": {"steps": [{"accept": ["h5h2"], "rule": "mate"}], "wrong": "les_50_4w"}},
+            {"t": "exam", "text": "les_50_5", "fen": "r5k1/5ppp/8/8/6Q1/2B5/5PPP/6K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["g4g7"], "rule": "mate"}], "wrong": "les_50_5w"}},
+            {"t": "summary", "text": "les_50_6", "fen": "6k1/5p1p/5PpQ/8/8/8/5PPP/6K1 w - - 0 1", "arrows": [["f6", "g7", "good"]]}
+          ]
+        },
+        {
+          "n": 51,
+          "title": "les_51_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_51_1", "fen": "6rk/6pp/8/6N1/8/8/8/6K1 w - - 0 1", "demo": ["g5f7"]},
+            {"t": "talk", "text": "les_51_2", "fen": "5r1k/6pp/8/3Q2N1/8/8/5PPP/6K1 w - - 0 1", "demo": ["g5f7", "h8g8", "f7h6", "g8h8", "d5g8", "f8g8", "h6f7"]},
+            {"t": "task", "text": "les_51_3", "fen": "6rk/6pp/8/4N3/8/8/5PPP/6K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e5f7"], "rule": "mate"}], "wrong": "les_51_3w"}},
+            {"t": "task", "text": "les_51_4", "fen": "6k1/5ppp/8/8/4n3/8/6PP/6RK b - - 0 1",
+              "moves": {"steps": [{"accept": ["e4f2"], "rule": "mate"}], "wrong": "les_51_4w"}},
+            {"t": "exam", "text": "les_51_5", "fen": "6k1/2Q2ppp/8/8/3q2n1/8/6PP/5R1K b - - 0 1",
+              "moves": {"steps": [{"accept": ["g4f2"], "rule": "mate_in:4", "reply": "h1g1"}, {"accept": ["f2h3"], "rule": "mate_in:3", "reply": "g1h1"}, {"accept": ["d4g1"], "rule": "mate_in:2", "reply": "f1g1"}, {"accept": ["h3f2"], "rule": "mate"}], "wrong": "les_51_5w"}},
+            {"t": "summary", "text": "les_51_6", "fen": "6rk/6pp/8/6N1/8/8/8/6K1 w - - 0 1", "marks": {"bad": ["h8"]}}
+          ]
+        },
+        {
+          "n": 52,
+          "title": "les_52_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_52_1", "fen": "7k/R7/5N2/8/8/8/8/6K1 w - - 0 1", "demo": ["a7h7"]},
+            {"t": "talk", "text": "les_52_2", "fen": "7k/7R/5N2/8/8/8/8/6K1 b - - 0 1", "marks": {"bad": ["g8", "g7"]}},
+            {"t": "task", "text": "les_52_3", "fen": "7k/1R6/5N2/8/8/8/5PPP/6K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["b7h7"], "rule": "mate"}], "wrong": "les_52_3w"}},
+            {"t": "task", "text": "les_52_4", "fen": "6k1/5ppp/8/8/8/5n2/r7/7K b - - 0 1",
+              "moves": {"steps": [{"accept": ["a2h2"], "rule": "mate"}], "wrong": "les_52_4w"}},
+            {"t": "exam", "text": "les_52_5", "fen": "7k/1R5p/5N2/8/8/8/5PPP/6K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["b7h7"], "rule": "mate"}], "wrong": "les_52_5w"}},
+            {"t": "summary", "text": "les_52_6", "fen": "7k/7R/5N2/8/8/8/8/6K1 b - - 0 1"}
+          ]
+        },
+        {
+          "n": 53,
+          "title": "les_53_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_53_1", "fen": "7k/8/6K1/8/2B5/4B3/8/8 w - - 0 1", "demo": ["e3d4"]},
+            {"t": "talk", "text": "les_53_2", "fen": "8/8/3k4/8/8/3BB3/8/4K3 w - - 0 1", "marks": {"focus": ["d4", "e4", "c4", "f4"]}},
+            {"t": "task", "text": "les_53_3", "fen": "7k/8/5K2/8/8/8/8/2BB4 w - - 0 1",
+              "play": {"goal": "mate", "limit": 20}},
+            {"t": "exam", "text": "les_53_4", "fen": "8/8/8/3k4/8/8/8/2B1KB2 w - - 0 1",
+              "play": {"goal": "mate", "limit": 34}},
+            {"t": "summary", "text": "les_53_5", "fen": "7k/8/6K1/8/2B5/4B3/8/8 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 54,
+          "title": "les_54_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_54_1", "fen": "7k/8/8/8/8/8/1R6/R5K1 w - - 0 1", "demo": ["b2b7", "h8g8", "a1a8"]},
+            {"t": "talk", "text": "les_54_2", "fen": "4b1k1/5p1p/5Pp1/8/8/8/3Q1PPP/6K1 w - - 0 1", "arrows": [["d2", "h6", "focus"], ["h6", "g7", "good"]]},
+            {"t": "task", "text": "les_54_3", "fen": "2r3k1/5ppp/8/8/8/8/3R1PPP/3R2K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d2d8"], "rule": "mate_in:2", "reply": "c8d8"}, {"accept": ["d1d8"], "rule": "mate"}], "wrong": "les_54_3w"}},
+            {"t": "task", "text": "les_54_4", "fen": "3r2k1/3r1ppp/8/8/8/8/5PPP/2R3K1 b - - 0 1",
+              "moves": {"steps": [{"accept": ["d7d1"], "rule": "mate_in:2", "reply": "c1d1"}, {"accept": ["d8d1"], "rule": "mate"}], "wrong": "les_54_4w"}},
+            {"t": "exam", "text": "les_54_5", "fen": "4b1k1/5p1p/5Pp1/8/8/8/3Q1PPP/6K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["d2h6"], "rule": "mate_in:2", "reply": "e8d7"}, {"accept": ["h6g7"], "rule": "mate"}], "wrong": "les_54_5w"}},
+            {"t": "summary", "text": "les_54_6", "fen": "7k/8/8/8/8/8/1R6/R5K1 w - - 0 1"}
+          ]
+        }
+      ]
+    },
+    {
+      "n": 8,
+      "title": "les_sec_8",
+      "lessons": [
+        {
+          "n": 55,
+          "title": "les_55_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_55_1", "fen": "r4rk1/ppp2ppp/3p4/8/8/3P4/PPP2PPP/R4RK1 w - - 0 1", "marks": {"focus": ["e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"]}},
+            {"t": "talk", "text": "les_55_2", "fen": "6k1/p4ppp/8/8/8/8/5PPP/1R4K1 w - - 0 1", "demo": ["b1b7"]},
+            {"t": "task", "text": "les_55_3", "fen": "r4rk1/ppp2ppp/3p4/8/8/3P4/PPP2PPP/R4RK1 w - - 0 1",
+              "tap": {"steps": [{"targets": ["e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"], "fact": "open_files"}], "wrong": "les_55_3w"}},
+            {"t": "task", "text": "les_55_4", "fen": "r4rk1/ppp2ppp/3p4/8/8/3P4/PPP2PPP/R4RK1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["a1e1", "f1e1"], "rule": "open_file"}], "wrong": "les_55_4w"}},
+            {"t": "task", "text": "les_55_5", "fen": "3r2k1/pp3pp1/7p/8/8/7P/PP3PP1/4R1K1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e1e7"], "sf": true}], "wrong": "les_55_5w"}},
+            {"t": "exam", "text": "les_55_6", "fen": "r4rk1/ppp2ppp/3p4/8/8/3P4/PPP2PPP/R4RK1 b - - 0 1",
+              "moves": {"steps": [{"accept": ["a8e8", "f8e8"], "rule": "open_file"}], "wrong": "les_55_6w"}},
+            {"t": "summary", "text": "les_55_7", "fen": "r4rk1/ppp2ppp/3p4/8/8/3P4/PPP2PPP/R4RK1 w - - 0 1", "marks": {"focus": ["e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8"]}}
+          ]
+        },
+        {
+          "n": 56,
+          "title": "les_56_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_56_1", "fen": "4k3/pp3ppp/8/8/3P4/8/PP3PPP/4K3 w - - 0 1", "marks": {"bad": ["d4"]}},
+            {"t": "talk", "text": "les_56_2", "fen": "4k3/pp3ppp/8/8/8/2P5/P1P2PPP/4K3 w - - 0 1", "marks": {"bad": ["c2", "c3"]}},
+            {"t": "talk", "text": "les_56_3", "fen": "4k3/pp3ppp/5n2/3p4/8/2N2B2/PP3PPP/4K3 w - - 0 1", "arrows": [["c3", "d5", "good"], ["f3", "d5", "good"]]},
+            {"t": "task", "text": "les_56_4", "fen": "4k3/pp4pp/4p3/8/2P5/8/PP3PPP/4K3 w - - 0 1",
+              "tap": {"steps": [{"targets": ["e6"], "fact": "isolated"}], "wrong": "les_56_4w"}},
+            {"t": "task", "text": "les_56_5", "fen": "4k3/ppp3pp/8/8/8/5P2/PP3PP1/4K3 w - - 0 1",
+              "tap": {"steps": [{"targets": ["f2", "f3"], "all": true, "fact": "doubled"}], "wrong": "les_56_5w"}},
+            {"t": "task", "text": "les_56_6", "fen": "4k3/pp3ppp/5n2/3p4/8/2N2B2/PP3PPP/4K3 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c3d5", "f3d5"], "rule": "see_win"}], "wrong": "les_56_6w"}},
+            {"t": "exam", "text": "les_56_7", "fen": "4k3/pp3ppp/8/3p4/3P4/8/PP3PPP/4K3 w - - 0 1",
+              "tap": {"steps": [{"targets": ["d4", "d5"], "all": true, "fact": "isolated"}], "wrong": "les_56_7w"}},
+            {"t": "summary", "text": "les_56_8", "fen": "4k3/pp3ppp/8/8/3P4/8/PP3PPP/4K3 w - - 0 1", "marks": {"bad": ["d4"]}}
+          ]
+        },
+        {
+          "n": 57,
+          "title": "les_57_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_57_1", "fen": "6k1/pp2bppp/3p4/4p3/4P3/2N5/PP3PPP/6K1 w - - 0 1", "marks": {"good": ["d5"]}},
+            {"t": "talk", "text": "les_57_2", "demo": ["c3d5"]},
+            {"t": "talk", "text": "les_57_3", "fen": "6k1/pp2bppp/3p4/3Np3/4P3/8/PP3PPP/6K1 b - - 1 1", "marks": {"good": ["d5"], "bad": ["e7"]}},
+            {"t": "task", "text": "les_57_4", "fen": "6k1/pp4pp/2p1p3/3p4/3P4/2P5/PP3PPP/6K1 w - - 0 1",
+              "tap": {"steps": [{"targets": ["e5"], "fact": "outpost"}], "wrong": "les_57_4w"}},
+            {"t": "task", "text": "les_57_5", "fen": "r4rk1/pp2bppp/3p1n2/4p1B1/4P3/2N5/PPP2PPP/R4RK1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["g5f6"], "rule": "capture:f6", "sf": true}], "wrong": "les_57_5w"}},
+            {"t": "exam", "text": "les_57_6", "fen": "r1b2rk1/pp4pp/2p1p3/3p4/3P4/2P2N2/PP3PPP/R4RK1 w - - 0 1",
+              "moves": {"steps": [{"accept": ["f3e5"], "sf": true}], "wrong": "les_57_6w"}},
+            {"t": "summary", "text": "les_57_7", "fen": "6k1/pp2bppp/3p4/3Np3/4P3/8/PP3PPP/6K1 b - - 1 1", "marks": {"good": ["d5"]}}
+          ]
+        },
+        {
+          "n": 58,
+          "title": "les_58_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_58_1", "fen": "4k3/pp4pp/8/3P4/8/8/PP4PP/4K3 w - - 0 1", "marks": {"good": ["d5"]}},
+            {"t": "talk", "text": "les_58_2", "fen": "7k/pp4pp/8/3P4/8/8/PP4PP/6K1 w - - 0 1", "demo": ["d5d6", "h8g8", "d6d7", "g8f7", "d7d8q"]},
+            {"t": "task", "text": "les_58_3", "fen": "4k3/pp3ppp/8/8/3P4/8/P4PPP/4K3 w - - 0 1",
+              "tap": {"steps": [{"targets": ["d4"], "fact": "passed"}], "wrong": "les_58_3w"}},
+            {"t": "task", "text": "les_58_4", "fen": "4k3/5pp1/8/1P6/3p4/8/6PP/4K3 w - - 0 1",
+              "tap": {"steps": [{"targets": ["b5", "d4"], "all": true, "fact": "passed"}], "wrong": "les_58_4w"}},
+            {"t": "exam", "text": "les_58_5", "fen": "6k1/5ppp/8/1P6/8/8/5PPP/6K1 w - - 0 1",
+              "play": {"goal": "promote", "limit": 8}},
+            {"t": "summary", "text": "les_58_6", "fen": "4k3/pp4pp/8/3P4/8/8/PP4PP/4K3 w - - 0 1", "marks": {"good": ["d5"]}}
+          ]
+        }
+      ]
+    },
+    {
+      "n": 9,
+      "title": "les_sec_9",
+      "lessons": [
+        {
+          "n": 59,
+          "title": "les_59_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_59_1", "fen": "8/pp4k1/2p5/8/8/2P5/PP4K1/8 w - - 0 1", "marks": {"focus": ["d4", "e4", "d5", "e5"]}},
+            {"t": "talk", "text": "les_59_2", "fen": "8/pp4k1/2p5/8/8/2P5/PP4K1/8 w - - 0 1", "demo": ["g2f3", "g7f6", "f3e4", "f6e6"]},
+            {"t": "task", "text": "les_59_3", "fen": "8/pp4k1/2p5/8/8/2P5/PP4K1/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["g2f3"], "rule": "king_center"}], "wrong": "les_59_3w"}},
+            {"t": "task", "text": "les_59_4", "fen": "8/8/2k5/8/3p4/4K3/8/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e3d4"], "rule": "capture:d4"}]}},
+            {"t": "exam", "text": "les_59_5", "fen": "8/pp4k1/2p5/8/8/2P5/PP4K1/8 b - - 0 1",
+              "moves": {"steps": [{"accept": ["g7f6"], "rule": "king_center"}], "wrong": "les_59_5w"}},
+            {"t": "summary", "text": "les_59_6", "fen": "8/pp4k1/2p5/8/8/2P5/PP4K1/8 w - - 0 1", "marks": {"focus": ["d4", "e4", "d5", "e5"]}}
+          ]
+        },
+        {
+          "n": 60,
+          "title": "les_60_title",
+          "level": 3,
+          "screens": [
+            {"t": "talk", "text": "les_60_1", "fen": "8/8/8/8/1P3k2/8/8/7K b - - 0 1", "marks": {"focus": ["b4", "b5", "b6", "b7", "b8", "c4", "c5", "c6", "c7", "c8", "d4", "d5", "d6", "d7", "d8", "e4", "e5", "e6", "e7", "e8", "f4", "f5", "f6", "f7", "f8"]}},
+            {"t": "talk", "text": "les_60_2", "fen": "8/8/8/8/1P3k2/8/8/7K b - - 0 1", "demo": ["f4e5", "b4b5", "e5d6", "b5b6", "d6c6", "b6b7", "c6b7"]},
+            {"t": "talk", "text": "les_60_3", "fen": "8/8/8/8/7k/8/1P6/K7 w - - 0 1", "marks": {"focus": ["b3", "b8", "g8", "g3"]}},
+            {"t": "task", "text": "les_60_4", "fen": "8/8/8/8/P5k1/8/8/7K w - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 0, "fact": "sf_win", "wrong": "les_60_4w"}},
+            {"t": "task", "text": "les_60_5", "fen": "8/8/8/8/P7/5k2/8/7K b - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 1, "fact": "sf_win", "wrong": "les_60_5w"}},
+            {"t": "task", "text": "les_60_6", "fen": "8/8/8/8/1P6/6k1/8/7K b - - 0 1",
+              "moves": {"steps": [{"accept": ["g3f4"], "unique": true}], "wrong": "les_60_6w"}},
+            {"t": "exam", "text": "les_60_7", "fen": "7K/8/8/8/7k/8/1P6/8 b - - 0 1",
+              "moves": {"steps": [{"accept": ["h4g3", "h4g4", "h4g5"], "unique": true}], "wrong": "les_60_7w"}},
+            {"t": "summary", "text": "les_60_8", "fen": "8/8/8/8/1P3k2/8/8/7K b - - 0 1", "marks": {"focus": ["b4", "b5", "b6", "b7", "b8", "c4", "c5", "c6", "c7", "c8", "d4", "d5", "d6", "d7", "d8", "e4", "e5", "e6", "e7", "e8", "f4", "f5", "f6", "f7", "f8"]}}
+          ]
+        },
+        {
+          "n": 61,
+          "title": "les_61_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_61_1", "fen": "8/8/4k3/8/4K3/8/8/8 w - - 0 1", "marks": {"focus": ["e5"]}},
+            {"t": "talk", "text": "les_61_2", "fen": "8/8/4k3/8/8/4K3/8/8 w - - 0 1", "demo": ["e3e4", "e6d6", "e4f5"]},
+            {"t": "task", "text": "les_61_3", "fen": "8/8/4k3/8/8/4K3/8/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e3e4"], "rule": "opposition"}], "wrong": "les_61_3w"}},
+            {"t": "task", "text": "les_61_4", "fen": "8/8/8/3k4/8/4K3/8/8 b - - 0 1",
+              "moves": {"steps": [{"accept": ["d5e5"], "rule": "opposition"}], "wrong": "les_61_4w"}},
+            {"t": "task", "text": "les_61_5", "fen": "8/8/4k3/8/8/4K3/4P3/8 w - - 0 1",
+              "moves": {"steps": [{"accept": ["e3e4"], "rule": "opposition", "sf": true}], "wrong": "les_61_5w"}},
+            {"t": "exam", "text": "les_61_6", "fen": "8/8/4k3/8/8/4K3/4P3/8 w - - 0 1",
+              "play": {"goal": "promote", "limit": 16}},
+            {"t": "summary", "text": "les_61_7", "fen": "8/8/4k3/8/4K3/8/8/8 w - - 0 1", "marks": {"focus": ["e5"]}}
+          ]
+        },
+        {
+          "n": 62,
+          "title": "les_62_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_62_1", "fen": "8/8/3k4/8/3K4/8/3P4/8 w - - 0 1", "marks": {"good": ["d4"]}},
+            {"t": "talk", "text": "les_62_2", "fen": "4k3/8/4K3/4P3/8/8/8/8 b - - 0 1", "marks": {"good": ["e6"]}},
+            {"t": "talk", "text": "les_62_3", "fen": "7k/8/6K1/7P/8/8/8/8 b - - 0 1", "marks": {"focus": ["h8"]}},
+            {"t": "task", "text": "les_62_4", "fen": "8/8/4k3/8/4K3/4P3/8/8 w - - 0 1",
+              "quiz": {"options": ["les_q_yes", "les_q_no"], "answer": 1, "fact": "sf_win", "wrong": "les_62_4w"}},
+            {"t": "task", "text": "les_62_5", "fen": "4k3/8/4K3/4P3/8/8/8/8 w - - 0 1",
+              "play": {"goal": "promote", "limit": 10}},
+            {"t": "exam", "text": "les_62_6", "fen": "8/8/3k4/8/3K4/8/3P4/8 w - - 0 1",
+              "play": {"goal": "promote", "limit": 16}},
+            {"t": "summary", "text": "les_62_7", "fen": "4k3/8/4K3/4P3/8/8/8/8 b - - 0 1", "marks": {"good": ["e6"]}}
+          ]
+        },
+        {
+          "n": 63,
+          "title": "les_63_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_63_1", "fen": "1K6/1P1k4/8/8/8/8/r7/2R5 w - - 0 1", "marks": {"focus": ["b8"]}},
+            {"t": "talk", "text": "les_63_2", "fen": "1K6/1P1k4/8/8/8/8/r7/2R5 w - - 0 1", "demo": ["c1d1", "d7e7", "d1d4", "a2a1", "b8c7", "a1c1", "c7b6", "c1b1", "b6c6", "b1c1", "c6b5", "c1b1", "d4b4"]},
+            {"t": "task", "text": "les_63_3", "fen": "1K6/1P1k4/8/8/8/8/r7/2R5 w - - 0 1",
+              "moves": {"steps": [{"accept": ["c1d1"], "reply": "d7e7", "sf": true}, {"accept": ["d1d4"], "sf": true}], "wrong": "les_63_3w"}},
+            {"t": "task", "text": "les_63_4", "fen": "1K6/1P2k3/8/8/3R4/8/8/r7 w - - 4 3",
+              "moves": {"steps": [{"accept": ["b8c7"], "reply": "a1c1", "sf": true}, {"accept": ["c7b6"], "reply": "c1b1", "sf": true}, {"accept": ["b6c6"], "reply": "b1c1", "sf": true}, {"accept": ["c6b5"], "reply": "c1b1", "sf": true}, {"accept": ["d4b4"]}], "wrong": "les_63_4w"}},
+            {"t": "exam", "text": "les_63_5", "fen": "1K6/1P1k4/8/8/8/8/r7/2R5 w - - 0 1",
+              "play": {"goal": "promote", "limit": 16}},
+            {"t": "summary", "text": "les_63_6", "fen": "1K6/1P1k4/8/8/8/8/r7/2R5 w - - 0 1"}
+          ]
+        },
+        {
+          "n": 64,
+          "title": "les_64_title",
+          "level": 4,
+          "screens": [
+            {"t": "talk", "text": "les_64_1", "fen": "4k3/7R/r7/3KP3/8/8/8/8 b - - 0 1", "marks": {"focus": ["a6", "b6", "c6", "d6", "e6", "f6", "g6", "h6"]}},
+            {"t": "talk", "text": "les_64_2", "fen": "4k3/7R/r3P3/3K4/8/8/8/8 b - - 0 1", "demo": ["a6a1", "d5d6", "a1d1"]},
+            {"t": "task", "text": "les_64_3", "fen": "4k3/7R/8/4P3/4K3/8/r7/8 b - - 0 1",
+              "moves": {"steps": [{"accept": ["a2a6"], "sf": true}], "wrong": "les_64_3w"}},
+            {"t": "task", "text": "les_64_4", "fen": "4k3/7R/r3P3/3K4/8/8/8/8 b - - 0 1",
+              "moves": {"steps": [{"accept": ["a6a1"], "sf": true}], "wrong": "les_64_4w"}},
+            {"t": "exam", "text": "les_64_5", "fen": "4k3/7R/8/3KP3/8/8/r7/8 b - - 0 1",
+              "moves": {"steps": [{"accept": ["a2a6"], "reply": "e5e6", "sf": true}, {"accept": ["a6a1"], "sf": true}], "wrong": "les_64_5w"}},
+            {"t": "summary", "text": "les_64_6", "fen": "4k3/7R/r7/3KP3/8/8/8/8 b - - 0 1"}
+          ]
+        }
+      ]
+    }
+  ]
+}

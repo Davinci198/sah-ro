@@ -1,0 +1,2778 @@
+{
+ "les_10_1": {
+  "en": "This is how every game begins. Each side has 16 pieces: the pawns stand in front, the other pieces behind them.",
+  "ro": "Așa începe fiecare partidă. Fiecare tabără are 16 piese: pionii stau în față, celelalte piese în spatele lor."
+ },
+ "les_10_2": {
+  "en": "From the corners inward: rook, knight, bishop. Each side has two of each.",
+  "ro": "Din colțuri spre mijloc: turn, cal, nebun. Fiecare tabără are câte două din fiecare."
+ },
+ "les_10_3": {
+  "en": "The queen stands on her own colour: the white queen on light d1, the black queen on dark d8. The king stands next to her.",
+  "ro": "Dama stă pe culoarea ei: dama albă pe d1 alb, dama neagră pe d8 negru. Regele stă lângă ea."
+ },
+ "les_10_4": {
+  "en": "White always moves first. Then the players take turns, one move each.",
+  "ro": "Albul mută mereu primul. Apoi jucătorii mută pe rând, câte o mutare fiecare."
+ },
+ "les_10_5": {
+  "en": "The white queen is missing. Tap the square where she stands at the start.",
+  "ro": "Lipsește dama albă. Atinge câmpul pe care stă la început."
+ },
+ "les_10_6": {
+  "en": "Now the white king. Tap his starting square.",
+  "ro": "Acum regele alb. Atinge câmpul lui de start."
+ },
+ "les_10_7": {
+  "en": "\"Set up White's back rank. Tap the right square for each piece shown below the board.\"",
+  "ro": "Așază prima linie a Albului. Atinge câmpul potrivit pentru fiecare piesă arătată sub tablă."
+ },
+ "les_10_8": {
+  "en": "Rook, knight, bishop, queen, king, bishop, knight, rook. And the queen on her own colour. You are ready for the rules of the game!",
+  "ro": "Turn, cal, nebun, damă, rege, nebun, cal, turn. Și dama pe culoarea ei. Ești gata pentru regulile jocului!"
+ },
+ "les_10_title": {
+  "en": "Setting up the board",
+  "ro": "Așezarea pieselor"
+ },
+ "les_11_1": {
+  "en": "When a piece attacks the king, we say the king is in check. Here the white rook attacks the black king, so Black is in check.",
+  "ro": "Când o piesă atacă regele, spunem că regele este în șah. Aici turnul alb atacă regele negru, deci Negrul este în șah."
+ },
+ "les_11_2": {
+  "en": "A king in check must get out of check at once. Until it does, no other move is allowed.",
+  "ro": "Un rege în șah trebuie să iasă imediat din șah. Până atunci, nicio altă mutare nu este permisă."
+ },
+ "les_11_3": {
+  "en": "You may never put your own king in check. The white king may not step to e1 or e2, because the black rook attacks them.",
+  "ro": "Nu ai voie să-ți pui propriul rege în șah. Regele alb nu poate merge pe e1 sau e2, pentru că turnul negru le atacă."
+ },
+ "les_11_4": {
+  "en": "Give check with the rook.",
+  "ro": "Dă șah cu turnul."
+ },
+ "les_11_5": {
+  "en": "Give check with the queen. There are several ways, and any of them will do!",
+  "ro": "Dă șah cu dama. Sunt mai multe variante și oricare e bună!"
+ },
+ "les_11_6": {
+  "en": "Give check with the knight.",
+  "ro": "Dă șah cu calul."
+ },
+ "les_11_7": {
+  "en": "Only one of your moves gives check. Find it!",
+  "ro": "Doar una dintre mutările tale dă șah. Găsește-o!"
+ },
+ "les_11_8": {
+  "en": "Check means the king is attacked. The king must get out of check at once, and you may never put your own king in check.",
+  "ro": "Șah înseamnă că regele este atacat. Regele trebuie să iasă imediat din șah și nu ai voie niciodată să-ți pui propriul rege în șah."
+ },
+ "les_11_title": {
+  "en": "Check",
+  "ro": "Șahul"
+ },
+ "les_12_1": {
+  "en": "There are three ways to get out of check: move the king, block the attack, or capture the attacking piece.",
+  "ro": "Există trei moduri de a ieși din șah: muți regele, blochezi atacul sau capturezi piesa care atacă."
+ },
+ "les_12_2": {
+  "en": "One: move the king to a square that is not attacked. The whole e-file is attacked, so the king steps off it.",
+  "ro": "Unu: mută regele pe un câmp neatacat. Toată coloana e este atacată, deci regele iese de pe ea."
+ },
+ "les_12_3": {
+  "en": "\"Two: block the check by putting a piece between the attacker and the king. The bishop cuts the rook's line.\"",
+  "ro": "Doi: blochează șahul punând o piesă între atacator și rege. Nebunul taie linia turnului."
+ },
+ "les_12_4": {
+  "en": "Three: capture the attacking piece. Here the bishop simply takes the rook.",
+  "ro": "Trei: capturează piesa care atacă. Aici nebunul pur și simplu ia turnul."
+ },
+ "les_12_5": {
+  "en": "Your king is in check. Move it to a safe square.",
+  "ro": "Regele tău este în șah. Mută-l pe un câmp sigur."
+ },
+ "les_12_6": {
+  "en": "Block the check with the knight.",
+  "ro": "Blochează șahul cu calul."
+ },
+ "les_12_6w": {
+  "en": "That gets out of check too, but this time block it with the knight.",
+  "ro": "Și așa ieși din șah, dar de data asta blochează-l cu calul."
+ },
+ "les_12_7": {
+  "en": "Get out of check by capturing the rook.",
+  "ro": "Ieși din șah capturând turnul."
+ },
+ "les_12_7w": {
+  "en": "That stops the check too, but this time capture the rook.",
+  "ro": "Și așa oprești șahul, dar de data asta capturează turnul."
+ },
+ "les_12_8": {
+  "en": "Your king is in check and only one move helps. Find it!",
+  "ro": "Regele tău este în șah și doar o mutare ajută. Găsește-o!"
+ },
+ "les_12_9": {
+  "en": "\"To get out of check: move the king, block the check, or capture the attacker. A knight's check can never be blocked.\"",
+  "ro": "Ca să ieși din șah: muți regele, blochezi șahul sau capturezi atacatorul. Șahul dat de cal nu poate fi blocat niciodată."
+ },
+ "les_12_title": {
+  "en": "Getting out of check",
+  "ro": "Ieșirea din șah"
+ },
+ "les_13_1": {
+  "en": "Checkmate is a check with no way out: the king cannot escape, block or capture. Checkmate ends the game, and the side that gives it wins.",
+  "ro": "Matul este un șah fără scăpare: regele nu poate fugi, bloca sau captura. Matul încheie partida, iar cel care îl dă câștigă."
+ },
+ "les_13_2": {
+  "en": "Not every check is checkmate. Here the black king simply escapes to h7.",
+  "ro": "Nu orice șah este mat. Aici regele negru pur și simplu fuge pe h7."
+ },
+ "les_13_3": {
+  "en": "\"Watch White give checkmate: the rook checks along the back rank, and Black's own pawns block the king's escape.\"",
+  "ro": "Privește cum Albul dă mat: turnul dă șah pe ultima linie, iar propriii pioni ai Negrului blochează scăparea regelui."
+ },
+ "les_13_4": {
+  "en": "Is the black king checkmated?",
+  "ro": "Regele negru a primit mat?"
+ },
+ "les_13_5": {
+  "en": "And here: is the black king checkmated?",
+  "ro": "Și aici: regele negru a primit mat?"
+ },
+ "les_13_5w": {
+  "en": "Look again: the queen is not protected, so the king can capture it.",
+  "ro": "Uită-te din nou: dama nu este apărată, deci regele o poate captura."
+ },
+ "les_13_6": {
+  "en": "Give checkmate in one move.",
+  "ro": "Dă mat într-o mutare."
+ },
+ "les_13_7": {
+  "en": "Find the one move that gives checkmate.",
+  "ro": "Găsește singura mutare care dă mat."
+ },
+ "les_13_8": {
+  "en": "Checkmate: the king is in check and cannot escape, block or capture. That is how you win a game of chess!",
+  "ro": "Mat: regele este în șah și nu poate fugi, bloca sau captura. Așa câștigi o partidă de șah!"
+ },
+ "les_13_title": {
+  "en": "Checkmate",
+  "ro": "Șah-mat"
+ },
+ "les_14_1": {
+  "en": "Black is not in check, but every king move would walk into check, and there is no other move. That is stalemate: a draw!",
+  "ro": "Negrul nu este în șah, dar orice mutare a regelui l-ar pune în șah și nu există altă mutare. Acesta este pat: remiză!"
+ },
+ "les_14_2": {
+  "en": "Stalemate often happens by accident. White is a queen ahead, but watch one careless move turn a sure win into a draw.",
+  "ro": "Patul apare des din neatenție. Albul are o damă în plus, dar privește cum o mutare neglijentă transformă o victorie sigură în remiză."
+ },
+ "les_14_3": {
+  "en": "Checkmate: the king is in check and cannot get out. Stalemate: no check, but no legal move. Checkmate wins, stalemate is a draw.",
+  "ro": "Mat: regele este în șah și nu poate scăpa. Pat: nu e șah, dar nu există nicio mutare legală. Matul câștigă, patul e remiză."
+ },
+ "les_14_4": {
+  "en": "White is to move. What is it?",
+  "ro": "Albul la mutare. Ce este?"
+ },
+ "les_14_5": {
+  "en": "Black is to move. What is it?",
+  "ro": "Negrul la mutare. Ce este?"
+ },
+ "les_14_6": {
+  "en": "Black is to move. What is it?",
+  "ro": "Negrul la mutare. Ce este?"
+ },
+ "les_14_6w": {
+  "en": "Look again: the king is in check, but it can still escape to g8.",
+  "ro": "Uită-te din nou: regele este în șah, dar mai poate fugi pe g8."
+ },
+ "les_14_7": {
+  "en": "Black is to move. Checkmate, stalemate, or neither?",
+  "ro": "Negrul la mutare. Mat, pat sau niciunul?"
+ },
+ "les_14_8": {
+  "en": "No check and no legal move means stalemate, a draw. When you are winning, always leave the enemy king a move!",
+  "ro": "Fără șah și fără mutare legală înseamnă pat, adică remiză. Când câștigi, lasă mereu regelui advers o mutare!"
+ },
+ "les_14_title": {
+  "en": "Stalemate",
+  "ro": "Patul"
+ },
+ "les_15_1": {
+  "en": "Castling is a special move of the king and a rook. The king moves two squares toward the rook, and the rook jumps over it.",
+  "ro": "Rocada este o mutare specială a regelui și a unui turn. Regele se mută două câmpuri spre turn, iar turnul sare peste el."
+ },
+ "les_15_2": {
+  "en": "You can castle toward either rook. Toward the h-file rook it is called short castling, toward the a-file rook long castling.",
+  "ro": "Poți face rocadă spre oricare turn. Spre turnul de pe coloana h se numește rocadă mică, spre cel de pe coloana a, rocadă mare."
+ },
+ "les_15_3": {
+  "en": "Castling tucks the king away to safety and brings a rook toward the centre. To castle, simply move your king two squares.",
+  "ro": "Rocada pune regele la adăpost și aduce un turn spre centru. Pentru rocadă, mută pur și simplu regele două câmpuri."
+ },
+ "les_15_4": {
+  "en": "Castle short, toward the rook on h1.",
+  "ro": "Fă rocada mică, spre turnul de pe h1."
+ },
+ "les_15_4w": {
+  "en": "That was long castling. This time castle toward the rook on h1.",
+  "ro": "Aceea a fost rocada mare. De data asta fă rocadă spre turnul de pe h1."
+ },
+ "les_15_5": {
+  "en": "Now castle long, toward the rook on a1.",
+  "ro": "Acum fă rocada mare, spre turnul de pe a1."
+ },
+ "les_15_5w": {
+  "en": "That was short castling. This time castle toward the rook on a1.",
+  "ro": "Aceea a fost rocada mică. De data asta fă rocadă spre turnul de pe a1."
+ },
+ "les_15_6": {
+  "en": "Now you play Black. Castle long.",
+  "ro": "Acum joci cu negrele. Fă rocada mare."
+ },
+ "les_15_6w": {
+  "en": "That was short castling. Castle toward the rook on a8.",
+  "ro": "Aceea a fost rocada mică. Fă rocadă spre turnul de pe a8."
+ },
+ "les_15_7": {
+  "en": "Castling: the king moves two squares toward a rook, and the rook jumps over it. Short castling to the h-side, long to the a-side.",
+  "ro": "Rocada: regele se mută două câmpuri spre un turn, iar turnul sare peste el. Rocada mică spre h, cea mare spre a."
+ },
+ "les_15_title": {
+  "en": "Castling",
+  "ro": "Rocada"
+ },
+ "les_16_1": {
+  "en": "No castling if your king has already moved, or if that rook has moved, even if it later went back to its square.",
+  "ro": "Nu ai voie să faci rocadă dacă regele s-a mutat deja sau dacă acel turn s-a mutat, chiar dacă apoi s-a întors pe câmpul lui."
+ },
+ "les_16_10": {
+  "en": "No castling if the king or that rook has moved, while in check, or across an attacked square. An attacked rook, or b1, is no problem.",
+  "ro": "Fără rocadă dacă regele sau acel turn s-a mutat, dacă ești în șah sau peste un câmp atacat. Un turn atacat sau b1 nu contează."
+ },
+ "les_16_2": {
+  "en": "No castling while your king is in check.",
+  "ro": "Nu poți face rocadă cât timp regele este în șah."
+ },
+ "les_16_3": {
+  "en": "The king may not pass over or land on a square attacked by the opponent. Here the black rook attacks f1.",
+  "ro": "Regele nu poate trece peste un câmp atacat de adversar și nici nu poate ajunge pe el. Aici turnul negru atacă f1."
+ },
+ "les_16_4": {
+  "en": "All the squares between the king and the rook must be empty. Here the bishop is in the way.",
+  "ro": "Toate câmpurile dintre rege și turn trebuie să fie libere. Aici nebunul stă în cale."
+ },
+ "les_16_5": {
+  "en": "Can White castle short here?",
+  "ro": "Poate Albul să facă rocada mică aici?"
+ },
+ "les_16_6": {
+  "en": "The rook on h1 moved earlier in the game and came back. Can White castle short?",
+  "ro": "Turnul de pe h1 s-a mutat mai devreme în partidă și s-a întors. Poate Albul să facă rocada mică?"
+ },
+ "les_16_7": {
+  "en": "Can White castle short here?",
+  "ro": "Poate Albul să facă rocada mică aici?"
+ },
+ "les_16_7w": {
+  "en": "Look at the black bishop: it attacks f1, the square the king has to cross.",
+  "ro": "Privește nebunul negru: atacă f1, câmpul peste care trebuie să treacă regele."
+ },
+ "les_16_8": {
+  "en": "The black rook attacks the rook on a1. Can White castle long?",
+  "ro": "Turnul negru atacă turnul de pe a1. Poate Albul să facă rocada mare?"
+ },
+ "les_16_8w": {
+  "en": "\"Yes, you can! Only the king's squares matter. An attacked rook does not stop castling.\"",
+  "ro": "Da, poți! Contează doar câmpurile regelui. Un turn atacat nu împiedică rocada."
+ },
+ "les_16_9": {
+  "en": "Can White castle long here?",
+  "ro": "Poate Albul să facă rocada mare aici?"
+ },
+ "les_16_title": {
+  "en": "When you cannot castle",
+  "ro": "Când nu poți face rocadă"
+ },
+ "les_17_1": {
+  "en": "When a pawn reaches the last rank, it is promoted: it turns into a queen, rook, bishop or knight of its colour. You choose!",
+  "ro": "Când un pion ajunge pe ultima linie, este promovat: devine damă, turn, nebun sau cal de culoarea lui. Tu alegi!"
+ },
+ "les_17_2": {
+  "en": "You will almost always choose a queen, the strongest piece. That is how a player can end up with two queens, or even more.",
+  "ro": "Aproape mereu vei alege o damă, cea mai puternică piesă. Așa poate un jucător să ajungă la două dame sau chiar mai multe."
+ },
+ "les_17_3": {
+  "en": "A pawn can also promote with a capture, moving diagonally onto the last rank.",
+  "ro": "Un pion poate fi promovat și printr-o captură, mutând pe diagonală pe ultima linie."
+ },
+ "les_17_4": {
+  "en": "Promote your pawn.",
+  "ro": "Promovează pionul."
+ },
+ "les_17_5": {
+  "en": "Promote your pawn, in the best way.",
+  "ro": "Promovează pionul în cel mai bun mod."
+ },
+ "les_17_5w": {
+  "en": "That promotes too, but you could have captured the rook at the same time!",
+  "ro": "Și așa promovezi, dar puteai captura turnul în același timp!"
+ },
+ "les_17_6": {
+  "en": "Only one of your pawns can promote. Find it and promote it.",
+  "ro": "Doar unul dintre pionii tăi poate fi promovat. Găsește-l și promovează-l."
+ },
+ "les_17_7": {
+  "en": "Promote your pawn and give checkmate at the same time!",
+  "ro": "Promovează pionul și dă mat în același timp!"
+ },
+ "les_17_8": {
+  "en": "A pawn on the last rank becomes a queen, rook, bishop or knight, usually a queen. A new queen can decide the game!",
+  "ro": "Un pion pe ultima linie devine damă, turn, nebun sau cal, de obicei damă. O damă nouă poate decide partida!"
+ },
+ "les_17_title": {
+  "en": "Pawn promotion",
+  "ro": "Promovarea pionului"
+ },
+ "les_18_1": {
+  "en": "En passant is a special pawn capture. Watch: the black pawn moves two squares and lands right next to the white pawn.",
+  "ro": "En passant este o captură specială cu pionul. Privește: pionul negru avansează două câmpuri și ajunge chiar lângă pionul alb."
+ },
+ "les_18_2": {
+  "en": "Now the white pawn may capture it as if it had moved only one square: it goes to d6, the square the black pawn skipped.",
+  "ro": "Acum pionul alb îl poate captura ca și cum s-ar fi mutat doar un câmp: merge pe d6, câmpul sărit de pionul negru."
+ },
+ "les_18_3": {
+  "en": "Now or never! En passant is allowed only right after the double step. One move later, the chance is gone.",
+  "ro": "Acum ori niciodată! En passant e permis doar imediat după pasul dublu. O mutare mai târziu, ocazia a trecut."
+ },
+ "les_18_4": {
+  "en": "The black pawn has just moved from d7 to d5. Capture it en passant!",
+  "ro": "Pionul negru tocmai a mutat de pe d7 pe d5. Capturează-l en passant!"
+ },
+ "les_18_5": {
+  "en": "The black pawn has just moved from a7 to a5. Capture it en passant!",
+  "ro": "Pionul negru tocmai a mutat de pe a7 pe a5. Capturează-l en passant!"
+ },
+ "les_18_6": {
+  "en": "This black pawn reached d5 a few moves ago. Can White capture it en passant now?",
+  "ro": "Acest pion negru a ajuns pe d5 acum câteva mutări. Poate Albul să-l captureze en passant acum?"
+ },
+ "les_18_6w": {
+  "en": "Not any more: en passant is possible only right after the double step.",
+  "ro": "Nu mai poate: en passant e posibil doar imediat după pasul dublu."
+ },
+ "les_18_7": {
+  "en": "The black pawn has just moved two squares and it gives check! Get out of check by capturing it.",
+  "ro": "Pionul negru tocmai a avansat două câmpuri și dă șah! Ieși din șah capturându-l."
+ },
+ "les_18_7w": {
+  "en": "The king could step away, but this time capture the checking pawn.",
+  "ro": "Regele s-ar putea da la o parte, dar de data asta capturează pionul care dă șah."
+ },
+ "les_18_8": {
+  "en": "En passant: right after an enemy pawn moves two squares past your pawn, you may capture it as if it had moved only one.",
+  "ro": "En passant: imediat după ce un pion advers trece două câmpuri pe lângă pionul tău, îl poți captura ca și cum ar fi mutat doar unul."
+ },
+ "les_18_title": {
+  "en": "En passant",
+  "ro": "En passant"
+ },
+ "les_19_1": {
+  "en": "If no one can possibly checkmate, the game is a draw. King against king, or king and bishop against king, can never win.",
+  "ro": "Dacă nimeni nu poate da mat, partida este remiză. Rege contra rege sau rege și nebun contra rege nu pot câștiga niciodată."
+ },
+ "les_19_2": {
+  "en": "If the same position appears three times, the game is a draw by repetition. Watch the knights go back and forth.",
+  "ro": "Dacă aceeași poziție apare de trei ori, partida este remiză prin repetiție. Privește caii mergând înainte și înapoi."
+ },
+ "les_19_3": {
+  "en": "If both sides make 50 moves without a single capture or pawn move, the game is a draw too.",
+  "ro": "Dacă ambele tabere fac 50 de mutări fără nicio captură și nicio mutare de pion, partida este tot remiză."
+ },
+ "les_19_4": {
+  "en": "And the players can always simply agree to a draw.",
+  "ro": "Iar jucătorii pot oricând să cadă de acord asupra remizei."
+ },
+ "les_19_5": {
+  "en": "King and knight against king. Can anyone still win this game?",
+  "ro": "Rege și cal contra rege. Mai poate cineva câștiga această partidă?"
+ },
+ "les_19_6": {
+  "en": "King and rook against king. Can anyone still win this game?",
+  "ro": "Rege și turn contra rege. Mai poate cineva câștiga această partidă?"
+ },
+ "les_19_7": {
+  "en": "King, bishop and knight against king. Can anyone still win this game?",
+  "ro": "Rege, nebun și cal contra rege. Mai poate cineva câștiga această partidă?"
+ },
+ "les_19_8": {
+  "en": "Draws: stalemate, too little material to checkmate, threefold repetition, the 50-move rule, or agreement.",
+  "ro": "Remize: pat, material insuficient pentru mat, repetarea poziției de trei ori, regula celor 50 de mutări sau acord."
+ },
+ "les_19_title": {
+  "en": "Other draws",
+  "ro": "Alte remize"
+ },
+ "les_1_1": {
+  "en": "This is a chessboard. It has 64 squares: 32 light and 32 dark. Two players sit on opposite sides: White and Black.",
+  "ro": "Aceasta este tabla de șah. Are 64 de câmpuri: 32 albe și 32 negre. Doi jucători stau față în față: Albul și Negrul."
+ },
+ "les_1_10": {
+  "en": "Remember: 64 squares, light square on the right. Ranks run across, files run up and down, diagonals run at a slant.",
+  "ro": "Reține: 64 de câmpuri, câmp alb la dreapta. Liniile merg orizontal, coloanele vertical, iar diagonalele oblic."
+ },
+ "les_1_2": {
+  "en": "Always put the board so that each player has a light square in the right-hand corner. Easy to remember: light on the right!",
+  "ro": "Așază mereu tabla astfel încât fiecare jucător să aibă un câmp alb în colțul din dreapta. Ușor de reținut: alb la dreapta!"
+ },
+ "les_1_3": {
+  "en": "A row of squares running from left to right is called a rank. The blue squares form one rank.",
+  "ro": "Un rând de câmpuri de la stânga la dreapta se numește linie. Câmpurile albastre formează o linie."
+ },
+ "les_1_4": {
+  "en": "A column of squares running up and down is called a file. The blue squares form one file.",
+  "ro": "Un șir de câmpuri de jos în sus se numește coloană. Câmpurile albastre formează o coloană."
+ },
+ "les_1_5": {
+  "en": "Squares of the same colour that touch at the corners form a diagonal, like the blue line from corner to corner.",
+  "ro": "Câmpurile de aceeași culoare care se ating prin colțuri formează o diagonală, ca linia albastră de la un colț la altul."
+ },
+ "les_1_6": {
+  "en": "Your turn! Tap one of the two light corner squares.",
+  "ro": "E rândul tău! Atinge unul dintre cele două câmpuri albe din colțuri."
+ },
+ "les_1_7": {
+  "en": "Tap any other square on the same rank as the blue square.",
+  "ro": "Atinge orice alt câmp de pe aceeași linie cu câmpul albastru."
+ },
+ "les_1_8": {
+  "en": "Now tap any other square on the same file as the blue square.",
+  "ro": "Acum atinge orice alt câmp de pe aceeași coloană cu câmpul albastru."
+ },
+ "les_1_9": {
+  "en": "Tap all the squares of the diagonal that starts in the blue corner.",
+  "ro": "Atinge toate câmpurile diagonalei care pornește din colțul albastru."
+ },
+ "les_1_title": {
+  "en": "The chessboard",
+  "ro": "Tabla de șah"
+ },
+ "les_20_1": {
+  "en": "Every move has a short name: the piece and the square it goes to. The knight goes to f3, so this move is ♘f3.",
+  "ro": "Fiecare mutare are un nume scurt: piesa și câmpul pe care merge. Calul merge pe f3, deci mutarea este ♘f3."
+ },
+ "les_20_10": {
+  "en": "Play ♘bd2 (Nbd2 in letters).",
+  "ro": "Joacă ♘bd2 (Nbd2 cu litere)."
+ },
+ "les_20_10w": {
+  "en": "♘bd2 means: the knight from the b-file goes to d2. That is the knight on b1.",
+  "ro": "♘bd2 înseamnă: calul de pe coloana b merge pe d2. Este calul de pe b1."
+ },
+ "les_20_11": {
+  "en": "A move is the piece and its square: ♘f3 or Nf3. x captures, + check, # checkmate, O-O castling, e8=♕ promotion.",
+  "ro": "O mutare este piesa și câmpul ei: ♘f3 sau Nf3. x captură, + șah, # mat, O-O rocadă, e8=♕ promovare."
+ },
+ "les_20_2": {
+  "en": "Pieces are written as symbols ♔ ♕ ♖ ♗ ♘ or as letters K Q R B N. ♘f3 and Nf3 mean the same. A pawn gets no mark: this move is e4.",
+  "ro": "Piesele se scriu cu simbolurile ♔ ♕ ♖ ♗ ♘ sau cu literele K Q R B N. ♘f3 și Nf3 înseamnă același lucru. Pionul nu are semn: mutarea este e4."
+ },
+ "les_20_3": {
+  "en": "In the game history this app shows the symbols. Websites often use the letters, and some books use letters from their own language.",
+  "ro": "În istoricul partidei, aplicația arată simbolurile. Site-urile folosesc des literele, iar unele cărți folosesc litere din limba lor."
+ },
+ "les_20_4": {
+  "en": "Which move does the arrow show?",
+  "ro": "Ce mutare arată săgeata?"
+ },
+ "les_20_4a": {
+  "en": "♘f3",
+  "ro": ""
+ },
+ "les_20_4b": {
+  "en": "♘g1",
+  "ro": ""
+ },
+ "les_20_4c": {
+  "en": "♗f3",
+  "ro": ""
+ },
+ "les_20_4w": {
+  "en": "The arrow starts at the knight on g1 and ends on f3. Write the piece and the square it goes to: ♘f3.",
+  "ro": "Săgeata pornește de la calul de pe g1 și se oprește pe f3. Scrie piesa și câmpul pe care merge: ♘f3."
+ },
+ "les_20_5": {
+  "en": "Play ♗c4 (Bc4 in letters).",
+  "ro": "Joacă ♗c4 (Bc4 cu litere)."
+ },
+ "les_20_5w": {
+  "en": "♗c4 means: the bishop goes to c4. Move the bishop from f1 to c4.",
+  "ro": "♗c4 înseamnă: nebunul merge pe c4. Mută nebunul de pe f1 pe c4."
+ },
+ "les_20_6": {
+  "en": "\"A capture adds an x: ♘xe5 means the knight captures on e5. A pawn capture starts with the pawn's file: dxe5.\"",
+  "ro": "La captură se adaugă un x: ♘xe5 înseamnă că calul capturează pe e5. Captura cu pionul începe cu coloana pionului: dxe5."
+ },
+ "les_20_7": {
+  "en": "Play dxe5.",
+  "ro": "Joacă dxe5."
+ },
+ "les_20_7w": {
+  "en": "dxe5 is a pawn capture: the pawn from the d-file captures on e5.",
+  "ro": "dxe5 este o captură cu pionul: pionul de pe coloana d capturează pe e5."
+ },
+ "les_20_8": {
+  "en": "Castling kingside is written O-O, queenside O-O-O. A check adds +, a checkmate #, and a promotion looks like e8=♕.",
+  "ro": "Rocada mică se scrie O-O, rocada mare O-O-O. Șahul adaugă +, matul #, iar promovarea arată așa: e8=♕."
+ },
+ "les_20_9": {
+  "en": "Both knights can go to d2. Add the file the knight starts from: ♘bd2 or ♘fd2.",
+  "ro": "Ambii cai pot merge pe d2. Adaugă coloana de pe care pleacă calul: ♘bd2 sau ♘fd2."
+ },
+ "les_20_title": {
+  "en": "Writing down moves",
+  "ro": "Notarea mutărilor"
+ },
+ "les_21_1": {
+  "en": "Two rooks checkmate easily. One rook guards a rank, the other checks on the next one. Here the b7 rook guards the 7th rank.",
+  "ro": "Două turnuri dau mat ușor. Un turn păzește o linie, celălalt dă șah pe următoarea. Aici turnul de pe b7 păzește linia a 7-a."
+ },
+ "les_21_2": {
+  "en": "From the middle, use the ladder: the rooks take turns checking, one rank higher each time, and push the king to the edge.",
+  "ro": "Din mijloc, folosește scara: turnurile dau șah pe rând, cu o linie mai sus de fiecare dată, și împing regele spre margine."
+ },
+ "les_21_3": {
+  "en": "Careful: the king will try to attack your rooks. If it comes close, move the threatened rook far away along its rank.",
+  "ro": "Atenție: regele va încerca să-ți atace turnurile. Dacă se apropie, mută turnul amenințat departe, de-a lungul liniei lui."
+ },
+ "les_21_4": {
+  "en": "Now you: checkmate the black king with your two rooks. The computer defends!",
+  "ro": "Acum tu: dă mat regelui negru cu cele două turnuri. Computerul se apără!"
+ },
+ "les_21_5": {
+  "en": "Checkmate again. Remember the ladder: one rook cuts off, the other checks.",
+  "ro": "Dă mat din nou. Amintește-ți scara: un turn taie drumul, celălalt dă șah."
+ },
+ "les_21_6": {
+  "en": "Checkmate the king from the middle of the board.",
+  "ro": "Dă mat regelui din mijlocul tablei."
+ },
+ "les_21_7": {
+  "en": "Two rooks mate by climbing a ladder: one cuts off a rank, the other checks on the next. Keep them away from the king!",
+  "ro": "Două turnuri dau mat urcând pe o scară: unul taie o linie, celălalt dă șah pe următoarea. Ține-le departe de rege!"
+ },
+ "les_21_title": {
+  "en": "Checkmate with two rooks",
+  "ro": "Matul cu două turnuri"
+ },
+ "les_22_1": {
+  "en": "A queen alone cannot checkmate: it needs help from its king. First the queen boxes the enemy king in, then your king walks up.",
+  "ro": "Dama singură nu poate da mat: are nevoie de ajutorul regelui ei. Întâi dama închide regele advers, apoi regele tău se apropie."
+ },
+ "les_22_2": {
+  "en": "The finish: the queen checks right next to the enemy king, and your king protects it, so the queen cannot be captured.",
+  "ro": "Finalul: dama dă șah chiar lângă regele advers, iar regele tău o apără, așa că dama nu poate fi capturată."
+ },
+ "les_22_3": {
+  "en": "Here the queen on g7 covers every escape, and the white king guards the queen. That is checkmate!",
+  "ro": "Aici dama de pe g7 acoperă orice scăpare, iar regele alb apără dama. Acesta este mat!"
+ },
+ "les_22_4": {
+  "en": "Checkmate with the queen and king. The computer defends!",
+  "ro": "Dă mat cu dama și regele. Computerul se apără!"
+ },
+ "les_22_5": {
+  "en": "Checkmate once more. Box the king in with the queen, then bring your king closer.",
+  "ro": "Încă un mat. Închide regele cu dama, apoi apropie-ți regele."
+ },
+ "les_22_6": {
+  "en": "Checkmate with the queen and king, from the middle of the board.",
+  "ro": "Dă mat cu dama și regele, din mijlocul tablei."
+ },
+ "les_22_7": {
+  "en": "Queen mate: the queen boxes the king in and drives it to the edge, your king comes closer, and the protected queen mates.",
+  "ro": "Matul cu dama: dama închide regele și îl împinge spre margine, regele tău se apropie, iar dama apărată dă mat."
+ },
+ "les_22_title": {
+  "en": "Checkmate with the queen",
+  "ro": "Matul cu dama"
+ },
+ "les_23_1": {
+  "en": "A queen up and about to win… Watch what happens after this careless queen move.",
+  "ro": "O damă în plus și victoria aproape… Privește ce se întâmplă după această mutare neglijentă a damei."
+ },
+ "les_23_2": {
+  "en": "The black king has no square and is not in check: stalemate, a draw! Before each move, check that the enemy king can still move.",
+  "ro": "Regele negru nu are niciun câmp și nu este în șah: pat, remiză! Înainte de fiecare mutare, verifică dacă regele advers se mai poate mișca."
+ },
+ "les_23_3": {
+  "en": "Give checkmate here, not stalemate!",
+  "ro": "Dă mat aici, nu pat!"
+ },
+ "les_23_4": {
+  "en": "Give checkmate here, not stalemate!",
+  "ro": "Dă mat aici, nu pat!"
+ },
+ "les_23_5": {
+  "en": "Right now the black king has no free square. Every king move would be stalemate, so make a queen move that gives it room.",
+  "ro": "Chiar acum regele negru nu are niciun câmp liber. Orice mutare de rege ar fi pat, așa că fă o mutare cu dama care îi lasă loc."
+ },
+ "les_23_6": {
+  "en": "Checkmate the king, and watch out for stalemate!",
+  "ro": "Dă mat regelui și ai grijă la pat!"
+ },
+ "les_23_7": {
+  "en": "Before every move ask: can the enemy king still move? If not, and it is not check, it is stalemate. Give it room until you mate.",
+  "ro": "Înainte de fiecare mutare întreabă-te: se mai poate mișca regele advers? Dacă nu și nu e șah, e pat. Lasă-i loc până dai mat."
+ },
+ "les_23_title": {
+  "en": "Beware of stalemate",
+  "ro": "Atenție la pat"
+ },
+ "les_23_w": {
+  "en": "Stalemate! The black king would have no move and not be in check: a draw. Try another move.",
+  "ro": "Pat! Regele negru n-ar avea nicio mutare și nu ar fi în șah: remiză. Încearcă altă mutare."
+ },
+ "les_24_1": {
+  "en": "Mating with one rook takes patience. First cut the king off: here the rook on the d-file keeps it on the left side of the board.",
+  "ro": "Matul cu un singur turn cere răbdare. Întâi taie drumul regelui: aici turnul de pe coloana d îl ține în partea stângă a tablei."
+ },
+ "les_24_2": {
+  "en": "The final picture: the two kings face each other with one square between them, and the rook checks along the edge.",
+  "ro": "Imaginea finală: cei doi regi stau față în față, cu un câmp între ei, iar turnul dă șah de-a lungul marginii."
+ },
+ "les_24_3": {
+  "en": "If the kings do not face each other, make a waiting move with the rook. The king must step in front of yours, and then comes mate.",
+  "ro": "Dacă regii nu stau față în față, fă o mutare de așteptare cu turnul. Regele trebuie să iasă în fața regelui tău, și atunci vine matul."
+ },
+ "les_24_4": {
+  "en": "Plan: cut off the king with the rook, walk your king up, and squeeze the enemy king to the edge. It may take 15 moves or more.",
+  "ro": "Plan: taie regele cu turnul, adu-ți regele și strânge regele advers spre margine. Poate dura 15 mutări sau mai mult."
+ },
+ "les_24_5": {
+  "en": "The king is already on the edge. Checkmate it!",
+  "ro": "Regele este deja pe margine. Dă-i mat!"
+ },
+ "les_24_6": {
+  "en": "Checkmate with the rook and king. The computer defends!",
+  "ro": "Dă mat cu turnul și regele. Computerul se apără!"
+ },
+ "les_24_7": {
+  "en": "Checkmate with the rook and king, from the middle of the board. Take your time!",
+  "ro": "Dă mat cu turnul și regele, din mijlocul tablei. Nu te grăbi!"
+ },
+ "les_24_8": {
+  "en": "Rook mate: cut the king off, bring your king up, and when the kings face each other, check along the edge. Patience wins!",
+  "ro": "Matul cu turnul: taie regele, adu-ți regele, iar când regii stau față în față, dă șah pe margine. Răbdarea câștigă!"
+ },
+ "les_24_title": {
+  "en": "Checkmate with a rook",
+  "ro": "Matul cu turnul"
+ },
+ "les_25_1": {
+  "en": "Pieces are worth different amounts. Count in pawns: pawn 1, knight 3, bishop 3, rook 5, queen 9. The king is priceless.",
+  "ro": "Piesele valorează diferit. Numără în pioni: pion 1, cal 3, nebun 3, turn 5, damă 9. Regele este de neprețuit."
+ },
+ "les_25_2": {
+  "en": "Values help you judge a capture. Here a knight (3) captures a rook (5) for free: White gains 5 points.",
+  "ro": "Valorile te ajută să judeci o captură. Aici un cal (3) capturează un turn (5) gratis: Albul câștigă 5 puncte."
+ },
+ "les_25_3": {
+  "en": "\"Add up the values to compare material. The side with more material usually wins, so don't give pieces away!\"",
+  "ro": "Adună valorile ca să compari materialul. Tabăra cu mai mult material câștigă de obicei, așa că nu da piese degeaba!"
+ },
+ "les_25_4": {
+  "en": "Two captures are possible. Take the more valuable piece.",
+  "ro": "Sunt posibile două capturi. Ia piesa mai valoroasă."
+ },
+ "les_25_4w": {
+  "en": "That pawn is worth only 1, and the rook would take your knight back. The rook on d5 is worth 5!",
+  "ro": "Pionul acela valorează doar 1, iar turnul ți-ar lua calul înapoi. Turnul de pe d5 valorează 5!"
+ },
+ "les_25_5": {
+  "en": "Which capture gains the most? Take it.",
+  "ro": "Care captură câștigă cel mai mult? Fă-o."
+ },
+ "les_25_5w": {
+  "en": "A rook is worth 5, but the queen is worth 9. Take the queen!",
+  "ro": "Un turn valorează 5, dar dama valorează 9. Ia dama!"
+ },
+ "les_25_6": {
+  "en": "White has a rook. Black has a knight and a bishop. Who has more material?",
+  "ro": "Albul are un turn. Negrul are un cal și un nebun. Cine are mai mult material?"
+ },
+ "les_25_6w": {
+  "en": "Count: rook 5 for White, knight 3 + bishop 3 = 6 for Black.",
+  "ro": "Numără: turn 5 pentru Alb, cal 3 + nebun 3 = 6 pentru Negru."
+ },
+ "les_25_7": {
+  "en": "Your pawn can capture a rook or a queen. Choose the better capture.",
+  "ro": "Pionul tău poate captura un turn sau o damă. Alege captura mai bună."
+ },
+ "les_25_7w": {
+  "en": "The rook is worth 5, but the queen is worth 9. Take the queen!",
+  "ro": "Turnul valorează 5, dar dama valorează 9. Ia dama!"
+ },
+ "les_25_8": {
+  "en": "Pawn 1, knight 3, bishop 3, rook 5, queen 9. Use these numbers to decide which captures and trades are good for you.",
+  "ro": "Pion 1, cal 3, nebun 3, turn 5, damă 9. Folosește aceste numere ca să decizi ce capturi și schimburi îți sunt favorabile."
+ },
+ "les_25_title": {
+  "en": "The value of the pieces",
+  "ro": "Valoarea pieselor"
+ },
+ "les_26_1": {
+  "en": "A piece that is attacked and not protected is hanging. You can capture it for free, like this knight.",
+  "ro": "O piesă atacată și neapărată este „în priză”. O poți captura gratis, ca pe acest cal."
+ },
+ "les_26_2": {
+  "en": "Check your own pieces too! This white knight is attacked by the rook and nobody protects it. Move it or protect it.",
+  "ro": "Verifică și propriile piese! Acest cal alb este atacat de turn și nimeni nu-l apără. Mută-l sau apără-l."
+ },
+ "les_26_3": {
+  "en": "One black piece is hanging. Capture it!",
+  "ro": "O piesă neagră este neapărată. Captureaz-o!"
+ },
+ "les_26_3w": {
+  "en": "That knight was protected by the pawn: you would lose your queen for it. Look for the piece that nobody protects.",
+  "ro": "Calul acela era apărat de pion: ți-ai pierde dama pentru el. Caută piesa pe care nu o apără nimeni."
+ },
+ "les_26_4": {
+  "en": "Capture the hanging piece with your knight.",
+  "ro": "Capturează piesa neapărată cu calul."
+ },
+ "les_26_4w": {
+  "en": "That bishop was protected by a pawn, so you only traded. The rook is completely free!",
+  "ro": "Nebunul acela era apărat de un pion, deci doar ai făcut un schimb. Turnul este complet liber!"
+ },
+ "les_26_5": {
+  "en": "Your knight is attacked by the rook. Move it to a safe square.",
+  "ro": "Calul tău este atacat de turn. Mută-l pe un câmp sigur."
+ },
+ "les_26_5w": {
+  "en": "\"Your knight is still attacked. Move the knight away from the rook's file.\"",
+  "ro": "Calul tău este încă atacat. Scoate calul de pe coloana turnului."
+ },
+ "les_26_6": {
+  "en": "Only one black piece is hanging and within your reach. Capture it!",
+  "ro": "Doar o piesă neagră este neapărată și la îndemâna ta. Captureaz-o!"
+ },
+ "les_26_6w": {
+  "en": "That piece was protected, so the capture loses material. Find the black piece that nobody protects.",
+  "ro": "Piesa aceea era apărată, deci captura pierde material. Găsește piesa neagră pe care nu o apără nimeni."
+ },
+ "les_26_7": {
+  "en": "\"Before every move, look for hanging pieces: take the opponent's for free, and never leave your own unprotected.\"",
+  "ro": "Înainte de fiecare mutare, caută piese neapărate: ia-le gratis pe ale adversarului și nu le lăsa niciodată pe ale tale neapărate."
+ },
+ "les_26_title": {
+  "en": "Hanging pieces",
+  "ro": "Piese neapărate"
+ },
+ "les_27_1": {
+  "en": "Before capturing, count. The d5 pawn is attacked twice (knight and bishop) and defended once (by the knight on f6).",
+  "ro": "Înainte să capturezi, numără. Pionul d5 este atacat de două ori (cal și nebun) și apărat o dată (de calul de pe f6)."
+ },
+ "les_27_2": {
+  "en": "Two attackers against one defender: White captures, Black captures back, and White captures again. White wins a pawn!",
+  "ro": "Doi atacatori contra unui apărător: Albul capturează, Negrul recapturează, iar Albul capturează din nou. Albul câștigă un pion!"
+ },
+ "les_27_3": {
+  "en": "Values matter too. Never capture a defended pawn with your queen: after the pawn takes back, you lose 9 points for 1.",
+  "ro": "Contează și valorile. Nu captura niciodată un pion apărat cu dama: după ce pionul recapturează, pierzi 9 puncte pentru 1."
+ },
+ "les_27_4": {
+  "en": "Does capturing the e5 pawn win material for White?",
+  "ro": "Câștigă Albul material dacă ia pionul e5?"
+ },
+ "les_27_4w": {
+  "en": "Count again: two white attackers against one defender. White wins the pawn.",
+  "ro": "Numără din nou: doi atacatori albi contra unui apărător. Albul câștigă pionul."
+ },
+ "les_27_5": {
+  "en": "Does capturing the e5 pawn with the knight win material?",
+  "ro": "Câștigă material captura pionului e5 cu calul?"
+ },
+ "les_27_5w": {
+  "en": "The d6 pawn defends e5. After it takes back, you give a knight (3) for a pawn (1).",
+  "ro": "Pionul d6 apără e5. După ce recapturează, dai un cal (3) pe un pion (1)."
+ },
+ "les_27_6": {
+  "en": "Win the d5 pawn. Count the attackers and defenders first!",
+  "ro": "Câștigă pionul d5. Numără întâi atacatorii și apărătorii!"
+ },
+ "les_27_7": {
+  "en": "Win a pawn with a capture, but choose the right piece!",
+  "ro": "Câștigă un pion printr-o captură, dar alege piesa potrivită!"
+ },
+ "les_27_7w": {
+  "en": "Not with the queen! The knight takes back, and you lose your queen for a pawn. Capture with a cheaper piece.",
+  "ro": "Nu cu dama! Calul recapturează și îți pierzi dama pe un pion. Capturează cu o piesă mai ieftină."
+ },
+ "les_27_8": {
+  "en": "Count attackers and defenders before capturing, and capture with your cheapest piece first. More attackers wins the fight.",
+  "ro": "Numără atacatorii și apărătorii înainte de captură și capturează întâi cu piesa cea mai ieftină. Mai mulți atacatori câștigă lupta."
+ },
+ "les_27_title": {
+  "en": "Attack and defence",
+  "ro": "Atac și apărare"
+ },
+ "les_28_1": {
+  "en": "A trade: you capture a piece and your opponent takes back a piece of the same value. Here a bishop (3) goes for a knight (3).",
+  "ro": "Un schimb: capturezi o piesă, iar adversarul îți ia înapoi o piesă de aceeași valoare. Aici un nebun (3) se dă pe un cal (3)."
+ },
+ "les_28_2": {
+  "en": "When you are ahead in material, trade pieces! The fewer pieces are left, the easier your extra material wins.",
+  "ro": "Când ai material în plus, schimbă piese! Cu cât rămân mai puține piese, cu atât materialul în plus câștigă mai ușor."
+ },
+ "les_28_3": {
+  "en": "Giving a knight or bishop (3) for a rook (5) is called winning the exchange. White comes out 2 points ahead.",
+  "ro": "Să dai un cal sau un nebun (3) pe un turn (5) se numește câștigarea calității. Albul iese cu 2 puncte în avantaj."
+ },
+ "les_28_4": {
+  "en": "White is a rook ahead. Trade the queens!",
+  "ro": "Albul are un turn în plus. Schimbă damele!"
+ },
+ "les_28_4w": {
+  "en": "Look at the queens facing each other on the d-file. Capture the black queen: Black takes back and the queens are gone.",
+  "ro": "Privește damele față în față pe coloana d. Capturează dama neagră: Negrul recapturează și damele dispar."
+ },
+ "les_28_5": {
+  "en": "\"Win the exchange: give your bishop for Black's rook.\"",
+  "ro": "Câștigă calitatea: dă-ți nebunul pe turnul Negrului."
+ },
+ "les_28_6": {
+  "en": "If White captures the rook with the knight and Black takes back, does White come out ahead?",
+  "ro": "Dacă Albul capturează turnul cu calul și Negrul recapturează, iese Albul în avantaj?"
+ },
+ "les_28_6w": {
+  "en": "Yes! White gives a knight (3) and gets a rook (5): that is winning the exchange.",
+  "ro": "Da! Albul dă un cal (3) și primește un turn (5): asta înseamnă câștigarea calității."
+ },
+ "les_28_7": {
+  "en": "White has extra pawns. Trade the rooks!",
+  "ro": "Albul are pioni în plus. Schimbă turnurile!"
+ },
+ "les_28_7w": {
+  "en": "Capture the rook on a8. The king takes back, and with the rooks gone, your extra pawns decide the game.",
+  "ro": "Capturează turnul de pe a8. Regele recapturează, iar fără turnuri pionii tăi în plus decid partida."
+ },
+ "les_28_8": {
+  "en": "Even trades keep the balance. When you are ahead, trade pieces. A minor piece for a rook wins the exchange.",
+  "ro": "Schimburile egale păstrează echilibrul. Când ești în avantaj, schimbă piese. O piesă ușoară pe un turn înseamnă câștigarea calității."
+ },
+ "les_28_title": {
+  "en": "Trading pieces",
+  "ro": "Schimbul de piese"
+ },
+ "les_29_1": {
+  "en": "\"Before every move, ask: what does my opponent's last move threaten? Watch Black's bishop.\"",
+  "ro": "Înainte de fiecare mutare întreabă-te: ce amenință ultima mutare a adversarului? Urmărește nebunul negru."
+ },
+ "les_29_2": {
+  "en": "\"The bishop attacks the knight, and nothing defends it. If you don't react, you lose a piece for nothing.\"",
+  "ro": "Nebunul atacă calul și nimic nu-l apără. Dacă nu reacționezi, pierzi o piesă degeaba."
+ },
+ "les_29_3": {
+  "en": "Black just pushed a pawn. Tap the piece it attacks.",
+  "ro": "Negrul tocmai a împins un pion. Atinge piesa pe care o atacă."
+ },
+ "les_29_3w": {
+  "en": "The e5 pawn attacks d4 and f4. Your knight on d4 is attacked, and nothing protects it.",
+  "ro": "Pionul de pe e5 atacă d4 și f4. Calul tău de pe d4 este atacat și nimic nu-l apără."
+ },
+ "les_29_4": {
+  "en": "Save the knight: move it to a square where it is safe.",
+  "ro": "Salvează calul: mută-l pe un câmp unde este în siguranță."
+ },
+ "les_29_4w": {
+  "en": "The knight is still in danger there. Choose a square that no black piece or pawn attacks.",
+  "ro": "Acolo calul e tot în pericol. Alege un câmp pe care nu-l atacă nicio piesă sau pion negru."
+ },
+ "les_29_5": {
+  "en": "A threat can also be checkmate. The rook on e8 wants to go to e1, and your king has no escape square.",
+  "ro": "O amenințare poate fi și de mat. Turnul de pe e8 vrea să meargă pe e1, iar regele tău nu are câmp de scăpare."
+ },
+ "les_29_6": {
+  "en": "Stop the checkmate!",
+  "ro": "Oprește matul!"
+ },
+ "les_29_6w": {
+  "en": "The rook would still give checkmate on e1. Make an escape square for your king, or block the e-file with your knight.",
+  "ro": "Turnul ar da tot mat pe e1. Fă un câmp de scăpare pentru rege sau blochează coloana e cu calul."
+ },
+ "les_29_7": {
+  "en": "\"Black's queen just jumped to h4. What does it threaten? Answer the threat!\"",
+  "ro": "Dama neagră tocmai a sărit pe h4. Ce amenință? Răspunde la amenințare!"
+ },
+ "les_29_7w": {
+  "en": "The queen and the bishop on d6 both aim at h2: taking on h2 is checkmate. Guard h2 or block the bishop, without giving away material.",
+  "ro": "Dama și nebunul de pe d6 țintesc amândoi h2: captura pe h2 e mat. Apără h2 sau blochează nebunul, fără să dai material."
+ },
+ "les_29_8": {
+  "en": "\"Before every move ask: what did my opponent's move attack? Is there a checkmate threat? Answer the threat first.\"",
+  "ro": "Înainte de fiecare mutare întreabă-te: ce a atacat mutarea adversarului? Există amenințare de mat? Răspunde întâi la amenințare."
+ },
+ "les_29_title": {
+  "en": "What is your opponent threatening?",
+  "ro": "Ce amenință adversarul?"
+ },
+ "les_2_1": {
+  "en": "Look at the edge of the board. The files are marked with letters from a to h, and the ranks with numbers from 1 to 8.",
+  "ro": "Privește marginea tablei. Coloanele sunt notate cu litere de la a la h, iar liniile cu cifre de la 1 la 8."
+ },
+ "les_2_2": {
+  "en": "Every square has a name: its letter and then its number. The blue square is on file e and rank 4, so it is called e4.",
+  "ro": "Fiecare câmp are un nume: litera sa, apoi cifra. Câmpul albastru este pe coloana e și linia 4, deci se numește e4."
+ },
+ "les_2_3": {
+  "en": "The bottom-left corner is a1 and the top-right corner is h8. White always starts on the side of rank 1.",
+  "ro": "Colțul din stânga jos este a1, iar cel din dreapta sus este h8. Albul pornește mereu din partea liniei 1."
+ },
+ "les_2_4": {
+  "en": "Tap the square d5.",
+  "ro": "Atinge câmpul d5."
+ },
+ "les_2_5": {
+  "en": "Tap the square h3.",
+  "ro": "Atinge câmpul h3."
+ },
+ "les_2_6": {
+  "en": "Tap the square c7.",
+  "ro": "Atinge câmpul c7."
+ },
+ "les_2_7": {
+  "en": "Tap five squares, one after another, without a mistake.",
+  "ro": "Atinge cinci câmpuri, unul după altul, fără nicio greșeală."
+ },
+ "les_2_7a": {
+  "en": "First square: tap b6.",
+  "ro": "Primul câmp: atinge b6."
+ },
+ "les_2_7b": {
+  "en": "Second square: tap f2.",
+  "ro": "Al doilea câmp: atinge f2."
+ },
+ "les_2_7c": {
+  "en": "Third square: tap g7.",
+  "ro": "Al treilea câmp: atinge g7."
+ },
+ "les_2_7d": {
+  "en": "Fourth square: tap a4.",
+  "ro": "Al patrulea câmp: atinge a4."
+ },
+ "les_2_7e": {
+  "en": "Last one: tap e5.",
+  "ro": "Ultimul: atinge e5."
+ },
+ "les_2_8": {
+  "en": "Letter first, then number: e4, a1, h8. From now on we will call squares by their names.",
+  "ro": "Întâi litera, apoi cifra: e4, a1, h8. De acum vom numi câmpurile după numele lor."
+ },
+ "les_2_title": {
+  "en": "Names of the squares",
+  "ro": "Numele câmpurilor"
+ },
+ "les_30_1": {
+  "en": "The four squares in the middle, d4, e4, d5 and e5, are the center. Whoever controls the center controls the game.",
+  "ro": "Cele patru câmpuri din mijloc, d4, e4, d5 și e5, formează centrul. Cine controlează centrul controlează partida."
+ },
+ "les_30_2": {
+  "en": "\"That's why most games start with a pawn to the center. The pawn takes space and opens lines for the queen and a bishop.\"",
+  "ro": "De aceea majoritatea partidelor încep cu un pion în centru. Pionul ia spațiu și deschide drumul damei și unui nebun."
+ },
+ "les_30_3": {
+  "en": "Pieces are stronger in the center too. A knight on e5 reaches 8 squares, a knight in the corner only 2.",
+  "ro": "Și piesele sunt mai puternice în centru. Un cal pe e5 ajunge pe 8 câmpuri, un cal în colț doar pe 2."
+ },
+ "les_30_4": {
+  "en": "Make a good first move: push a pawn to the center.",
+  "ro": "Fă o primă mutare bună: împinge un pion în centru."
+ },
+ "les_30_4w": {
+  "en": "Push the e-pawn or the d-pawn two squares, right into the center.",
+  "ro": "Împinge pionul e sau pionul d două câmpuri, chiar în centru."
+ },
+ "les_30_5": {
+  "en": "Black played quietly. Put a second pawn in the center!",
+  "ro": "Negrul a jucat liniștit. Pune un al doilea pion în centru!"
+ },
+ "les_30_5w": {
+  "en": "Your e4 pawn has a free neighbor square: d4. Push the d-pawn there.",
+  "ro": "Pionul tău de pe e4 are un câmp vecin liber: d4. Împinge acolo pionul d."
+ },
+ "les_30_6": {
+  "en": "You play Black. White took the center. Answer with a pawn to the center!",
+  "ro": "Joci cu negrele. Albul a ocupat centrul. Răspunde cu un pion în centru!"
+ },
+ "les_30_6w": {
+  "en": "Push your e-pawn or d-pawn two squares to fight for the center.",
+  "ro": "Împinge pionul e sau pionul d două câmpuri ca să lupți pentru centru."
+ },
+ "les_30_7": {
+  "en": "Start with pawns in the center, then bring your pieces toward it. A piece in the center controls more squares.",
+  "ro": "Începe cu pioni în centru, apoi adu-ți piesele spre el. O piesă în centru controlează mai multe câmpuri."
+ },
+ "les_30_title": {
+  "en": "The center",
+  "ro": "Centrul"
+ },
+ "les_31_1": {
+  "en": "Developing means bringing knights and bishops off the back rank. Here both sides develop a knight and a bishop.",
+  "ro": "Dezvoltarea înseamnă să scoți caii și nebunii de pe prima linie. Aici ambele tabere dezvoltă un cal și un nebun."
+ },
+ "les_31_2": {
+  "en": "Aim your pieces at the center and at the enemy king. The bishop on c4 eyes f7, a weak square guarded only by the king.",
+  "ro": "Îndreaptă-ți piesele spre centru și spre regele advers. Nebunul de pe c4 țintește f7, un câmp slab păzit doar de rege."
+ },
+ "les_31_3": {
+  "en": "Develop a new piece with each move. Moving the same piece twice lets your opponent get ahead.",
+  "ro": "Dezvoltă o piesă nouă la fiecare mutare. Dacă muți aceeași piesă de două ori, adversarul te depășește."
+ },
+ "les_31_4": {
+  "en": "Develop a knight toward the center.",
+  "ro": "Dezvoltă un cal spre centru."
+ },
+ "les_31_4w": {
+  "en": "Play the knight toward the center: to f3 or c3. From there it controls central squares.",
+  "ro": "Joacă un cal spre centru: pe f3 sau c3. De acolo controlează câmpurile centrale."
+ },
+ "les_31_5": {
+  "en": "Develop your bishop to an active square.",
+  "ro": "Dezvoltă nebunul pe un câmp activ."
+ },
+ "les_31_5w": {
+  "en": "Bring the bishop from f1 to a square where it attacks: c4 or b5.",
+  "ro": "Du nebunul de pe f1 pe un câmp de unde atacă: c4 sau b5."
+ },
+ "les_31_6": {
+  "en": "\"Two white pieces are out. Develop a piece that hasn't moved yet.\"",
+  "ro": "Două piese albe sunt deja ieșite. Dezvoltă o piesă care încă nu s-a mutat."
+ },
+ "les_31_6w": {
+  "en": "\"Bring out a piece that hasn't moved: the knight on b1. The bishop on c1 is still blocked by the d-pawn.\"",
+  "ro": "Scoate o piesă care nu s-a mutat: calul de pe b1. Nebunul de pe c1 este încă blocat de pionul d."
+ },
+ "les_31_7": {
+  "en": "You play Black. Your e5 pawn is attacked. Defend it by developing a piece.",
+  "ro": "Joci cu negrele. Pionul tău de pe e5 este atacat. Apără-l dezvoltând o piesă."
+ },
+ "les_31_7w": {
+  "en": "Protect e5 with a move that also develops: the knight on b8 can do it.",
+  "ro": "Apără e5 cu o mutare care și dezvoltă: calul de pe b8 o poate face."
+ },
+ "les_31_8": {
+  "en": "Knights and bishops out early, toward the center, one new piece per move. The side that develops faster gets to attack.",
+  "ro": "Caii și nebunii ies devreme, spre centru, câte o piesă nouă pe mutare. Cine se dezvoltă mai repede ajunge să atace."
+ },
+ "les_31_title": {
+  "en": "Developing pieces",
+  "ro": "Dezvoltarea pieselor"
+ },
+ "les_32_1": {
+  "en": "In the center, the king is in danger once lines open. Castle early: the king hides behind pawns, and a rook joins the game.",
+  "ro": "În centru, regele este în pericol când se deschid liniile. Fă rocadă devreme: regele se ascunde după pioni, iar un turn intră în joc."
+ },
+ "les_32_2": {
+  "en": "\"The pawns in front of a castled king are its shield. Don't push them without a good reason.\"",
+  "ro": "Pionii din fața regelui după rocadă sunt scutul lui. Nu-i împinge fără un motiv serios."
+ },
+ "les_32_3": {
+  "en": "Castle your king to safety.",
+  "ro": "Pune-ți regele la adăpost prin rocadă."
+ },
+ "les_32_4": {
+  "en": "You play Black. Castle your king to safety.",
+  "ro": "Joci cu negrele. Pune-ți regele la adăpost prin rocadă."
+ },
+ "les_32_5": {
+  "en": "\"Your kingside pieces haven't moved. Castle on the other side!\"",
+  "ro": "Piesele de pe flancul regelui nu s-au mutat. Fă rocadă pe cealaltă parte!"
+ },
+ "les_32_6": {
+  "en": "You play Black. Castle! Only one side is possible.",
+  "ro": "Joci cu negrele. Fă rocadă! E posibilă doar pe o parte."
+ },
+ "les_32_7": {
+  "en": "Castle early, usually on the kingside, and keep the pawns in front of your king. A safe king lets you attack without worry.",
+  "ro": "Fă rocadă devreme, de obicei pe flancul regelui, și păstrează pionii din fața regelui. Un rege sigur te lasă să ataci fără griji."
+ },
+ "les_32_title": {
+  "en": "A safe king",
+  "ro": "Un rege în siguranță"
+ },
+ "les_33_1": {
+  "en": "Bringing the queen out early is risky. Here Black develops a knight and attacks the queen at the same time.",
+  "ro": "Să scoți dama devreme e riscant. Aici Negrul dezvoltă un cal și atacă dama în același timp."
+ },
+ "les_33_2": {
+  "en": "Now White must move the queen again, and Black develops once more. Every move spent running away is a move lost.",
+  "ro": "Acum Albul trebuie să mute iar dama, iar Negrul se dezvoltă din nou. Fiecare mutare de fugă este o mutare pierdută."
+ },
+ "les_33_3": {
+  "en": "Other mistakes: moving the same piece twice, grabbing pawns while pieces sleep, forgetting to castle. Develop first!",
+  "ro": "Alte greșeli: muți aceeași piesă de două ori, iei pioni cât piesele dorm, uiți de rocadă. Întâi dezvoltarea!"
+ },
+ "les_33_4": {
+  "en": "Your queen is attacked. Move it to a safe square.",
+  "ro": "Dama ta este atacată. Mut-o pe un câmp sigur."
+ },
+ "les_33_4w": {
+  "en": "\"Your queen isn't safe there. Retreat it to a square where Black can't attack it, like e3 or d3.\"",
+  "ro": "Dama nu e în siguranță acolo. Retrage-o pe un câmp unde Negrul n-o poate ataca, de exemplu e3 sau d3."
+ },
+ "les_33_5": {
+  "en": "\"Black's queen came out early. Develop a piece and attack the queen!\"",
+  "ro": "Dama Negrului a ieșit devreme. Dezvoltă o piesă și atacă dama!"
+ },
+ "les_33_5w": {
+  "en": "Find a developing move that attacks the queen. The knight on b1 can do it.",
+  "ro": "Găsește o mutare de dezvoltare care atacă dama. Calul de pe b1 o poate face."
+ },
+ "les_33_6": {
+  "en": "\"You play Black. White's queen came out early. Develop a piece and attack it!\"",
+  "ro": "Joci cu negrele. Dama Albului a ieșit devreme. Dezvoltă o piesă și atac-o!"
+ },
+ "les_33_6w": {
+  "en": "Develop the knight from b8 to c6: it attacks the queen on d4.",
+  "ro": "Dezvoltă calul de pe b8 pe c6: atacă dama de pe d4."
+ },
+ "les_33_7": {
+  "en": "\"Keep the queen at home early on, develop a new piece every move and castle. When your opponent doesn't, punish it!\"",
+  "ro": "Ține dama acasă la început, dezvoltă o piesă nouă la fiecare mutare și fă rocadă. Când adversarul nu face asta, pedepsește-l!"
+ },
+ "les_33_title": {
+  "en": "Opening mistakes",
+  "ro": "Greșeli în deschidere"
+ },
+ "les_34_1": {
+  "en": "\"Scholar's mate: the queen and bishop both aim at f7, which only the king guards. If Black doesn't notice, the queen mates.\"",
+  "ro": "Matul ciobanului: dama și nebunul țintesc amândoi f7, pe care îl păzește doar regele. Dacă Negrul nu observă, dama dă mat."
+ },
+ "les_34_2": {
+  "en": "\"Fool's mate is the fastest mate of all. White weakened the king by pushing the f- and g-pawns.\"",
+  "ro": "Matul prostului este cel mai rapid mat dintre toate. Albul și-a slăbit regele împingând pionii f și g."
+ },
+ "les_34_3": {
+  "en": "When the queen and bishop both attack f7, defend! After every move of your opponent, ask: what does it threaten?",
+  "ro": "Când dama și nebunul atacă amândoi f7, apără-te! După fiecare mutare a adversarului, întreabă-te: ce amenință?"
+ },
+ "les_34_4": {
+  "en": "You play Black. White threatens mate on f7. Stop it without losing material!",
+  "ro": "Joci cu negrele. Albul amenință mat pe f7. Oprește-l fără să pierzi material!"
+ },
+ "les_34_4w": {
+  "en": "\"Guard f7 with the queen (e7, f6) or the knight (h6), or block the queen with g6. Don't lose material!\"",
+  "ro": "Apără f7 cu dama (e7, f6) sau cu calul (h6) ori blochează dama cu g6. Nu pierde material!"
+ },
+ "les_34_5": {
+  "en": "Black missed the threat. Checkmate in one move!",
+  "ro": "Negrul a scăpat amenințarea. Mat într-o mutare!"
+ },
+ "les_34_6": {
+  "en": "You play Black. White weakened the king. Checkmate in one move!",
+  "ro": "Joci cu negrele. Albul și-a slăbit regele. Mat într-o mutare!"
+ },
+ "les_34_7": {
+  "en": "You play Black. White threatens mate. Stop it without losing material!",
+  "ro": "Joci cu negrele. Albul amenință mat. Oprește-l fără să pierzi material!"
+ },
+ "les_34_7w": {
+  "en": "The queen on f3 and the bishop on c4 both hit f7. Guard f7 or block the queen.",
+  "ro": "Dama de pe f3 și nebunul de pe c4 lovesc amândoi f7. Apără f7 sau blochează dama."
+ },
+ "les_34_8": {
+  "en": "Queen and bishop against f7 is a common trap. Spot the threat and defend, and the early queen becomes a target.",
+  "ro": "Dama și nebunul contra f7 sunt o capcană frecventă. Vezi amenințarea și apără-te, iar dama ieșită devreme devine o țintă."
+ },
+ "les_34_title": {
+  "en": "\"Scholar's mate\"",
+  "ro": "Matul ciobanului"
+ },
+ "les_35_1": {
+  "en": "Before every move, look at the forcing moves: checks, captures and threats. Your opponent must answer them.",
+  "ro": "Înainte de fiecare mutare, privește mutările forțate: șahuri, capturi și amenințări. Adversarul trebuie să le răspundă."
+ },
+ "les_35_2": {
+  "en": "Here the check achieves nothing, but the capture wins a rook for free. Compare all forcing moves, then choose.",
+  "ro": "Aici șahul nu aduce nimic, dar captura câștigă gratis un turn. Compară toate mutările forțate, apoi alege."
+ },
+ "les_35_3": {
+  "en": "A threat attacks something. Here the pawn attacks the knight: if Black ignores it, White captures the knight next move.",
+  "ro": "O amenințare atacă ceva. Aici pionul atacă calul: dacă Negrul o ignoră, Albul ia calul la mutarea următoare."
+ },
+ "les_35_4": {
+  "en": "Give a check with any piece.",
+  "ro": "Dă șah cu orice piesă."
+ },
+ "les_35_5": {
+  "en": "Look at every capture. Find the one that wins material.",
+  "ro": "Privește fiecare captură. Găsește-o pe cea care câștigă material."
+ },
+ "les_35_5w": {
+  "en": "That piece was protected, so you only traded or lost material. One black piece is not protected at all.",
+  "ro": "Piesa aceea era apărată, deci doar ai schimbat sau ai pierdut material. O piesă neagră nu este apărată deloc."
+ },
+ "les_35_6": {
+  "en": "Look at every check. Find a checkmate!",
+  "ro": "Privește fiecare șah. Găsește un mat!"
+ },
+ "les_35_6w": {
+  "en": "\"Not mate. Look for a check along the back rank, where the black king can't escape.\"",
+  "ro": "Nu e mat. Caută un șah pe ultima linie, de unde regele negru nu poate scăpa."
+ },
+ "les_35_7": {
+  "en": "Checks, captures, threats. Find the capture that wins the most.",
+  "ro": "Șahuri, capturi, amenințări. Găsește captura care câștigă cel mai mult."
+ },
+ "les_35_7w": {
+  "en": "Check every capture. The black queen on d5 is attacked and not protected!",
+  "ro": "Verifică fiecare captură. Dama neagră de pe d5 este atacată și neapărată!"
+ },
+ "les_35_8": {
+  "en": "Checks, captures and threats first! Look at all of them, for you and for your opponent, before every move.",
+  "ro": "Întâi șahuri, capturi și amenințări! Privește-le pe toate, ale tale și ale adversarului, înainte de fiecare mutare."
+ },
+ "les_35_title": {
+  "en": "Checks, captures and threats",
+  "ro": "Șahuri, capturi și amenințări"
+ },
+ "les_36_1": {
+  "en": "A double attack hits two targets with one move. Your opponent can save only one. Here the queen checks and attacks the knight.",
+  "ro": "Un atac dublu lovește două ținte cu o singură mutare. Adversarul poate salva doar una. Aici dama dă șah și atacă calul."
+ },
+ "les_36_2": {
+  "en": "Any piece can double attack, even a pawn. This pawn attacks both knights: a pawn fork.",
+  "ro": "Orice piesă poate face atac dublu, chiar și un pion. Acest pion atacă ambii cai: o furculiță de pion."
+ },
+ "les_36_3": {
+  "en": "The black rook is not protected. Attack it together with the king!",
+  "ro": "Turnul negru nu este apărat. Atacă-l odată cu regele!"
+ },
+ "les_36_3w": {
+  "en": "Find a queen move that gives check and attacks the rook on a8 at the same time.",
+  "ro": "Găsește o mutare de damă care dă șah și atacă în același timp turnul de pe a8."
+ },
+ "les_36_4": {
+  "en": "Attack both black pieces with your rook.",
+  "ro": "Atacă ambele piese negre cu turnul."
+ },
+ "les_36_4w": {
+  "en": "Put the rook on the fifth rank, where it attacks both the knight and the bishop.",
+  "ro": "Pune turnul pe linia a cincea, de unde atacă și calul, și nebunul."
+ },
+ "les_36_5": {
+  "en": "You play Black. Fork two white pieces with a pawn!",
+  "ro": "Joci cu negrele. Fă o furculiță cu pionul pe două piese albe!"
+ },
+ "les_36_5w": {
+  "en": "Push the d-pawn: from d4 it attacks both c3 and e3.",
+  "ro": "Împinge pionul d: de pe d4 atacă atât c3, cât și e3."
+ },
+ "les_36_6": {
+  "en": "Win the black rook with a double attack.",
+  "ro": "Câștigă turnul negru cu un atac dublu."
+ },
+ "les_36_6w": {
+  "en": "Give a check that also attacks the rook on a5.",
+  "ro": "Dă un șah care atacă și turnul de pe a5."
+ },
+ "les_36_7": {
+  "en": "A double attack hits two targets at once. Checks are the best double attacks: the king must move, and you take the other piece.",
+  "ro": "Un atac dublu lovește două ținte deodată. Șahurile sunt cele mai bune atacuri duble: regele trebuie să fugă, iar tu iei cealaltă piesă."
+ },
+ "les_36_title": {
+  "en": "Double attack",
+  "ro": "Atacul dublu"
+ },
+ "les_37_1": {
+  "en": "Knights are great at forks. Here the knight checks the king and attacks the rook at the same time.",
+  "ro": "Caii sunt maeștri ai furculiței. Aici calul dă șah regelui și atacă turnul în același timp."
+ },
+ "les_37_2": {
+  "en": "\"A knight's attack can't be blocked. Look for a square where your knight would attack two valuable pieces.\"",
+  "ro": "Atacul calului nu poate fi blocat. Caută un câmp de unde calul tău ar ataca două piese valoroase."
+ },
+ "les_37_3": {
+  "en": "Fork the king and the queen!",
+  "ro": "Fă furculiță pe rege și damă!"
+ },
+ "les_37_3w": {
+  "en": "Find a knight square that attacks both g8 and c8.",
+  "ro": "Găsește un câmp pentru cal care atacă atât g8, cât și c8."
+ },
+ "les_37_4": {
+  "en": "Fork both black rooks.",
+  "ro": "Fă furculiță pe ambele turnuri negre."
+ },
+ "les_37_4w": {
+  "en": "From d5 the knight attacks both b6 and f6.",
+  "ro": "De pe d5 calul atacă atât b6, cât și f6."
+ },
+ "les_37_5": {
+  "en": "You play Black. Fork the king and the queen!",
+  "ro": "Joci cu negrele. Fă furculiță pe rege și damă!"
+ },
+ "les_37_5w": {
+  "en": "Find a knight check that also attacks the queen on c3.",
+  "ro": "Găsește un șah cu calul care atacă și dama de pe c3."
+ },
+ "les_37_6": {
+  "en": "Win the black rook with a knight fork.",
+  "ro": "Câștigă turnul negru cu o furculiță de cal."
+ },
+ "les_37_6w": {
+  "en": "Look for a knight check that also attacks the rook on b8.",
+  "ro": "Caută un șah cu calul care atacă și turnul de pe b8."
+ },
+ "les_37_7": {
+  "en": "\"Knight forks are sneaky: the attack can't be blocked. Watch for squares that attack the king, queen and rooks at once.\"",
+  "ro": "Furculițele cu calul sunt perfide: atacul nu poate fi blocat. Caută câmpuri care atacă deodată regele, dama și turnurile."
+ },
+ "les_37_title": {
+  "en": "Knight forks",
+  "ro": "Furculița cu calul"
+ },
+ "les_38_1": {
+  "en": "\"A pin: a piece can't move because a more valuable piece stands behind it. With the king behind, moving is illegal.\"",
+  "ro": "Legarea: o piesă nu se poate muta pentru că în spatele ei stă o piesă mai valoroasă. Cu regele în spate, mutarea e ilegală."
+ },
+ "les_38_2": {
+  "en": "With a queen or rook behind, the pinned piece may move, but then the piece behind it is lost.",
+  "ro": "Cu o damă sau un turn în spate, piesa legată se poate muta, dar atunci piesa din spatele ei se pierde."
+ },
+ "les_38_3": {
+  "en": "\"It is Black's move. Can the knight on c6 move?\"",
+  "ro": "Este mutarea Negrului. Se poate muta calul de pe c6?"
+ },
+ "les_38_3w": {
+  "en": "The knight is pinned: if it moved, the bishop would attack the king. That is illegal.",
+  "ro": "Calul este legat: dacă s-ar muta, nebunul ar ataca regele. Asta e ilegal."
+ },
+ "les_38_4": {
+  "en": "Pin the knight to the black king.",
+  "ro": "Leagă calul de regele negru."
+ },
+ "les_38_4w": {
+  "en": "Put your bishop on the diagonal that runs through the knight to the king on e8.",
+  "ro": "Pune nebunul pe diagonala care trece prin cal spre regele de pe e8."
+ },
+ "les_38_5": {
+  "en": "Pin the black queen to its king!",
+  "ro": "Leagă dama neagră de regele ei!"
+ },
+ "les_38_5w": {
+  "en": "Find a bishop square on the diagonal from f7 to g8. The pawn on b3 protects it.",
+  "ro": "Găsește un câmp pentru nebun pe diagonala de la f7 la g8. Pionul de pe b3 îl apără."
+ },
+ "les_38_6": {
+  "en": "Win the black queen with a pin.",
+  "ro": "Câștigă dama neagră printr-o legare."
+ },
+ "les_38_6w": {
+  "en": "\"Put the rook on the e-file, next to your king. The queen can't leave the line to the black king.\"",
+  "ro": "Pune turnul pe coloana e, lângă regele tău. Dama nu poate părăsi linia spre regele negru."
+ },
+ "les_38_7": {
+  "en": "A pinned piece is stuck. Pin pieces to the king or queen, and never leave your own pieces in front of your king.",
+  "ro": "O piesă legată e blocată. Leagă piese de rege sau de damă și nu-ți lăsa niciodată piesele în fața regelui."
+ },
+ "les_38_title": {
+  "en": "The pin",
+  "ro": "Legarea"
+ },
+ "les_39_1": {
+  "en": "\"A pinned piece can't run away. Attack it again, best with a pawn, and it is lost.\"",
+  "ro": "O piesă legată nu poate fugi. Atac-o încă o dată, cel mai bine cu un pion, și e pierdută."
+ },
+ "les_39_2": {
+  "en": "\"A pinned piece also can't defend. It seems to guard squares, but it isn't allowed to capture on them.\"",
+  "ro": "O piesă legată nici nu poate apăra. Pare că păzește câmpuri, dar nu are voie să captureze pe ele."
+ },
+ "les_39_3": {
+  "en": "The knight is pinned to the king. Attack it with a pawn!",
+  "ro": "Calul este legat de rege. Atacă-l cu un pion!"
+ },
+ "les_39_3w": {
+  "en": "\"Push the e-pawn: it attacks the pinned knight, which can't escape.\"",
+  "ro": "Împinge pionul e: atacă calul legat, care nu poate scăpa."
+ },
+ "les_39_4": {
+  "en": "\"You play Black. White's knight is pinned. Attack it with a pawn!\"",
+  "ro": "Joci cu negrele. Calul Albului este legat. Atacă-l cu un pion!"
+ },
+ "les_39_4w": {
+  "en": "Push the d-pawn to d4 to attack the pinned knight on c3.",
+  "ro": "Împinge pionul d pe d4 ca să ataci calul legat de pe c3."
+ },
+ "les_39_5": {
+  "en": "The pinned knight only seems to guard e5. Win the bishop!",
+  "ro": "Calul legat doar pare că păzește e5. Câștigă nebunul!"
+ },
+ "les_39_6": {
+  "en": "Win the pinned knight.",
+  "ro": "Câștigă calul legat."
+ },
+ "les_39_6w": {
+  "en": "The knight on e5 is pinned by your rook. Attack it with a pawn.",
+  "ro": "Calul de pe e5 este legat de turnul tău. Atacă-l cu un pion."
+ },
+ "les_39_7": {
+  "en": "\"Attack a pinned piece again, ideally with a pawn. And remember: a pinned piece doesn't really defend anything.\"",
+  "ro": "Atacă din nou o piesă legată, ideal cu un pion. Și ține minte: o piesă legată nu apără de fapt nimic."
+ },
+ "les_39_title": {
+  "en": "Attacking a pinned piece",
+  "ro": "Atacul piesei legate"
+ },
+ "les_3_1": {
+  "en": "This is the rook. It moves in a straight line, up, down, left or right, as many squares as it likes. The dots show where it can go.",
+  "ro": "Acesta este turnul. Se mută în linie dreaptă, în sus, în jos, la stânga sau la dreapta, oricâte câmpuri. Punctele arată unde poate merge."
+ },
+ "les_3_2": {
+  "en": "The rook cannot jump over other pieces. Here the white pawn blocks its way up.",
+  "ro": "Turnul nu poate sări peste alte piese. Aici pionul alb îi blochează drumul în sus."
+ },
+ "les_3_3": {
+  "en": "To capture, move onto the square of an enemy piece. The enemy piece leaves the board. You can never capture your own pieces.",
+  "ro": "Ca să capturezi, mută pe câmpul unei piese adverse. Piesa adversă iese de pe tablă. Nu poți captura niciodată propriile piese."
+ },
+ "les_3_4": {
+  "en": "Collect the stars! Move the rook onto each star. You have 2 moves.",
+  "ro": "Adună stelele! Mută turnul pe fiecare stea. Ai 2 mutări."
+ },
+ "les_3_5": {
+  "en": "Collect all three stars in 3 moves.",
+  "ro": "Adună toate cele trei stele în 3 mutări."
+ },
+ "les_3_6": {
+  "en": "Your pawn is in the way. Get the star in 3 moves.",
+  "ro": "Pionul tău îți stă în cale. Ia steaua în 3 mutări."
+ },
+ "les_3_7": {
+  "en": "Capture all the black pawns in 3 moves.",
+  "ro": "Capturează toți pionii negri în 3 mutări."
+ },
+ "les_3_8": {
+  "en": "The rook moves in straight lines, as far as it likes, and captures the same way. It cannot jump.",
+  "ro": "Turnul se mută în linie dreaptă, oricât de departe, și capturează la fel. Nu poate sări."
+ },
+ "les_3_title": {
+  "en": "The rook",
+  "ro": "Turnul"
+ },
+ "les_40_1": {
+  "en": "A skewer (or X-ray attack) is a pin in reverse: the valuable piece is in front. When it moves away, you take the piece behind.",
+  "ro": "Atacul în raze X (frigăruia) este o legare inversă: piesa valoroasă e în față. Când se mută, iei piesa din spate."
+ },
+ "les_40_2": {
+  "en": "Skewers are strongest with a check: the king must step aside, and the piece behind it falls.",
+  "ro": "Atacul în raze X e cel mai puternic cu șah: regele trebuie să se dea la o parte, iar piesa din spatele lui cade."
+ },
+ "les_40_3": {
+  "en": "Skewer the king and win the rook.",
+  "ro": "Atacă regele în raze X și câștigă turnul."
+ },
+ "les_40_3w": {
+  "en": "Check the king along the fifth rank. The rook on a5 stands behind it.",
+  "ro": "Dă șah regelui pe linia a cincea. Turnul de pe a5 stă în spatele lui."
+ },
+ "les_40_4": {
+  "en": "Skewer the two black rooks with your bishop.",
+  "ro": "Atacă în raze X cele două turnuri negre cu nebunul."
+ },
+ "les_40_4w": {
+  "en": "Attack the rook on c6 along the long diagonal: the other rook is right behind it.",
+  "ro": "Atacă turnul de pe c6 pe diagonala mare: celălalt turn este chiar în spatele lui."
+ },
+ "les_40_5": {
+  "en": "You play Black. Skewer the king and the queen!",
+  "ro": "Joci cu negrele. Atacă în raze X regele și dama!"
+ },
+ "les_40_5w": {
+  "en": "Check the king along the second rank. The queen on b2 is behind it.",
+  "ro": "Dă șah regelui pe linia a doua. Dama de pe b2 este în spatele lui."
+ },
+ "les_40_6": {
+  "en": "Win the black rook with a skewer.",
+  "ro": "Câștigă turnul negru cu un atac în raze X."
+ },
+ "les_40_6w": {
+  "en": "Check the king with the bishop on the diagonal that leads to g8.",
+  "ro": "Dă șah regelui cu nebunul pe diagonala care duce la g8."
+ },
+ "les_40_7": {
+  "en": "Skewer: attack a valuable piece that has another piece behind it. With a check, the win is guaranteed.",
+  "ro": "Raze X: atacă o piesă valoroasă care are altă piesă în spate. Cu șah, câștigul este garantat."
+ },
+ "les_40_title": {
+  "en": "The skewer",
+  "ro": "Atacul în raze X"
+ },
+ "les_41_1": {
+  "en": "A discovered attack: one piece moves and uncovers an attack by the piece behind it. Two attacks with one move!",
+  "ro": "Atacul la descoperire: o piesă se mută și descoperă atacul piesei din spatele ei. Două atacuri dintr-o mutare!"
+ },
+ "les_41_2": {
+  "en": "The strongest kind is a discovered check. The king must be saved, so the moving piece can grab anything.",
+  "ro": "Cel mai puternic este șahul la descoperire. Regele trebuie salvat, așa că piesa mutată poate lua orice."
+ },
+ "les_41_3": {
+  "en": "Move the bishop with check and uncover an attack on the queen!",
+  "ro": "Mută nebunul cu șah și descoperă un atac asupra damei!"
+ },
+ "les_41_3w": {
+  "en": "Your rook on d1 is aimed at the queen. Move the bishop away with check.",
+  "ro": "Turnul tău de pe d1 țintește dama. Mută nebunul cu șah."
+ },
+ "les_41_4": {
+  "en": "You play Black. Move the knight with a discovered check and win the queen!",
+  "ro": "Joci cu negrele. Mută calul cu șah la descoperire și câștigă dama!"
+ },
+ "les_41_4w": {
+  "en": "Your rook on e8 is aimed at the king. Move the knight to a square that attacks the queen.",
+  "ro": "Turnul tău de pe e8 țintește regele. Mută calul pe un câmp care atacă dama."
+ },
+ "les_41_5": {
+  "en": "Win the black queen with a discovered check.",
+  "ro": "Câștigă dama neagră cu un șah la descoperire."
+ },
+ "les_41_5w": {
+  "en": "Move the knight off the e-file to a square that attacks the queen on b6.",
+  "ro": "Scoate calul de pe coloana e pe un câmp care atacă dama de pe b6."
+ },
+ "les_41_6": {
+  "en": "Pieces lined up behind your own piece are loaded weapons. Move the front piece with a threat, and two attacks hit at once.",
+  "ro": "Piesele aliniate în spatele propriei piese sunt arme încărcate. Mută piesa din față cu o amenințare și lovesc două atacuri deodată."
+ },
+ "les_41_title": {
+  "en": "Discovered attack",
+  "ro": "Atacul la descoperire"
+ },
+ "les_42_1": {
+  "en": "A double check: the moving piece gives check and uncovers a second check. The king is attacked twice at once.",
+  "ro": "Șahul dublu: piesa mutată dă șah și descoperă un al doilea șah. Regele este atacat de două ori deodată."
+ },
+ "les_42_2": {
+  "en": "\"You can't block or capture two attackers with one move. Against a double check, only a king move helps.\"",
+  "ro": "Nu poți bloca sau captura doi atacatori dintr-o mutare. Contra unui șah dublu ajută doar o mutare de rege."
+ },
+ "les_42_3": {
+  "en": "Give a double check.",
+  "ro": "Dă un șah dublu."
+ },
+ "les_42_3w": {
+  "en": "That is only one check. Move the knight to a square where it gives check too.",
+  "ro": "Acesta e doar un șah. Mută calul pe un câmp de unde dă și el șah."
+ },
+ "les_42_4": {
+  "en": "\"The black king can't move anywhere. Checkmate with a double check!\"",
+  "ro": "Regele negru nu se poate mișca nicăieri. Dă mat cu un șah dublu!"
+ },
+ "les_42_4w": {
+  "en": "\"Black can block that check. With a double check, only the king could move, and it can't.\"",
+  "ro": "Negrul poate bloca acel șah. La șahul dublu doar regele s-ar putea muta, și nu poate."
+ },
+ "les_42_5": {
+  "en": "You play Black. Checkmate with a double check!",
+  "ro": "Joci cu negrele. Dă mat cu un șah dublu!"
+ },
+ "les_42_5w": {
+  "en": "White can block that check. Move the knight so that it gives check too.",
+  "ro": "Albul poate bloca acel șah. Mută calul astfel încât să dea și el șah."
+ },
+ "les_42_6": {
+  "en": "Double check forces the king to move. When the king has no squares, it is checkmate, whatever else is on the board.",
+  "ro": "Șahul dublu obligă regele să se mute. Când regele nu are câmpuri, e mat, orice altceva ar fi pe tablă."
+ },
+ "les_42_title": {
+  "en": "Double check",
+  "ro": "Șahul dublu"
+ },
+ "les_43_1": {
+  "en": "The knight on c6 is the only defender of e5. Capture the defender, and the pawn is no longer protected.",
+  "ro": "Calul de pe c6 este singurul apărător al lui e5. Capturează apărătorul, iar pionul nu mai este apărat."
+ },
+ "les_43_2": {
+  "en": "You can also chase a defender away: attack it with a pawn, and when it moves, the piece it guarded is hanging.",
+  "ro": "Poți și alunga un apărător: atacă-l cu un pion, iar când se mută, piesa pe care o păzea rămâne neapărată."
+ },
+ "les_43_3": {
+  "en": "The bishop on d5 has only one defender. Remove it, then win the bishop!",
+  "ro": "Nebunul de pe d5 are un singur apărător. Elimină-l, apoi câștigă nebunul!"
+ },
+ "les_43_3w": {
+  "en": "First capture the knight on f6: it is the only defender of the bishop.",
+  "ro": "Întâi capturează calul de pe f6: este singurul apărător al nebunului."
+ },
+ "les_43_4": {
+  "en": "The knight on d6 guards the bishop. Chase the knight away with a pawn!",
+  "ro": "Calul de pe d6 păzește nebunul. Alungă calul cu un pion!"
+ },
+ "les_43_4w": {
+  "en": "Attack the knight with your e-pawn. Then the bishop on c4 is no longer protected.",
+  "ro": "Atacă calul cu pionul e. Apoi nebunul de pe c4 nu mai este apărat."
+ },
+ "les_43_5": {
+  "en": "You play Black. Remove the defender and win a piece!",
+  "ro": "Joci cu negrele. Elimină apărătorul și câștigă o piesă!"
+ },
+ "les_43_5w": {
+  "en": "The knight on f3 is the only defender of the bishop on d4. Capture the knight first.",
+  "ro": "Calul de pe f3 este singurul apărător al nebunului de pe d4. Întâi capturează calul."
+ },
+ "les_43_6": {
+  "en": "Before attacking a protected piece, look at its defender. Capture it or chase it away, and the piece falls.",
+  "ro": "Înainte să ataci o piesă apărată, privește-i apărătorul. Captureaz-o sau alung-o, iar piesa cade."
+ },
+ "les_43_title": {
+  "en": "Removing the defender",
+  "ro": "Eliminarea apărătorului"
+ },
+ "les_44_1": {
+  "en": "The rook on d8 has two jobs: guarding the bishop and the back rank. White captures the bishop to lure the rook away.",
+  "ro": "Turnul de pe d8 are două sarcini: să apere nebunul și ultima linie. Albul ia nebunul ca să atragă turnul departe."
+ },
+ "les_44_2": {
+  "en": "This is deflection: force a defender away from its job. A piece with two jobs is overloaded and can do only one.",
+  "ro": "Aceasta este devierea: forțezi un apărător să-și părăsească sarcina. O piesă cu două sarcini e supraîncărcată și poate face doar una."
+ },
+ "les_44_3": {
+  "en": "The rook on c8 is overloaded. Deflect it and checkmate!",
+  "ro": "Turnul de pe c8 este supraîncărcat. Deviază-l și dă mat!"
+ },
+ "les_44_3w": {
+  "en": "Capture the knight on c4. If the rook takes back, it leaves the back rank.",
+  "ro": "Capturează calul de pe c4. Dacă turnul recapturează, părăsește ultima linie."
+ },
+ "les_44_4": {
+  "en": "You play Black. The white rook is overloaded. Deflect it and checkmate!",
+  "ro": "Joci cu negrele. Turnul alb este supraîncărcat. Deviază-l și dă mat!"
+ },
+ "les_44_4w": {
+  "en": "Capture the knight on c5. If the rook takes back, your other rook mates on e1.",
+  "ro": "Capturează calul de pe c5. Dacă turnul recapturează, celălalt turn al tău dă mat pe e1."
+ },
+ "les_44_5": {
+  "en": "The black queen is overloaded. Deflect it and checkmate!",
+  "ro": "Dama neagră este supraîncărcată. Deviaz-o și dă mat!"
+ },
+ "les_44_5w": {
+  "en": "The queen guards both the knight and the back rank. Capture the knight.",
+  "ro": "Dama păzește și calul, și ultima linie. Capturează calul."
+ },
+ "les_44_6": {
+  "en": "Look for enemy pieces with two jobs. Attack one job, and the other is left undone.",
+  "ro": "Caută piese adverse cu două sarcini. Atacă una dintre sarcini, iar cealaltă rămâne neîndeplinită."
+ },
+ "les_44_title": {
+  "en": "Deflection",
+  "ro": "Devierea"
+ },
+ "les_45_1": {
+  "en": "Black just captured on a2. Taking back at once is a blunder: after ♖xa2 comes ♜xd1, checkmate.",
+  "ro": "Negrul tocmai a capturat pe a2. Să iei înapoi imediat e o greșeală gravă: după ♖xa2 urmează ♜xd1, mat."
+ },
+ "les_45_2": {
+  "en": "First ♖xd8+. Black has to take back, and only then you recapture on a2. Now you are a whole rook up.",
+  "ro": "Întâi ♖xd8+. Negrul trebuie să ia înapoi și abia apoi recapturezi pe a2. Acum ai un turn întreg în plus."
+ },
+ "les_45_3": {
+  "en": "This is an in-between move: before the expected recapture, play a stronger forcing move, usually a check. The recapture can wait.",
+  "ro": "Aceasta e o mutare intermediară: înainte de recaptura așteptată, joacă o mutare forțată mai puternică, de obicei un șah. Recaptura poate aștepta."
+ },
+ "les_45_4": {
+  "en": "You play Black. White just took on e7, but ♛xe7 at once loses the rook on c8. Play an in-between move first!",
+  "ro": "Joci cu negrele. Albul tocmai a luat pe e7, dar ♛xe7 imediat pierde turnul de pe c8. Joacă întâi o mutare intermediară!"
+ },
+ "les_45_4w": {
+  "en": "Taking on e7 at once loses your rook to ♕xc8. First save the rook with a check on c1, then take back on e7.",
+  "ro": "Dacă iei imediat pe e7, pierzi turnul după ♕xc8. Întâi salvează turnul cu un șah pe c1, apoi ia înapoi pe e7."
+ },
+ "les_45_5": {
+  "en": "You play Black. White just took on b4, but ♛xb4 at once loses the rook on d8. Find the in-between move!",
+  "ro": "Joci cu negrele. Albul tocmai a luat pe b4, dar ♛xb4 imediat pierde turnul de pe d8. Găsește mutarea intermediară!"
+ },
+ "les_45_5w": {
+  "en": "Taking on b4 at once loses your rook to ♕xd8+. First save the rook with a check on d1, then take back on b4.",
+  "ro": "Dacă iei imediat pe b4, pierzi turnul după ♕xd8+. Întâi salvează turnul cu un șah pe d1, apoi ia înapoi pe b4."
+ },
+ "les_45_6": {
+  "en": "\"Black just took on a6. Don't recapture at once: first an in-between move, then take back!\"",
+  "ro": "Negrul tocmai a luat pe a6. Nu lua înapoi imediat: întâi o mutare intermediară, apoi recapturează!"
+ },
+ "les_45_6w": {
+  "en": "Taking on a6 at once loses your queen to ♛xc5. First move your queen away with check, then take back on a6.",
+  "ro": "Dacă iei imediat pe a6, pierzi dama după ♛xc5. Întâi mută dama cu șah, apoi ia înapoi pe a6."
+ },
+ "les_45_7": {
+  "en": "Before you recapture automatically, look for a check or a threat first. An in-between move often wins more.",
+  "ro": "Înainte să recapturezi automat, caută întâi un șah sau o amenințare. O mutare intermediară câștigă adesea mai mult."
+ },
+ "les_45_title": {
+  "en": "In-between moves",
+  "ro": "Mutări intermediare"
+ },
+ "les_46_1": {
+  "en": "A decoy: give up a piece to lure the enemy king onto a bad square. After ♚xh8, the knight forks the king and queen.",
+  "ro": "Atragerea: sacrifici o piesă ca să ademenești regele advers pe un câmp prost. După ♚xh8, calul face furculiță pe rege și damă."
+ },
+ "les_46_2": {
+  "en": "The sacrifice looks crazy, but it pays back more. Decoys set up forks, skewers and mates.",
+  "ro": "Sacrificiul pare nebunesc, dar aduce înapoi mai mult. Atragerea pregătește furculițe, atacuri în raze X și maturi."
+ },
+ "les_46_3": {
+  "en": "Lure the king onto a8, then fork the king and queen!",
+  "ro": "Atrage regele pe a8, apoi fă furculiță pe rege și damă!"
+ },
+ "les_46_3w": {
+  "en": "Sacrifice the rook on a8 with check. The king takes, and then your knight forks.",
+  "ro": "Sacrifică turnul pe a8 cu șah. Regele ia, iar apoi calul tău face furculiță."
+ },
+ "les_46_4": {
+  "en": "You play Black. Lure the king onto a1, then fork the king and queen!",
+  "ro": "Joci cu negrele. Atrage regele pe a1, apoi fă furculiță pe rege și damă!"
+ },
+ "les_46_4w": {
+  "en": "Sacrifice the rook on a1 with check. The king takes, and then your knight forks.",
+  "ro": "Sacrifică turnul pe a1 cu șah. Regele ia, iar apoi calul tău face furculiță."
+ },
+ "les_46_5": {
+  "en": "Use a decoy and a knight fork to win the queen.",
+  "ro": "Folosește atragerea și o furculiță de cal ca să câștigi dama."
+ },
+ "les_46_5w": {
+  "en": "Lure the king onto h8 with a rook sacrifice. Then a knight check forks it with the queen.",
+  "ro": "Atrage regele pe h8 sacrificând turnul. Apoi un șah cu calul face furculiță pe rege și damă."
+ },
+ "les_46_6": {
+  "en": "A decoy sacrifice drags a piece onto a square where a fork, skewer or mate waits. Count what you get back!",
+  "ro": "Un sacrificiu de atragere trage o piesă pe un câmp unde o așteaptă o furculiță, un atac în raze X sau un mat. Numără ce primești înapoi!"
+ },
+ "les_46_title": {
+  "en": "Decoy",
+  "ro": "Atragerea"
+ },
+ "les_47_1": {
+  "en": "A trapped piece has no safe square to go to. This bishop grabbed a pawn on a2. After b3, it is stuck, and the king takes it.",
+  "ro": "O piesă prinsă nu are niciun câmp sigur unde să meargă. Acest nebun a luat un pion pe a2. După b3 e blocat, iar regele îl ia."
+ },
+ "les_47_2": {
+  "en": "Pieces on the edge are easiest to trap. Before grabbing a pawn in the corner, check that your piece can get back!",
+  "ro": "Piesele de pe margine se prind cel mai ușor. Înainte să iei un pion din colț, verifică dacă piesa ta se poate întoarce!"
+ },
+ "les_47_3": {
+  "en": "The knight on h5 has few squares. Trap it and win it!",
+  "ro": "Calul de pe h5 are puține câmpuri. Prinde-l și câștigă-l!"
+ },
+ "les_47_3w": {
+  "en": "Attack the knight with a pawn. Your other pieces already cover all its escape squares.",
+  "ro": "Atacă calul cu un pion. Celelalte piese ale tale acoperă deja toate câmpurile lui de scăpare."
+ },
+ "les_47_4": {
+  "en": "You play Black. The white bishop grabbed a pawn. Trap it!",
+  "ro": "Joci cu negrele. Nebunul alb a luat un pion. Prinde-l!"
+ },
+ "les_47_4w": {
+  "en": "\"Close the bishop's way out with a pawn. Your king already guards b8.\"",
+  "ro": "Închide ieșirea nebunului cu un pion. Regele tău păzește deja b8."
+ },
+ "les_47_5": {
+  "en": "The black bishop grabbed a pawn. Trap it and win it!",
+  "ro": "Nebunul negru a luat un pion. Prinde-l și câștigă-l!"
+ },
+ "les_47_5w": {
+  "en": "Shut the bishop in with a pawn. Your king guards g1, then walks over to take it.",
+  "ro": "Închide nebunul cu un pion. Regele tău păzește g1, apoi merge să-l ia."
+ },
+ "les_47_6": {
+  "en": "\"A piece with no safe squares is lost. Take away escape squares first, then attack. Don't let your own pieces get trapped!\"",
+  "ro": "O piesă fără câmpuri sigure e pierdută. Întâi ia-i câmpurile de scăpare, apoi atac-o. Nu-ți lăsa propriile piese să fie prinse!"
+ },
+ "les_47_title": {
+  "en": "Trapping a piece",
+  "ro": "Prinderea unei piese"
+ },
+ "les_48_1": {
+  "en": "Black is a rook ahead. But White can check forever: this is perpetual check, and the game is a draw.",
+  "ro": "Negrul are un turn în plus. Dar Albul poate da șah la nesfârșit: acesta este șahul etern, iar partida e remiză."
+ },
+ "les_48_2": {
+  "en": "Perpetual check needs checks that never run out. When you are losing, look for it: it saves the game.",
+  "ro": "Șahul etern cere șahuri care nu se termină niciodată. Când pierzi, caută-l: salvează partida."
+ },
+ "les_48_3": {
+  "en": "You are losing. Save the game with perpetual check!",
+  "ro": "Pierzi. Salvează partida cu șah etern!"
+ },
+ "les_48_3w": {
+  "en": "Every move must be a check that keeps the checks going. Black threatens mate!",
+  "ro": "Fiecare mutare trebuie să fie un șah care ține seria de șahuri. Negrul amenință mat!"
+ },
+ "les_48_4": {
+  "en": "You play Black. You are losing. Find perpetual check!",
+  "ro": "Joci cu negrele. Pierzi. Găsește șahul etern!"
+ },
+ "les_48_4w": {
+  "en": "Black is lost unless every move is a check. Keep checking the king!",
+  "ro": "Negrul e pierdut dacă nu dă șah la fiecare mutare. Continuă să dai șah regelui!"
+ },
+ "les_48_5": {
+  "en": "You are losing. Draw with perpetual check!",
+  "ro": "Pierzi. Fă remiză cu șah etern!"
+ },
+ "les_48_5w": {
+  "en": "Keep checking! If you stop, Black mates you.",
+  "ro": "Continuă să dai șah! Dacă te oprești, Negrul îți dă mat."
+ },
+ "les_48_6": {
+  "en": "Behind? Look for perpetual check. Ahead? Keep your king safe from endless checks, or your win becomes a draw.",
+  "ro": "Ești în urmă? Caută șahul etern. Ești în avantaj? Ferește-ți regele de șahuri fără sfârșit, altfel victoria devine remiză."
+ },
+ "les_48_title": {
+  "en": "Perpetual check",
+  "ro": "Șahul etern"
+ },
+ "les_49_1": {
+  "en": "The black king is locked in by its own pawns. A rook on the back rank gives checkmate: the back rank mate.",
+  "ro": "Regele negru este închis de propriii pioni. Un turn pe ultima linie dă mat: matul pe ultima linie."
+ },
+ "les_49_2": {
+  "en": "The cure is an escape square, called luft. With the h-pawn on h6, the king simply steps to h7.",
+  "ro": "Remediul este un câmp de scăpare, numit „fereastră”. Cu pionul h pe h6, regele pur și simplu merge pe h7."
+ },
+ "les_49_3": {
+  "en": "Checkmate on the back rank!",
+  "ro": "Dă mat pe ultima linie!"
+ },
+ "les_49_3w": {
+  "en": "Not mate. Put your rook on the eighth rank, where the king has no escape.",
+  "ro": "Nu e mat. Pune turnul pe linia a opta, unde regele nu are scăpare."
+ },
+ "les_49_4": {
+  "en": "You play Black. Checkmate on the back rank!",
+  "ro": "Joci cu negrele. Dă mat pe ultima linie!"
+ },
+ "les_49_4w": {
+  "en": "Not mate. The white king is locked in behind its pawns: check it on the first rank.",
+  "ro": "Nu e mat. Regele alb este închis după pionii lui: dă-i șah pe prima linie."
+ },
+ "les_49_5": {
+  "en": "Black threatens ♜d1 mate. Stop it!",
+  "ro": "Negrul amenință mat cu ♜d1. Oprește-l!"
+ },
+ "les_49_5w": {
+  "en": "♜d1 would still be mate. Push a pawn to make an escape square, or guard the first rank with your rook.",
+  "ro": "♜d1 ar fi tot mat. Împinge un pion ca să faci un câmp de scăpare sau apără prima linie cu turnul."
+ },
+ "les_49_6": {
+  "en": "Find the back rank mate.",
+  "ro": "Găsește matul pe ultima linie."
+ },
+ "les_49_6w": {
+  "en": "\"That isn't mate. Which piece can give check on the eighth rank without being captured?\"",
+  "ro": "Nu e mat. Ce piesă poate da șah pe linia a opta fără să fie capturată?"
+ },
+ "les_49_7": {
+  "en": "\"A king behind unmoved pawns is in danger on the back rank. Give your king luft in time, and punish opponents who don't.\"",
+  "ro": "Un rege în spatele pionilor nemutați e în pericol pe ultima linie. Fă-i regelui la timp o fereastră și pedepsește adversarii care nu o fac."
+ },
+ "les_49_title": {
+  "en": "Back rank mate",
+  "ro": "Matul pe ultima linie"
+ },
+ "les_4_1": {
+  "en": "This is the bishop. It moves diagonally, as many squares as it likes. Like the rook, it cannot jump over pieces.",
+  "ro": "Acesta este nebunul. Se mută pe diagonală, oricâte câmpuri. Ca turnul, nu poate sări peste piese."
+ },
+ "les_4_2": {
+  "en": "A bishop never changes colour. Each player has two bishops: one for the light squares and one for the dark squares.",
+  "ro": "Nebunul nu își schimbă niciodată culoarea. Fiecare jucător are doi nebuni: unul pentru câmpurile albe și unul pentru cele negre."
+ },
+ "les_4_3": {
+  "en": "Collect the stars with the bishop. You have 2 moves.",
+  "ro": "Adună stelele cu nebunul. Ai 2 mutări."
+ },
+ "les_4_4": {
+  "en": "Collect all three stars in 3 moves.",
+  "ro": "Adună toate cele trei stele în 3 mutări."
+ },
+ "les_4_5": {
+  "en": "The pawn blocks the direct way. Reach the star in 3 moves.",
+  "ro": "Pionul blochează drumul direct. Ajungi la stea în 3 mutări."
+ },
+ "les_4_6": {
+  "en": "Capture all the black pawns in 3 moves.",
+  "ro": "Capturează toți pionii negri în 3 mutări."
+ },
+ "les_4_7": {
+  "en": "The bishop moves diagonally and always stays on squares of the same colour.",
+  "ro": "Nebunul se mută pe diagonală și rămâne mereu pe câmpuri de aceeași culoare."
+ },
+ "les_4_title": {
+  "en": "The bishop",
+  "ro": "Nebunul"
+ },
+ "les_50_1": {
+  "en": "\"The queen checks right next to the king, and the bishop protects her. The king can't capture her: checkmate!\"",
+  "ro": "Dama dă șah chiar lângă rege, iar nebunul o apără. Regele nu o poate captura: mat!"
+ },
+ "les_50_2": {
+  "en": "Any piece can support the queen, even a pawn. Here the pawn on f6 protects g7.",
+  "ro": "Orice piesă poate sprijini dama, chiar și un pion. Aici pionul de pe f6 apără g7."
+ },
+ "les_50_3": {
+  "en": "Checkmate with the queen, supported by the knight.",
+  "ro": "Dă mat cu dama, sprijinită de cal."
+ },
+ "les_50_3w": {
+  "en": "Not mate. Put the queen next to the king on a square your knight protects.",
+  "ro": "Nu e mat. Pune dama lângă rege, pe un câmp apărat de calul tău."
+ },
+ "les_50_4": {
+  "en": "You play Black. Checkmate with the queen, supported by the bishop.",
+  "ro": "Joci cu negrele. Dă mat cu dama, sprijinită de nebun."
+ },
+ "les_50_4w": {
+  "en": "Not mate. Your bishop on d6 protects h2.",
+  "ro": "Nu e mat. Nebunul tău de pe d6 apără h2."
+ },
+ "les_50_5": {
+  "en": "Checkmate in one move.",
+  "ro": "Mat într-o mutare."
+ },
+ "les_50_5w": {
+  "en": "Not mate. The bishop on c3 aims at g7: bring the queen there.",
+  "ro": "Nu e mat. Nebunul de pe c3 țintește g7: du dama acolo."
+ },
+ "les_50_6": {
+  "en": "A queen next to the king, protected by another piece, is the most common mate. Look for squares near the king your pieces support.",
+  "ro": "Dama lângă rege, apărată de altă piesă, este cel mai frecvent mat. Caută câmpuri lângă rege sprijinite de piesele tale."
+ },
+ "les_50_title": {
+  "en": "The supported queen",
+  "ro": "Dama sprijinită"
+ },
+ "les_51_1": {
+  "en": "Smothered mate: the king is surrounded by its own pieces, and a knight checks it. Nothing can capture the knight.",
+  "ro": "Matul înăbușit: regele este înconjurat de propriile piese, iar un cal îi dă șah. Nimic nu poate captura calul."
+ },
+ "les_51_2": {
+  "en": "The famous finish: knight checks, double check, then a queen sacrifice on g8. The rook must take, and the knight mates.",
+  "ro": "Finalul celebru: șah cu calul, șah dublu, apoi sacrificiu de damă pe g8. Turnul trebuie să ia, iar calul dă mat."
+ },
+ "les_51_3": {
+  "en": "Give smothered mate!",
+  "ro": "Dă mat înăbușit!"
+ },
+ "les_51_3w": {
+  "en": "\"Not mate. The king is boxed in by its own pieces. Which knight check can't be answered?\"",
+  "ro": "Nu e mat. Regele este închis de propriile piese. La care șah cu calul nu există răspuns?"
+ },
+ "les_51_4": {
+  "en": "You play Black. Give smothered mate!",
+  "ro": "Joci cu negrele. Dă mat înăbușit!"
+ },
+ "les_51_4w": {
+  "en": "Not mate. Check the white king with your knight from f2.",
+  "ro": "Nu e mat. Dă șah regelui alb cu calul de pe f2."
+ },
+ "les_51_5": {
+  "en": "You play Black. Knight check, double check, queen sacrifice, smothered mate!",
+  "ro": "Joci cu negrele. Șah cu calul, șah dublu, sacrificiu de damă, mat înăbușit!"
+ },
+ "les_51_5w": {
+  "en": "Start with a knight check on f2. Then a double check from h3, a queen sacrifice on g1, and the knight mates on f2.",
+  "ro": "Începe cu un șah cu calul pe f2. Apoi șah dublu de pe h3, sacrificiu de damă pe g1, iar calul dă mat pe f2."
+ },
+ "les_51_6": {
+  "en": "A king surrounded by its own pieces fears knights. A queen sacrifice can force a piece to block the last escape square.",
+  "ro": "Un rege înconjurat de propriile piese se teme de cai. Un sacrificiu de damă poate forța o piesă să blocheze ultimul câmp de scăpare."
+ },
+ "les_51_title": {
+  "en": "Smothered mate",
+  "ro": "Matul înăbușit"
+ },
+ "les_52_1": {
+  "en": "The Arabian mate: the rook checks next to the king in the corner, and the knight protects the rook and guards g8.",
+  "ro": "Matul arab: turnul dă șah lângă regele din colț, iar calul apără turnul și păzește g8."
+ },
+ "les_52_2": {
+  "en": "The rook covers the whole seventh rank, the knight covers g8. The king in the corner has nowhere to go.",
+  "ro": "Turnul acoperă toată linia a șaptea, calul acoperă g8. Regele din colț nu are unde să meargă."
+ },
+ "les_52_3": {
+  "en": "Give the Arabian mate!",
+  "ro": "Dă matul arab!"
+ },
+ "les_52_3w": {
+  "en": "Not mate. Put the rook next to the king, on a square your knight protects.",
+  "ro": "Nu e mat. Pune turnul lângă rege, pe un câmp apărat de calul tău."
+ },
+ "les_52_4": {
+  "en": "You play Black. Give the Arabian mate!",
+  "ro": "Joci cu negrele. Dă matul arab!"
+ },
+ "les_52_4w": {
+  "en": "Not mate. Your knight on f3 protects h2 and guards g1.",
+  "ro": "Nu e mat. Calul tău de pe f3 apără h2 și păzește g1."
+ },
+ "les_52_5": {
+  "en": "Checkmate in one move.",
+  "ro": "Mat într-o mutare."
+ },
+ "les_52_5w": {
+  "en": "Not mate. Capture on h7: the knight protects your rook there.",
+  "ro": "Nu e mat. Capturează pe h7: acolo calul îți apără turnul."
+ },
+ "les_52_6": {
+  "en": "Rook and knight make a deadly pair against a king in the corner. Look for the rook check next to the king, protected by the knight.",
+  "ro": "Turnul și calul formează o pereche mortală contra unui rege din colț. Caută șahul cu turnul lângă rege, apărat de cal."
+ },
+ "les_52_title": {
+  "en": "The Arabian mate",
+  "ro": "Matul arab"
+ },
+ "les_53_1": {
+  "en": "Two bishops can checkmate a lone king in a corner. One bishop checks, the other and your king cover every escape square.",
+  "ro": "Doi nebuni pot da mat unui rege singur în colț. Un nebun dă șah, celălalt și regele tău acoperă orice câmp de scăpare."
+ },
+ "les_53_2": {
+  "en": "\"Keep the bishops side by side: together they form a wall the king can't cross. Bring your king up and shrink the box.\"",
+  "ro": "Ține nebunii unul lângă altul: împreună formează un zid pe care regele nu-l poate trece. Adu-ți regele și micșorează cutia."
+ },
+ "les_53_3": {
+  "en": "Checkmate the king in the corner with your bishops.",
+  "ro": "Dă mat regelui din colț cu nebunii."
+ },
+ "les_53_4": {
+  "en": "Drive the king into a corner and checkmate it with two bishops.",
+  "ro": "Împinge regele într-un colț și dă-i mat cu doi nebuni."
+ },
+ "les_53_5": {
+  "en": "Two bishops side by side, the king close by, the enemy king pushed into a corner: then a bishop check is mate.",
+  "ro": "Doi nebuni alături, regele aproape, regele advers împins în colț: atunci un șah cu nebunul este mat."
+ },
+ "les_53_title": {
+  "en": "Mate with two bishops",
+  "ro": "Matul cu doi nebuni"
+ },
+ "les_54_1": {
+  "en": "Mate in two: the first move takes away the last squares, and whatever Black does, the second move is mate.",
+  "ro": "Mat în două mutări: prima mutare ia ultimele câmpuri și, orice ar face Negrul, a doua mutare este mat."
+ },
+ "les_54_2": {
+  "en": "Look at checks and captures first. If none of them mates, look for a quiet move that leaves no defence.",
+  "ro": "Privește întâi șahurile și capturile. Dacă niciuna nu dă mat, caută o mutare liniștită care nu lasă nicio apărare."
+ },
+ "les_54_3": {
+  "en": "Mate in two! Start with a check.",
+  "ro": "Mat în două mutări! Începe cu un șah."
+ },
+ "les_54_3w": {
+  "en": "Sacrifice a rook on d8. When Black takes, the other rook mates.",
+  "ro": "Sacrifică un turn pe d8. Când Negrul ia, celălalt turn dă mat."
+ },
+ "les_54_4": {
+  "en": "You play Black. Mate in two!",
+  "ro": "Joci cu negrele. Mat în două mutări!"
+ },
+ "les_54_4w": {
+  "en": "Sacrifice a rook on d1. When White takes, the other rook mates.",
+  "ro": "Sacrifică un turn pe d1. Când Albul ia, celălalt turn dă mat."
+ },
+ "les_54_5": {
+  "en": "Mate in two! The first move is quiet.",
+  "ro": "Mat în două mutări! Prima mutare este liniștită."
+ },
+ "les_54_5w": {
+  "en": "\"Bring the queen next to the pawn on f6: from h6 she threatens mate on g7, and Black can't stop it.\"",
+  "ro": "Du dama lângă pionul de pe f6: de pe h6 amenință mat pe g7, iar Negrul nu-l poate opri."
+ },
+ "les_54_6": {
+  "en": "In mate in two, check every forcing move first, then quiet moves. The best first move leaves your opponent no good answer.",
+  "ro": "La mat în două, verifică întâi fiecare mutare forțată, apoi mutările liniștite. Cea mai bună primă mutare nu-i lasă adversarului niciun răspuns bun."
+ },
+ "les_54_title": {
+  "en": "Mate in two",
+  "ro": "Mat în două mutări"
+ },
+ "les_55_1": {
+  "en": "A file with no pawns is an open file. Rooks belong there: nothing blocks them, and they reach deep into the enemy camp.",
+  "ro": "O coloană fără pioni este o coloană deschisă. Acolo e locul turnurilor: nimic nu le blochează și pătrund adânc în tabăra adversă."
+ },
+ "les_55_2": {
+  "en": "From an open file the rook can invade the seventh rank. There it attacks pawns from the side and hems in the king.",
+  "ro": "De pe o coloană deschisă turnul poate invada linia a șaptea. Acolo atacă pionii din lateral și strâmtorează regele."
+ },
+ "les_55_3": {
+  "en": "Tap a square on the open file.",
+  "ro": "Atinge un câmp de pe coloana deschisă."
+ },
+ "les_55_3w": {
+  "en": "That file has pawns on it. Find the file without any pawns.",
+  "ro": "Pe coloana aceea sunt pioni. Găsește coloana fără niciun pion."
+ },
+ "les_55_4": {
+  "en": "Put a rook on the open file.",
+  "ro": "Pune un turn pe coloana deschisă."
+ },
+ "les_55_4w": {
+  "en": "The e-file has no pawns. Move a rook there.",
+  "ro": "Coloana e nu are pioni. Mută un turn acolo."
+ },
+ "les_55_5": {
+  "en": "Your rook controls the open file. Invade the seventh rank!",
+  "ro": "Turnul tău controlează coloana deschisă. Invadează linia a șaptea!"
+ },
+ "les_55_5w": {
+  "en": "Move the rook up the e-file to e7, where it attacks the pawns on b7 and f7.",
+  "ro": "Urcă turnul pe coloana e până pe e7, de unde atacă pionii de pe b7 și f7."
+ },
+ "les_55_6": {
+  "en": "You play Black. Put a rook on the open file.",
+  "ro": "Joci cu negrele. Pune un turn pe coloana deschisă."
+ },
+ "les_55_6w": {
+  "en": "Find the file without pawns and move a rook there.",
+  "ro": "Găsește coloana fără pioni și mută un turn acolo."
+ },
+ "les_55_7": {
+  "en": "Put your rooks on open files, then look for a way to the seventh rank. A rook behind closed pawns does nothing.",
+  "ro": "Pune-ți turnurile pe coloane deschise, apoi caută drumul spre linia a șaptea. Un turn în spatele pionilor blocați nu face nimic."
+ },
+ "les_55_title": {
+  "en": "Rooks on open files",
+  "ro": "Turnuri pe coloane deschise"
+ },
+ "les_56_1": {
+  "en": "An isolated pawn has no friendly pawns on the files next to it. No pawn can protect it, so your pieces must.",
+  "ro": "Un pion izolat nu are pioni proprii pe coloanele vecine. Niciun pion nu-l poate apăra, așa că trebuie să-l apere piesele."
+ },
+ "les_56_2": {
+  "en": "\"Doubled pawns stand on the same file. They can't protect each other, and the front one blocks the back one.\"",
+  "ro": "Pionii dublați stau pe aceeași coloană. Nu se pot apăra unul pe altul, iar cel din față îl blochează pe cel din spate."
+ },
+ "les_56_3": {
+  "en": "Weak pawns are targets. Attack them with your pieces, and keep your own pawns in healthy chains.",
+  "ro": "Pionii slabi sunt ținte. Atacă-i cu piesele și păstrează-ți pionii în lanțuri sănătoase."
+ },
+ "les_56_4": {
+  "en": "Tap the isolated pawn.",
+  "ro": "Atinge pionul izolat."
+ },
+ "les_56_4w": {
+  "en": "That pawn has a friendly pawn on a file next to it. Look for a pawn with no neighbors.",
+  "ro": "Pionul acela are un pion propriu pe o coloană vecină. Caută un pion fără vecini."
+ },
+ "les_56_5": {
+  "en": "Tap both doubled pawns.",
+  "ro": "Atinge ambii pioni dublați."
+ },
+ "les_56_5w": {
+  "en": "Doubled pawns stand on the same file, one behind the other.",
+  "ro": "Pionii dublați stau pe aceeași coloană, unul în spatele celuilalt."
+ },
+ "les_56_6": {
+  "en": "\"Black's d5 pawn is isolated. Win it!\"",
+  "ro": "Pionul d5 al Negrului este izolat. Câștigă-l!"
+ },
+ "les_56_6w": {
+  "en": "Count: two white attackers against one defender. Capture on d5!",
+  "ro": "Numără: doi atacatori albi contra unui apărător. Capturează pe d5!"
+ },
+ "les_56_7": {
+  "en": "\"Tap both isolated pawns, White's and Black's.\"",
+  "ro": "Atinge ambii pioni izolați, al Albului și al Negrului."
+ },
+ "les_56_7w": {
+  "en": "That pawn has a friendly neighbor. An isolated pawn has no pawns of its color on the files next to it.",
+  "ro": "Pionul acela are un vecin propriu. Un pion izolat nu are pioni de culoarea lui pe coloanele vecine."
+ },
+ "les_56_8": {
+  "en": "\"Isolated and doubled pawns are weaknesses. Attack them in your opponent's camp, avoid them in yours.\"",
+  "ro": "Pionii izolați și dublați sunt slăbiciuni. Atacă-i în tabăra adversarului, evită-i în a ta."
+ },
+ "les_56_title": {
+  "en": "Weak pawns",
+  "ro": "Pioni slabi"
+ },
+ "les_57_1": {
+  "en": "\"An outpost is a square in your opponent's half that your pawn protects and no enemy pawn can ever attack. Here: d5.\"",
+  "ro": "Un avanpost este un câmp în jumătatea adversarului, apărat de pionul tău, pe care niciun pion advers nu-l poate ataca vreodată. Aici: d5."
+ },
+ "les_57_2": {
+  "en": "\"A knight on an outpost is a monster: it can't be chased away by pawns, only traded for a piece.\"",
+  "ro": "Un cal pe avanpost e un monstru: pionii nu-l pot alunga, poate fi doar schimbat pe o piesă."
+ },
+ "les_57_3": {
+  "en": "Compare the knight on d5 with the black bishop on e7, blocked by its own pawns. The knight is much stronger.",
+  "ro": "Compară calul de pe d5 cu nebunul negru de pe e7, blocat de propriii pioni. Calul este mult mai puternic."
+ },
+ "les_57_4": {
+  "en": "\"Tap White's outpost.\"",
+  "ro": "Atinge avanpostul Albului."
+ },
+ "les_57_4w": {
+  "en": "An outpost is protected by your pawn, and no black pawn can ever attack it. Look at the squares your pawns protect.",
+  "ro": "Avanpostul e apărat de pionul tău și niciun pion negru nu-l poate ataca vreodată. Privește câmpurile apărate de pionii tăi."
+ },
+ "les_57_5": {
+  "en": "The black knight on f6 guards d5. Trade it off with your bishop, and d5 is yours.",
+  "ro": "Calul negru de pe f6 apără d5. Schimbă-l cu nebunul tău, iar d5 e al tău."
+ },
+ "les_57_5w": {
+  "en": "Capture the knight on f6 with your bishop. Then nothing guards d5, and your knight can jump there.",
+  "ro": "Ia calul de pe f6 cu nebunul. Apoi nimic nu mai apără d5, iar calul tău poate sări acolo."
+ },
+ "les_57_6": {
+  "en": "Find the outpost and put your knight on it.",
+  "ro": "Găsește avanpostul și pune calul pe el."
+ },
+ "les_57_6w": {
+  "en": "\"Look for a square in Black's half that your pawn protects and no black pawn can ever attack. Your knight reaches it in one jump.\"",
+  "ro": "Caută un câmp în jumătatea Negrului, apărat de pionul tău, pe care niciun pion negru nu-l poate ataca. Calul ajunge acolo dintr-un salt."
+ },
+ "les_57_7": {
+  "en": "Outposts are holes in the enemy pawn chain. Put a knight there, and trade off the pieces that guard it.",
+  "ro": "Avanposturile sunt găuri în lanțul de pioni advers. Pune un cal acolo și schimbă piesele care apără câmpul."
+ },
+ "les_57_title": {
+  "en": "Outposts",
+  "ro": "Avanposturi"
+ },
+ "les_58_1": {
+  "en": "A passed pawn has no enemy pawns in front of it, on its own file or the files next to it. Only pieces can stop it.",
+  "ro": "Un pion liber nu are pioni adverși în față, nici pe coloana lui, nici pe cele vecine. Doar piesele îl pot opri."
+ },
+ "les_58_2": {
+  "en": "Passed pawns must be pushed! Here the black king is too far away, and the pawn walks all the way to d8.",
+  "ro": "Pionii liberi trebuie împinși! Aici regele negru e prea departe, iar pionul merge până pe d8."
+ },
+ "les_58_3": {
+  "en": "Tap the passed pawn.",
+  "ro": "Atinge pionul liber."
+ },
+ "les_58_3w": {
+  "en": "An enemy pawn can still stop that one. Find the pawn with no enemy pawns in front or beside it.",
+  "ro": "Pe acela încă îl poate opri un pion advers. Găsește pionul fără pioni adverși în față sau alături."
+ },
+ "les_58_4": {
+  "en": "\"Tap every passed pawn, White's and Black's.\"",
+  "ro": "Atinge fiecare pion liber, al Albului și al Negrului."
+ },
+ "les_58_4w": {
+  "en": "That pawn can still be blocked or captured by an enemy pawn. Check the files next to it too.",
+  "ro": "Pionul acela încă poate fi blocat sau capturat de un pion advers. Verifică și coloanele vecine."
+ },
+ "les_58_5": {
+  "en": "Your b-pawn is passed and the black king is far away. Push it and promote!",
+  "ro": "Pionul tău b este liber, iar regele negru e departe. Împinge-l și promovează-l!"
+ },
+ "les_58_6": {
+  "en": "\"A passed pawn is a future queen. Push it, support it with your pieces, and block your opponent's passed pawns early.\"",
+  "ro": "Un pion liber este o viitoare damă. Împinge-l, sprijină-l cu piesele și blochează din timp pionii liberi ai adversarului."
+ },
+ "les_58_title": {
+  "en": "The passed pawn",
+  "ro": "Pionul liber"
+ },
+ "les_59_1": {
+  "en": "In the opening the king hides. In the endgame, with the queens gone, it becomes a strong fighting piece.",
+  "ro": "În deschidere regele se ascunde. În final, fără dame, devine o piesă de luptă puternică."
+ },
+ "les_59_2": {
+  "en": "Bring your king toward the center. From there it can attack pawns and support your own on either side.",
+  "ro": "Adu-ți regele spre centru. De acolo poate ataca pioni și își poate sprijini pionii pe oricare flanc."
+ },
+ "les_59_3": {
+  "en": "Bring your king closer to the center.",
+  "ro": "Apropie-ți regele de centru."
+ },
+ "les_59_3w": {
+  "en": "The center is d4, e4, d5 and e5. Step the king toward those squares.",
+  "ro": "Centrul este d4, e4, d5 și e5. Mută regele spre aceste câmpuri."
+ },
+ "les_59_4": {
+  "en": "The black pawn is alone. Capture it with your king!",
+  "ro": "Pionul negru este singur. Capturează-l cu regele!"
+ },
+ "les_59_5": {
+  "en": "You play Black. Bring your king closer to the center.",
+  "ro": "Joci cu negrele. Apropie-ți regele de centru."
+ },
+ "les_59_5w": {
+  "en": "Step the king toward d5 and e5.",
+  "ro": "Mută regele spre d5 și e5."
+ },
+ "les_59_6": {
+  "en": "In the endgame, the king is a fighter. March it to the center early: an active king often decides the game.",
+  "ro": "În final, regele este un luptător. Du-l devreme spre centru: un rege activ decide adesea partida."
+ },
+ "les_59_title": {
+  "en": "The king in the endgame",
+  "ro": "Regele în final"
+ },
+ "les_5_1": {
+  "en": "This is the queen, the strongest piece. She moves like a rook and a bishop together: in straight lines and diagonally.",
+  "ro": "Aceasta este dama, cea mai puternică piesă. Se mută ca un turn și un nebun la un loc: în linie dreaptă și pe diagonală."
+ },
+ "les_5_2": {
+  "en": "She cannot jump over pieces either. Watch how far the queen travels in just three moves.",
+  "ro": "Nici ea nu poate sări peste piese. Privește cât de departe ajunge dama în doar trei mutări."
+ },
+ "les_5_3": {
+  "en": "Collect the stars with the queen. You have 2 moves.",
+  "ro": "Adună stelele cu dama. Ai 2 mutări."
+ },
+ "les_5_4": {
+  "en": "Collect all three stars in 3 moves.",
+  "ro": "Adună toate cele trei stele în 3 mutări."
+ },
+ "les_5_5": {
+  "en": "Your pawns are in the way. Collect both stars in 3 moves.",
+  "ro": "Pionii tăi îți stau în cale. Adună ambele stele în 3 mutări."
+ },
+ "les_5_6": {
+  "en": "Capture all the black pieces in 3 moves.",
+  "ro": "Capturează toate piesele negre în 3 mutări."
+ },
+ "les_5_7": {
+  "en": "The queen combines the rook and the bishop. That is why she is the strongest piece on the board.",
+  "ro": "Dama îmbină turnul și nebunul. De aceea este cea mai puternică piesă de pe tablă."
+ },
+ "les_5_title": {
+  "en": "The queen",
+  "ro": "Dama"
+ },
+ "les_60_1": {
+  "en": "Can the king catch the pawn? Draw a square from the pawn to its promotion rank. If the king can step inside, it catches the pawn.",
+  "ro": "Poate regele să prindă pionul? Desenează un pătrat de la pion până la linia de promovare. Dacă regele poate intra în el, prinde pionul."
+ },
+ "les_60_2": {
+  "en": "Black to move steps into the square, and the king catches the pawn just in time.",
+  "ro": "Negrul, la mutare, intră în pătrat, iar regele prinde pionul exact la timp."
+ },
+ "les_60_3": {
+  "en": "Careful with a pawn on its starting square: it can move two squares, so draw the square from one square further.",
+  "ro": "Atenție la un pion pe câmpul de start: poate avansa două câmpuri, deci desenează pătratul cu un câmp mai departe."
+ },
+ "les_60_4": {
+  "en": "White to move. Does the pawn promote?",
+  "ro": "Albul la mutare. Se promovează pionul?"
+ },
+ "les_60_4w": {
+  "en": "\"After a5, the square runs from a5 to d8. The black king can't get inside it.\"",
+  "ro": "După a5, pătratul merge de la a5 la d8. Regele negru nu poate intra în el."
+ },
+ "les_60_5": {
+  "en": "Black to move. Does the pawn promote?",
+  "ro": "Negrul la mutare. Se promovează pionul?"
+ },
+ "les_60_5w": {
+  "en": "The square runs from a4 to e8. Black steps to e4, inside it, and catches the pawn.",
+  "ro": "Pătratul merge de la a4 la e8. Negrul merge pe e4, în interior, și prinde pionul."
+ },
+ "les_60_6": {
+  "en": "You play Black. Step into the square and stop the pawn!",
+  "ro": "Joci cu negrele. Intră în pătrat și oprește pionul!"
+ },
+ "les_60_6w": {
+  "en": "The square runs from b4 to f8. Find the king move that lands inside it.",
+  "ro": "Pătratul merge de la b4 la f8. Găsește mutarea de rege care ajunge în interiorul lui."
+ },
+ "les_60_7": {
+  "en": "You play Black. The pawn can move two squares. Step into the square!",
+  "ro": "Joci cu negrele. Pionul poate avansa două câmpuri. Intră în pătrat!"
+ },
+ "les_60_7w": {
+  "en": "Draw the square from b3, not b2: it runs from b3 to g8. Step onto the g-file.",
+  "ro": "Desenează pătratul de pe b3, nu de pe b2: merge de la b3 la g8. Treci pe coloana g."
+ },
+ "les_60_8": {
+  "en": "The rule of the square tells you at a glance whether a king catches a passed pawn. No counting needed!",
+  "ro": "Regula pătratului îți spune dintr-o privire dacă regele prinde un pion liber. Nu trebuie să numeri!"
+ },
+ "les_60_title": {
+  "en": "The rule of the square",
+  "ro": "Regula pătratului"
+ },
+ "les_61_1": {
+  "en": "Kings facing each other with one square between them are in opposition. The side that is NOT to move has the opposition.",
+  "ro": "Regii față în față, cu un câmp între ei, sunt în opoziție. Tabăra care NU este la mutare are opoziția."
+ },
+ "les_61_2": {
+  "en": "With the opposition, you win the fight of the kings: the other king must step aside, and yours walks forward.",
+  "ro": "Cu opoziția câștigi lupta regilor: celălalt rege trebuie să se dea la o parte, iar al tău înaintează."
+ },
+ "les_61_3": {
+  "en": "Take the opposition.",
+  "ro": "Ia opoziția."
+ },
+ "les_61_3w": {
+  "en": "Put your king directly opposite the black king, with one square between them.",
+  "ro": "Pune-ți regele exact în fața regelui negru, cu un câmp între ei."
+ },
+ "les_61_4": {
+  "en": "You play Black. Take the opposition.",
+  "ro": "Joci cu negrele. Ia opoziția."
+ },
+ "les_61_4w": {
+  "en": "Move your king so the kings face each other on the same file, one square apart.",
+  "ro": "Mută-ți regele astfel încât regii să stea față în față pe aceeași coloană, la un câmp distanță."
+ },
+ "les_61_5": {
+  "en": "Take the opposition: it wins this pawn ending!",
+  "ro": "Ia opoziția: câștigă acest final de pioni!"
+ },
+ "les_61_5w": {
+  "en": "Step in front of your pawn, opposite the black king.",
+  "ro": "Treci în fața pionului tău, față în față cu regele negru."
+ },
+ "les_61_6": {
+  "en": "Use the opposition to push your pawn through and promote it.",
+  "ro": "Folosește opoziția ca să-ți duci pionul mai departe și să-l promovezi."
+ },
+ "les_61_7": {
+  "en": "The opposition decides king-and-pawn endings. Face the enemy king with one square between you, and make it give way.",
+  "ro": "Opoziția decide finalurile de rege și pion. Stai față în față cu regele advers, cu un câmp între voi, și obligă-l să cedeze."
+ },
+ "les_61_title": {
+  "en": "The opposition",
+  "ro": "Opoziția"
+ },
+ "les_62_1": {
+  "en": "King and pawn against king: put your king in front of the pawn, not behind it. The king clears the way, the pawn follows.",
+  "ro": "Rege și pion contra rege: pune-ți regele în fața pionului, nu în spatele lui. Regele deschide drumul, pionul îl urmează."
+ },
+ "les_62_2": {
+  "en": "If your king reaches the sixth rank in front of the pawn, it wins whoever is to move.",
+  "ro": "Dacă regele tău ajunge pe linia a șasea în fața pionului, câștigă indiferent cine e la mutare."
+ },
+ "les_62_3": {
+  "en": "Rook pawns are different. Once the defending king reaches the corner, it can never be driven out: a draw.",
+  "ro": "Pionii de turn sunt altfel. Odată ce regele care se apără ajunge în colț, nu mai poate fi scos de acolo: remiză."
+ },
+ "les_62_4": {
+  "en": "White to move. Can White win?",
+  "ro": "Albul la mutare. Poate Albul să câștige?"
+ },
+ "les_62_4w": {
+  "en": "\"Black has the opposition, and the pawn has no spare move. It's a draw.\"",
+  "ro": "Negrul are opoziția, iar pionul nu are nicio mutare de rezervă. E remiză."
+ },
+ "les_62_5": {
+  "en": "Your king is on the sixth rank in front of the pawn. Promote it!",
+  "ro": "Regele tău e pe linia a șasea, în fața pionului. Promovează-l!"
+ },
+ "les_62_6": {
+  "en": "Promote the pawn. Tip: the pawn can still make one small step to win the opposition.",
+  "ro": "Promovează pionul. Sfat: pionul mai poate face un pas mic ca să câștige opoziția."
+ },
+ "les_62_7": {
+  "en": "\"King in front of the pawn, opposition, then the pawn. Reach the sixth rank and it's a win, except with a rook pawn.\"",
+  "ro": "Regele în fața pionului, opoziția, apoi pionul. Ajungi pe linia a șasea și e câștig, cu excepția pionului de turn."
+ },
+ "les_62_title": {
+  "en": "King and pawn against king",
+  "ro": "Rege și pion contra rege"
+ },
+ "les_63_1": {
+  "en": "The Lucena position: rook and pawn on the seventh against rook. The white king is stuck in front of its pawn, and rook checks keep it there.",
+  "ro": "Poziția Lucena: turn și pion pe linia a șaptea contra turn. Regele alb e blocat în fața pionului, iar șahurile cu turnul îl țin acolo."
+ },
+ "les_63_2": {
+  "en": "The winning plan: build a bridge. The rook goes to the fourth rank, then blocks the checks when the king walks out.",
+  "ro": "Planul câștigător: construiește un pod. Turnul merge pe linia a patra, apoi blochează șahurile când regele iese."
+ },
+ "les_63_3": {
+  "en": "First push the black king away with a check, then bring your rook to the fourth rank.",
+  "ro": "Întâi împinge regele negru cu un șah, apoi adu-ți turnul pe linia a patra."
+ },
+ "les_63_3w": {
+  "en": "Check on the d-file first, then put the rook on d4: it will be the bridge.",
+  "ro": "Întâi dă șah pe coloana d, apoi pune turnul pe d4: acela va fi podul."
+ },
+ "les_63_4": {
+  "en": "Now walk the king out toward the rook. When the checks run out of room, block with the rook: the bridge!",
+  "ro": "Acum scoate regele spre turn. Când șahurile rămân fără loc, blochează cu turnul: podul!"
+ },
+ "les_63_4w": {
+  "en": "Walk the king down the c- and b-files toward your rook. When it reaches b5, block the check on b4.",
+  "ro": "Coboară regele pe coloanele c și b spre turnul tău. Când ajunge pe b5, blochează șahul pe b4."
+ },
+ "les_63_5": {
+  "en": "Win the Lucena position: build the bridge and promote the pawn.",
+  "ro": "Câștigă poziția Lucena: construiește podul și promovează pionul."
+ },
+ "les_63_6": {
+  "en": "Lucena: cut the enemy king off, rook to the fourth rank, king out, block the checks with the rook. The pawn promotes.",
+  "ro": "Lucena: taie regele advers, turnul pe linia a patra, regele iese, blochezi șahurile cu turnul. Pionul se promovează."
+ },
+ "les_63_title": {
+  "en": "Building a bridge",
+  "ro": "Construirea podului"
+ },
+ "les_64_1": {
+  "en": "\"Rook against rook and pawn is often a draw. The Philidor defence: keep your rook on the sixth rank, so the white king can't come forward.\"",
+  "ro": "Turn contra turn și pion e adesea remiză. Apărarea Philidor: ține-ți turnul pe linia a șasea, ca regele alb să nu poată înainta."
+ },
+ "les_64_2": {
+  "en": "When the pawn steps to the sixth rank, the white king loses its shelter. Now drop the rook back and check from behind.",
+  "ro": "Când pionul ajunge pe linia a șasea, regele alb își pierde adăpostul. Acum retrage turnul și dă șah din spate."
+ },
+ "les_64_3": {
+  "en": "You play Black. Put your rook on the sixth rank to keep the white king out.",
+  "ro": "Joci cu negrele. Pune-ți turnul pe linia a șasea ca să ții regele alb afară."
+ },
+ "les_64_3w": {
+  "en": "\"Move the rook to a6, on the sixth rank. The white king can't cross it.\"",
+  "ro": "Mută turnul pe a6, pe linia a șasea. Regele alb nu o poate trece."
+ },
+ "les_64_4": {
+  "en": "You play Black. The pawn stepped to e6. Drop your rook back to check from behind!",
+  "ro": "Joci cu negrele. Pionul a ajuns pe e6. Retrage turnul ca să dai șah din spate!"
+ },
+ "les_64_4w": {
+  "en": "Move the rook down to a1. From there it checks the white king from behind, and it has no shelter.",
+  "ro": "Coboară turnul pe a1. De acolo dă șah regelui alb din spate, iar acesta nu are adăpost."
+ },
+ "les_64_5": {
+  "en": "You play Black. Hold the draw: rook to the sixth rank, and when the pawn advances, rook back to check.",
+  "ro": "Joci cu negrele. Ține remiza: turnul pe linia a șasea, iar când pionul avansează, turnul înapoi ca să dea șah."
+ },
+ "les_64_5w": {
+  "en": "First the rook to a6, on the sixth rank. When the pawn reaches e6, drop the rook to a1.",
+  "ro": "Întâi turnul pe a6, pe linia a șasea. Când pionul ajunge pe e6, retrage turnul pe a1."
+ },
+ "les_64_6": {
+  "en": "\"Philidor: rook on the sixth rank, then checks from behind. That's the end of the course. Congratulations, and good luck in your games!\"",
+  "ro": "Philidor: turnul pe linia a șasea, apoi șahuri din spate. Acesta e finalul cursului. Felicitări și mult succes în partidele tale!"
+ },
+ "les_64_title": {
+  "en": "The Philidor defence",
+  "ro": "Apărarea Philidor"
+ },
+ "les_6_1": {
+  "en": "This is the knight. It moves in an L shape: two squares in a straight line, then one square to the side.",
+  "ro": "Acesta este calul. Se mută în formă de L: două câmpuri în linie dreaptă, apoi un câmp în lateral."
+ },
+ "les_6_2": {
+  "en": "\"The knight is the only piece that can jump over other pieces, both yours and your opponent's.\"",
+  "ro": "Calul este singura piesă care poate sări peste alte piese, atât ale tale, cât și ale adversarului."
+ },
+ "les_6_3": {
+  "en": "Watch the colours: with every move the knight lands on a square of the other colour.",
+  "ro": "Urmărește culorile: la fiecare mutare, calul ajunge pe un câmp de cealaltă culoare."
+ },
+ "les_6_4": {
+  "en": "Collect the stars with the knight. You have 2 moves.",
+  "ro": "Adună stelele cu calul. Ai 2 mutări."
+ },
+ "les_6_5": {
+  "en": "The star is close, but the knight cannot reach it in one move. Get it in 2 moves.",
+  "ro": "Steaua e aproape, dar calul nu ajunge la ea dintr-o mutare. Ia-o în 2 mutări."
+ },
+ "les_6_6": {
+  "en": "Collect both stars in 3 moves.",
+  "ro": "Adună ambele stele în 3 mutări."
+ },
+ "les_6_7": {
+  "en": "Capture all the black pawns in 3 moves.",
+  "ro": "Capturează toți pionii negri în 3 mutări."
+ },
+ "les_6_8": {
+  "en": "Capture all the black pawns in 4 moves.",
+  "ro": "Capturează toți pionii negri în 4 mutări."
+ },
+ "les_6_9": {
+  "en": "The knight jumps in an L shape, can leap over pieces and always changes the colour of its square.",
+  "ro": "Calul sare în formă de L, poate trece peste piese și își schimbă mereu culoarea câmpului."
+ },
+ "les_6_title": {
+  "en": "The knight",
+  "ro": "Calul"
+ },
+ "les_7_1": {
+  "en": "This is the king. He moves one square in any direction. He is the most important piece of all.",
+  "ro": "Acesta este regele. Se mută un câmp în orice direcție. Este cea mai importantă piesă dintre toate."
+ },
+ "les_7_2": {
+  "en": "The king captures the same way, one square away. Later you will learn why keeping him safe decides the game.",
+  "ro": "Regele capturează la fel, la un câmp distanță. Mai târziu vei afla de ce siguranța lui decide partida."
+ },
+ "les_7_3": {
+  "en": "Walk the king to the star in 2 moves.",
+  "ro": "Du regele la stea în 2 mutări."
+ },
+ "les_7_4": {
+  "en": "Collect both stars in 4 moves.",
+  "ro": "Adună ambele stele în 4 mutări."
+ },
+ "les_7_5": {
+  "en": "Go around your pawn and reach the star in 3 moves.",
+  "ro": "Ocolește-ți pionul și ajungi la stea în 3 mutări."
+ },
+ "les_7_6": {
+  "en": "Capture both black pawns in 4 moves.",
+  "ro": "Capturează ambii pioni negri în 4 mutări."
+ },
+ "les_7_7": {
+  "en": "The king moves one square in any direction. He is slow, but he is the most important piece.",
+  "ro": "Regele se mută un câmp în orice direcție. Este lent, dar este cea mai importantă piesă."
+ },
+ "les_7_title": {
+  "en": "The king",
+  "ro": "Regele"
+ },
+ "les_8_1": {
+  "en": "This is the pawn. It moves straight forward, one square at a time. A pawn can never move backwards.",
+  "ro": "Acesta este pionul. Merge drept înainte, câte un câmp. Un pion nu poate merge niciodată înapoi."
+ },
+ "les_8_2": {
+  "en": "From its starting square, a pawn may choose: one square forward, or two.",
+  "ro": "De pe câmpul de start, pionul poate alege: un câmp înainte sau două."
+ },
+ "les_8_3": {
+  "en": "A pawn cannot move forward if the square in front of it is taken, by any piece.",
+  "ro": "Un pion nu poate înainta dacă câmpul din fața lui este ocupat, de orice piesă."
+ },
+ "les_8_4": {
+  "en": "This pawn is on its starting square. Move it two squares forward.",
+  "ro": "Acest pion este pe câmpul de start. Mută-l două câmpuri înainte."
+ },
+ "les_8_4w": {
+  "en": "That is one square. This time move the pawn two squares.",
+  "ro": "Acela este un câmp. De data asta mută pionul două câmpuri."
+ },
+ "les_8_5": {
+  "en": "This pawn has already left its starting square. Move it forward.",
+  "ro": "Acest pion a părăsit deja câmpul de start. Mută-l înainte."
+ },
+ "les_8_6": {
+  "en": "Only one of these pawns can move. Find it and move it forward.",
+  "ro": "Doar unul dintre acești pioni se poate muta. Găsește-l și mută-l înainte."
+ },
+ "les_8_7": {
+  "en": "Collect all three stars in 3 moves.",
+  "ro": "Adună toate cele trei stele în 3 mutări."
+ },
+ "les_8_8": {
+  "en": "A pawn moves forward, one square, or two from its starting square. It never moves back.",
+  "ro": "Pionul merge înainte, un câmp sau două de pe câmpul de start. Nu merge niciodată înapoi."
+ },
+ "les_8_title": {
+  "en": "The pawn: moving",
+  "ro": "Pionul: mutarea"
+ },
+ "les_9_1": {
+  "en": "A pawn captures differently than it moves: one square diagonally forward. It cannot capture the piece right in front of it.",
+  "ro": "Pionul capturează altfel decât se mută: un câmp pe diagonală înainte. Nu poate captura piesa aflată chiar în fața lui."
+ },
+ "les_9_2": {
+  "en": "Here the pawn captures the rook and takes its place.",
+  "ro": "Aici pionul capturează turnul și îi ia locul."
+ },
+ "les_9_3": {
+  "en": "Capture the black knight.",
+  "ro": "Capturează calul negru."
+ },
+ "les_9_4": {
+  "en": "Capture the black rook.",
+  "ro": "Capturează turnul negru."
+ },
+ "les_9_4w": {
+  "en": "That was the bishop. Look for the rook, the piece that looks like a tower.",
+  "ro": "Acela era nebunul. Caută turnul, piesa care arată ca un turn de cetate."
+ },
+ "les_9_5": {
+  "en": "One of your pawns can capture something. Find it and capture!",
+  "ro": "Unul dintre pionii tăi poate captura ceva. Găsește-l și capturează!"
+ },
+ "les_9_5w": {
+  "en": "That pawn cannot capture anything. Look for a black piece diagonally in front of a pawn.",
+  "ro": "Acel pion nu poate captura nimic. Caută o piesă neagră pe diagonală în fața unui pion."
+ },
+ "les_9_6": {
+  "en": "Capture all the black pawns in 3 moves.",
+  "ro": "Capturează toți pionii negri în 3 mutări."
+ },
+ "les_9_7": {
+  "en": "The pawn moves straight, but captures diagonally forward. It is the only piece that captures differently than it moves.",
+  "ro": "Pionul se mută drept, dar capturează pe diagonală înainte. Este singura piesă care capturează altfel decât se mută."
+ },
+ "les_9_title": {
+  "en": "The pawn: capturing",
+  "ro": "Pionul: captura"
+ },
+ "les_q_black": {
+  "en": "Black",
+  "ro": "Negrul"
+ },
+ "les_q_checkmate": {
+  "en": "Checkmate",
+  "ro": "Mat"
+ },
+ "les_q_equal": {
+  "en": "Equal",
+  "ro": "Egal"
+ },
+ "les_q_neither": {
+  "en": "Neither",
+  "ro": "Niciunul"
+ },
+ "les_q_no": {
+  "en": "No",
+  "ro": "Nu"
+ },
+ "les_q_stalemate": {
+  "en": "Stalemate",
+  "ro": "Pat"
+ },
+ "les_q_white": {
+  "en": "White",
+  "ro": "Albul"
+ },
+ "les_q_yes": {
+  "en": "Yes",
+  "ro": "Da"
+ },
+ "les_sec_1": {
+  "en": "The board and the pieces",
+  "ro": "Tabla și piesele"
+ },
+ "les_sec_2": {
+  "en": "The goal and special rules",
+  "ro": "Scopul și regulile speciale"
+ },
+ "les_sec_3": {
+  "en": "First checkmates",
+  "ro": "Primele maturi"
+ },
+ "les_sec_4": {
+  "en": "Material",
+  "ro": "Material"
+ },
+ "les_sec_5": {
+  "en": "How to start a game",
+  "ro": "Cum începi o partidă"
+ },
+ "les_sec_6": {
+  "en": "Tactics",
+  "ro": "Tactică"
+ },
+ "les_sec_7": {
+  "en": "Checkmate patterns",
+  "ro": "Modele de mat"
+ },
+ "les_sec_8": {
+  "en": "Planning",
+  "ro": "Planificare"
+ },
+ "les_sec_9": {
+  "en": "Endgames",
+  "ro": "Finaluri"
+ }
+}
