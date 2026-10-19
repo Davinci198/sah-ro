@@ -99,7 +99,7 @@ class LessonActivity : UiActivity() {
         root.addView(
             label(
                 "64 de lecții în 9 secțiuni: apasă o lecție pentru a o parcurge ecran cu ecran.",
-                11f,
+                12f,
                 mutedColor,
             ),
             fullWidth(),
@@ -158,10 +158,10 @@ class LessonActivity : UiActivity() {
         root.addView(top, fullWidth())
         root.addView(space(8))
 
-        progressLabel = label("", 11f, mutedColor)
+        progressLabel = label("", 12f, mutedColor)
         root.addView(progressLabel, fullWidth())
 
-        textCard = card("")
+        textCard = card("", 15f)
         root.addView(textCard, fullWidth())
         root.addView(space(8))
 
@@ -175,7 +175,7 @@ class LessonActivity : UiActivity() {
         }
         root.addView(scroller, LinearLayout.LayoutParams(-1, -2))
 
-        feedbackLabel = label("", 13f, mutedColor)
+        feedbackLabel = label("", 14f, mutedColor)
         root.addView(feedbackLabel, fullWidth())
 
         controls = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }

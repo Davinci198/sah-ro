@@ -25,8 +25,9 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
     private val lightDiagonal = Color.rgb(255, 244, 177)
     private val selectedCorrect = Color.rgb(34, 197, 94)
     private val selectedWrong = Color.rgb(239, 68, 68)
-    private val highlightTarget = Color.WHITE
+    private val highlightTarget = Color.rgb(34, 211, 238)
     private val selectedAccent = Color.rgb(255, 199, 71)
+    private val focusColor = Color.rgb(139, 92, 246)
     private val lastMoveColor = Color.rgb(120, 160, 220)
     private val checkColor = Color.rgb(255, 96, 96)
     private val coordPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -138,20 +139,23 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
             val dark = DiagonalRules.isDarkSquare(file, rank)
             val piece = board.pieceAt(square)
             positionSquares[index] = if (sprites.containsKey(piece)) piece else null
-            val borderColor = when (marks[square]) {
+            val mark = marks[square]
+            val borderColor = when (mark) {
                 BoardMark.SELECTED -> selectedAccent
                 BoardMark.TARGET -> highlightTarget
                 BoardMark.GOOD -> selectedCorrect
                 BoardMark.BAD -> selectedWrong
-                BoardMark.FOCUS -> lightDiagonal
+                BoardMark.FOCUS -> focusColor
                 BoardMark.LAST -> lastMoveColor
                 BoardMark.CHECK -> checkColor
                 null -> Color.TRANSPARENT
             }
-            val borderWidth = if (borderColor == Color.TRANSPARENT) 0 else dp(3)
+            val borderWidth = if (mark == null) 0 else dp(4)
             button.text = ""
             button.isEnabled = true
-            button.background = rippleBackground(if (dark) darkSquare else lightSquare, borderColor, borderWidth)
+            val baseColor = if (dark) darkSquare else lightSquare
+            val fillColor = if (mark == null) baseColor else wash(baseColor, borderColor, 0.35f)
+            button.background = rippleBackground(fillColor, borderColor, borderWidth)
             button.contentDescription = positionDescription(square, dark, piece)
         }
         invalidate()
@@ -262,6 +266,17 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
         val targetLabel = if (targetMarked) ", coordonata marcată" else ""
         return "Pătrățel ${square.coordinate}, $color$diagonal$targetLabel"
     }
+
+    /**
+     * Blends the square's base colour toward [tint] so a marked cell reads even
+     * where the border colour alone would sink into the board (pale marks on
+     * light squares, white marks, and so on).
+     */
+    private fun wash(baseColor: Int, tint: Int, amount: Float): Int = Color.rgb(
+        (Color.red(baseColor) + (Color.red(tint) - Color.red(baseColor)) * amount).toInt(),
+        (Color.green(baseColor) + (Color.green(tint) - Color.green(baseColor)) * amount).toInt(),
+        (Color.blue(baseColor) + (Color.blue(tint) - Color.blue(baseColor)) * amount).toInt(),
+    )
 
     private fun rippleBackground(baseColor: Int, borderColor: Int, borderWidth: Int): RippleDrawable {
         val content = GradientDrawable().apply {
