@@ -39,6 +39,7 @@ class PuzzleActivity : UiActivity() {
     private var difficulty = 4
     private var selected: Square? = null
     private var lastMove: Pair<Square, Square>? = null
+    private var hintArrow: BoardArrow? = null
     private var solvedCount = 0
     private var earned = 0
     private val random = Random(System.currentTimeMillis())
@@ -114,7 +115,7 @@ class PuzzleActivity : UiActivity() {
         }
         root.addView(scroller, LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(8) })
 
-        messageLabel = label("", 13f, mutedColor)
+        messageLabel = label("", 14f, mutedColor)
         root.addView(messageLabel, fullWidth())
 
         movesLabel = label("", 12f, mutedColor)
@@ -153,8 +154,8 @@ class PuzzleActivity : UiActivity() {
         root.addView(
             label(
                 "Rezolvă poziția: mută piesa, adversarul răspunde singur.\n" +
-                    "„Indiciu” arată piesa care trebuie mutată.",
-                11f,
+                    "„Indiciu” îți arată cu săgeata mutarea de făcut.",
+                12f,
                 mutedColor,
             ),
             fullWidth(),
@@ -217,6 +218,7 @@ class PuzzleActivity : UiActivity() {
         session = PuzzleSession(puzzle)
         selected = null
         lastMove = null
+        hintArrow = null
         hintButton.isEnabled = true
         nextButton.isEnabled = false
         messageLabel.text = ""
@@ -233,6 +235,7 @@ class PuzzleActivity : UiActivity() {
         session = restored
         selected = null
         lastMove = null
+        hintArrow = null
         messageLabel.setTextColor(mutedColor)
         messageLabel.text =
             if (restored.isSolved) "Rezolvat — apasă „Următorul”." else "Poziția dinainte de rotire."
@@ -273,6 +276,7 @@ class PuzzleActivity : UiActivity() {
         when (val outcome = session.play(selectedNow, square)) {
             is PuzzleOutcome.Correct -> {
                 lastMove = selectedNow to square
+                hintArrow = null
                 if (outcome.solved) {
                     solvedCount++
                     earned += session.score()
@@ -301,8 +305,9 @@ class PuzzleActivity : UiActivity() {
 
     private fun showHint() {
         val session = session ?: return
-        val expected = session.expected ?: return
-        selected = ChessMove.fromUci(expected)?.from
+        val move = ChessMove.fromUci(session.expected ?: return) ?: return
+        selected = move.from
+        hintArrow = BoardArrow(move.from, move.to, hintColor)
         messageLabel.setTextColor(accentColor)
         messageLabel.text = "Indiciu: ${session.hint()}"
         render()
@@ -311,12 +316,17 @@ class PuzzleActivity : UiActivity() {
     private fun render() {
         val session = session ?: return
         val board = session.board
-        val targets = selected
-            ?.let { from -> MoveGenerator.legalMovesFrom(board, from).map { it.to } }
-            .orEmpty()
+        val arrow = hintArrow
+        val targets = if (arrow != null && selected == arrow.from) {
+            // The hint arrow replaces the fan of candidate squares.
+            emptyList()
+        } else {
+            selected?.let { from -> MoveGenerator.legalMovesFrom(board, from).map { it.to } }.orEmpty()
+        }
         boardView.renderPosition(
             board.toFen(),
             marks(targets = targets, lastMove = lastMove, board = board, selected = selected),
+            arrows = listOfNotNull(arrow),
         )
     }
 
