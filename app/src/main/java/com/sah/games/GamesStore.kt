@@ -1,0 +1,155 @@
+package com.sah.games
+
+import com.sah.content.Json
+import com.sah.content.int
+import com.sah.content.string
+import java.io.File
+
+/** Where an imported game came from. */
+enum class Platform(val label: String, val fileName: String) {
+    CHESSCOM("Chess.com", "chesscom"),
+    LICHESS("Lichess", "lichess"),
+}
+
+/**
+ * One imported game, flattened for the list and the replay screen: who the
+ * opponent was, the result for the imported player, and the raw PGN kept so
+ * the moves can be replayed later without the network.
+ */
+data class ImportedGame(
+    val id: String,
+    val platform: String,
+    val opponent: String,
+    val opponentRating: Int?,
+    val myRating: Int?,
+    val myColor: String,
+    val outcome: String,
+    val date: String,
+    val timeControl: String,
+    val timeClass: String,
+    val opening: String,
+    val url: String,
+    val pgn: String,
+)
+
+/** Result for the imported player: `W` win, `D` draw, `L` loss. */
+fun outcomeFor(result: String, myColor: String): String = when (result) {
+    "1-0" -> if (myColor == "white") "W" else "L"
+    "0-1" -> if (myColor == "black") "W" else "L"
+    else -> "D"
+}
+
+/** `2020.05.09` or `2020-05-09` becomes `2020-05-09` so dates sort as text. */
+fun normalizeDate(raw: String): String = raw.replace('.', '-').take(10)
+
+/** Human label for a result code. */
+fun outcomeWord(outcome: String): String = when (outcome) {
+    "W" -> "Victorie"
+    "L" -> "Înfrângere"
+    else -> "Egal"
+}
+
+/**
+ * Append-only NDJSON storage: one JSON object per line, one file per
+ * platform, in `filesDir`. Games are appended as they arrive so a long
+ * import that dies halfway keeps what it already downloaded. Loading
+ * dedupes by game id, keeping the first copy.
+ */
+class GamesStore(private val directory: File) {
+
+    init {
+        directory.mkdirs()
+    }
+
+    fun fileFor(platform: Platform): File = File(directory, platform.fileName + ".ndjson")
+
+    fun load(platform: Platform): List<ImportedGame> {
+        val file = fileFor(platform)
+        if (!file.exists()) return emptyList()
+        val seen = HashSet<String>()
+        val games = ArrayList<ImportedGame>()
+        synchronized(LOCK) {
+            file.forEachLine { line ->
+                val game = gameFromJson(line.trim()) ?: return@forEachLine
+                if (seen.add(game.id)) games += game
+            }
+        }
+        return games
+    }
+
+    fun loadAll(): List<ImportedGame> = Platform.values().flatMap { load(it) }
+
+    fun knownIds(platform: Platform): MutableSet<String> = load(platform).mapTo(HashSet()) { it.id }
+
+    fun append(platform: Platform, game: ImportedGame) {
+        synchronized(LOCK) {
+            fileFor(platform).appendText(game.toJsonLine() + "\n", Charsets.UTF_8)
+        }
+    }
+
+    fun clear(platform: Platform) {
+        synchronized(LOCK) { fileFor(platform).delete() }
+    }
+
+    private companion object {
+        val LOCK = Any()
+    }
+}
+
+/** One flat JSON object per game; the only on-disk format. */
+fun ImportedGame.toJsonLine(): String {
+    val fields = ArrayList<String>(13)
+    fun str(key: String, value: String) { fields += "\"$key\":${value.toJsonString()}" }
+    fun num(key: String, value: Int?) { if (value != null) fields += "\"$key\":$value" }
+    str("id", id)
+    str("platform", platform)
+    str("opponent", opponent)
+    num("oppRating", opponentRating)
+    num("myRating", myRating)
+    str("color", myColor)
+    str("outcome", outcome)
+    str("date", date)
+    str("tc", timeControl)
+    str("class", timeClass)
+    str("opening", opening)
+    str("url", url)
+    str("pgn", pgn)
+    return fields.joinToString(",", "{", "}")
+}
+
+/** Parses one stored line; null when the line is corrupt or incomplete. */
+fun gameFromJson(line: String): ImportedGame? = runCatching {
+    val map = Json.parseObject(line)
+    val id = map.string("id") ?: return null
+    ImportedGame(
+        id = id,
+        platform = map.string("platform") ?: "",
+        opponent = map.string("opponent") ?: "",
+        opponentRating = map.int("oppRating"),
+        myRating = map.int("myRating"),
+        myColor = map.string("color") ?: "white",
+        outcome = map.string("outcome") ?: "D",
+        date = map.string("date") ?: "",
+        timeControl = map.string("tc") ?: "",
+        timeClass = map.string("class") ?: "",
+        opening = map.string("opening") ?: "",
+        url = map.string("url") ?: "",
+        pgn = map.string("pgn") ?: "",
+    )
+}.getOrNull()
+
+private fun String.toJsonString(): String = buildString {
+    append('"')
+    for (c in this@toJsonString) {
+        when {
+            c == '"' -> append("\\\"")
+            c == '\\' -> append("\\\\")
+            c == '\n' -> append("\\n")
+            c == '\r' -> append("\\r")
+            c == '\t' -> append("\\t")
+            c < ' ' -> append("\\u").append(c.code.toString(16).padStart(4, '0'))
+            else -> append(c)
+        }
+    }
+    append('"')
+}

@@ -3,4 +3,6 @@
     <string name="app_name">sah_ro</string>
     <string name="lesson_title">Lecții</string>
     <string name="puzzle_title">Puzzle-uri</string>
+    <string name="games_title">Jocurile mele</string>
+    <string name="game_replay_title">Redare joc</string>
 </resources>
