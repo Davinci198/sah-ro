@@ -314,6 +314,9 @@ class LessonSession(
 
     val starsTotal: Int get() = screen.stars?.stars?.size ?: 0
 
+    /** The squares of a `stars` screen that still hold an uncollected star. */
+    val pendingStars: Set<String> get() = starsLeft.toSet()
+
     /** Own moves played on a `stars` screen, against [StarsTask.max]. */
     val movesUsed: Int get() = starMoves
 

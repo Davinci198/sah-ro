@@ -13,9 +13,18 @@ import android.view.ViewGroup
 import android.widget.Button
 import com.sah.chess.ChessBoard
 import com.sah.chess.Pieces
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 /** Highlight kinds the piece board understands. */
 enum class BoardMark { SELECTED, TARGET, GOOD, BAD, FOCUS, LAST, CHECK }
+
+/** An arrow overlay drawn above the pieces, from [from] to [to]. */
+data class BoardArrow(val from: Square, val to: Square, val color: Int)
+
+/** Violet that marks "hint" everywhere: lesson focus squares and puzzle hint arrows. */
+val hintColor = Color.rgb(139, 92, 246)
 
 class ChessBoardView(context: Context) : ViewGroup(context) {
     private val density = resources.displayMetrics.density
@@ -27,7 +36,6 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
     private val selectedWrong = Color.rgb(239, 68, 68)
     private val highlightTarget = Color.rgb(34, 211, 238)
     private val selectedAccent = Color.rgb(255, 199, 71)
-    private val focusColor = Color.rgb(139, 92, 246)
     private val lastMoveColor = Color.rgb(120, 160, 220)
     private val checkColor = Color.rgb(255, 96, 96)
     private val coordPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -43,6 +51,8 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
     private var onSquareTapped: ((Square) -> Unit)? = null
     private var pieceSprites: Map<Char, Bitmap>? = null
     private var positionSquares: Array<Char?> = arrayOfNulls(64)
+    private var starSquares: Set<Square> = emptySet()
+    private var arrowList: List<BoardArrow> = emptyList()
 
     init {
         setBackgroundColor(Color.BLACK)
@@ -84,6 +94,8 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
         this.feedbackSquare = feedbackSquare
         this.feedbackCorrect = feedbackCorrect
         positionSquares = arrayOfNulls(64)
+        starSquares = emptySet()
+        arrowList = emptyList()
         buttons.forEachIndexed { index, button ->
             val file = index % 8
             val rank = 7 - index / 8
@@ -129,9 +141,16 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
      * The caller decides priorities by putting a single mark per square into the
      * map; the board only paints it.
      */
-    fun renderPosition(fen: String, marks: Map<Square, BoardMark> = emptyMap()) {
+    fun renderPosition(
+        fen: String,
+        marks: Map<Square, BoardMark> = emptyMap(),
+        stars: Set<Square> = emptySet(),
+        arrows: List<BoardArrow> = emptyList(),
+    ) {
         val board = ChessBoard.fromFen(fen)
         val sprites = pieceSprites()
+        starSquares = stars
+        arrowList = arrows
         buttons.forEachIndexed { index, button ->
             val file = index % 8
             val rank = 7 - index / 8
@@ -145,7 +164,7 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
                 BoardMark.TARGET -> highlightTarget
                 BoardMark.GOOD -> selectedCorrect
                 BoardMark.BAD -> selectedWrong
-                BoardMark.FOCUS -> focusColor
+                BoardMark.FOCUS -> hintColor
                 BoardMark.LAST -> lastMoveColor
                 BoardMark.CHECK -> checkColor
                 null -> Color.TRANSPARENT
@@ -180,6 +199,8 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
         drawPieceSprites(canvas)
+        drawStars(canvas)
+        drawArrows(canvas)
         drawCoordinates(canvas)
     }
 
@@ -195,6 +216,73 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
             val left = button.left + inset
             val top = button.top + inset
             canvas.drawBitmap(bitmap, null, android.graphics.RectF(left, top, left + dest, top + dest), null)
+        }
+    }
+
+    private val starPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.CENTER
+        typeface = android.graphics.Typeface.DEFAULT_BOLD
+    }
+    private val arrowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        strokeJoin = Paint.Join.ROUND
+        strokeCap = Paint.Cap.ROUND
+    }
+
+    /**
+     * Golden stars on the squares a `stars` screen still asks the learner to
+     * reach. Drawn above the pieces so the goal is never hidden; a collected
+     * square is simply no longer in [starSquares].
+     */
+    private fun drawStars(canvas: Canvas) {
+        if (starSquares.isEmpty()) return
+        val squareSize = width / 8f
+        starPaint.textSize = squareSize * 0.62f
+        starPaint.strokeWidth = squareSize * 0.045f
+        for (star in starSquares) {
+            val centerX = (star.file + 0.5f) * squareSize
+            val top = (7 - star.rank) * squareSize
+            val baseline = top + (squareSize - (starPaint.ascent() + starPaint.descent())) / 2f
+            starPaint.style = Paint.Style.STROKE
+            starPaint.color = Color.rgb(24, 24, 24)
+            canvas.drawText("★", centerX, baseline, starPaint)
+            starPaint.style = Paint.Style.FILL
+            starPaint.color = Color.rgb(255, 199, 71)
+            canvas.drawText("★", centerX, baseline, starPaint)
+        }
+        starPaint.style = Paint.Style.FILL
+    }
+
+    /** Thick line with a big head from square centre to square centre, above everything. */
+    private fun drawArrows(canvas: Canvas) {
+        if (arrowList.isEmpty()) return
+        val squareSize = width / 8f
+        val shaft = squareSize * 0.16f
+        val headLength = squareSize * 0.34f
+        val headHalf = squareSize * 0.24f
+        for (arrow in arrowList) {
+            val x1 = (arrow.from.file + 0.5f) * squareSize
+            val y1 = (7 - arrow.from.rank + 0.5f) * squareSize
+            val x2 = (arrow.to.file + 0.5f) * squareSize
+            val y2 = (7 - arrow.to.rank + 0.5f) * squareSize
+            val angle = atan2(y2 - y1, x2 - x1)
+            val dx = cos(angle)
+            val dy = sin(angle)
+            val startX = x1 + dx * shaft
+            val startY = y1 + dy * shaft
+            val neckX = x2 - dx * headLength
+            val neckY = y2 - dy * headLength
+            arrowPaint.color = arrow.color
+            arrowPaint.style = Paint.Style.STROKE
+            arrowPaint.strokeWidth = shaft
+            canvas.drawLine(startX, startY, neckX, neckY, arrowPaint)
+            arrowPaint.style = Paint.Style.FILL
+            val head = android.graphics.Path().apply {
+                moveTo(x2, y2)
+                lineTo(neckX - dy * headHalf, neckY + dx * headHalf)
+                lineTo(neckX + dy * headHalf, neckY - dx * headHalf)
+                close()
+            }
+            canvas.drawPath(head, arrowPaint)
         }
     }
 

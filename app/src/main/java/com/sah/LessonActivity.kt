@@ -223,7 +223,8 @@ class LessonActivity : UiActivity() {
         val boardView = this.boardView
         if (boardView != null) {
             boardView.visibility = View.VISIBLE
-            boardView.renderPosition(board.toFen(), marksFor(active))
+            val stars = active.pendingStars.mapNotNull { square(it) }.toSet()
+            boardView.renderPosition(board.toFen(), marksFor(active), stars)
         }
 
         prevButton?.isEnabled = !active.isFirst
