@@ -211,13 +211,15 @@ class GamesImportTest {
     // -- lichess parser ------------------------------------------------------
 
     @Test
-    fun lichessStreamSplitsTwoGames() {
-        val parser = LichessStreamParser("thibault")
-        val games = ArrayList<ImportedGame>()
-        for (line in lichessStream.lines()) {
-            parser.feed(line)?.let(games::add)
-        }
-        parser.finish()?.let(games::add)
+    fun lichessPageSplitsTwoGamesKeepingHeadersWithMoves() {
+        val blocks = LichessParser.splitBlocks(lichessStream)
+        assertEquals(2, blocks.size)
+        assertTrue(blocks[0].contains("[GameId \"N1SQKS1V\"]"))
+        assertTrue(blocks[0].contains("1. e4 c5"))
+        assertTrue(blocks[1].contains("[GameId \"iDM3fRbj\"]"))
+        assertTrue(blocks[1].contains("1. e4 e5 2. f4"))
+
+        val games = blocks.mapNotNull { LichessParser.game(it, "thibault") }
         assertEquals(2, games.size)
 
         val first = games[0]
@@ -240,10 +242,9 @@ class GamesImportTest {
     }
 
     @Test
-    fun lichessStreamSkipsNonStandardVariantWithoutFen() {
-        val parser = LichessStreamParser("thibault")
-        val games = ArrayList<ImportedGame>()
-        for (line in """
+    fun lichessPageSkipsNonStandardVariantWithoutFen() {
+        val blocks = LichessParser.splitBlocks(
+            """
             [Event "Chess960 game"]
             [Site "https://lichess.org/abc123"]
             [White "thibault"]
@@ -253,11 +254,24 @@ class GamesImportTest {
             [Variant "Chess960"]
 
             1. e4 e5 2. Nf3 1-0
-        """.trimIndent().lines()) {
-            parser.feed(line)?.let(games::add)
-        }
-        parser.finish()?.let(games::add)
-        assertTrue(games.isEmpty())
+            """.trimIndent(),
+        )
+        assertEquals(1, blocks.size)
+        assertNull(LichessParser.game(blocks.single(), "thibault"))
+    }
+
+    @Test
+    fun lichessCursorTimestampsParseFromHeaders() {
+        val blocks = LichessParser.splitBlocks(lichessStream)
+        val first = LichessParser.utcMillis(blocks[0])
+        val second = LichessParser.utcMillis(blocks[1])
+        assertTrue(first > 0)
+        assertEquals(41 * 60_000L + 11_000L, first - second)
+
+        val endOfDay = LichessParser.utcMillis("[UTCDate \"2026.10.19\"]\n[UTCTime \"23:59:59\"]\n\n1. e4 *")
+        val dateOnly = LichessParser.utcMillis("[UTCDate \"2026.10.19\"]\n[White \"a\"]\n\n1. e4 *")
+        assertEquals(endOfDay, dateOnly)
+        assertEquals(0, LichessParser.utcMillis("[White \"a\"]\n\n1. e4 *"))
     }
 
     // -- storage -------------------------------------------------------------
