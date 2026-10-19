@@ -205,7 +205,7 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
             val dark = DiagonalRules.isDarkSquare(0, 7 - row)
             coordPaint.color = if (dark) Color.rgb(214, 228, 190) else Color.rgb(120, 146, 90)
             val text = (8 - row).toString()
-            canvas.drawText(text, row * squareSize + pad, pad + baselineShift, coordPaint)
+            canvas.drawText(text, pad, row * squareSize + pad + baselineShift, coordPaint)
         }
         // file letters: bottom-right corner of every rank-1 cell
         for (file in 0..7) {
