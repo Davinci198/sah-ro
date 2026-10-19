@@ -1,9 +1,11 @@
 package com.sah
 
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.format.DateUtils
 import android.view.View
 import android.widget.Button
 import android.widget.HorizontalScrollView
@@ -32,11 +34,36 @@ class PuzzleActivity : UiActivity() {
     private lateinit var boardView: ChessBoardView
     private lateinit var statusLabel: TextView
     private lateinit var turnLabel: TextView
+    private lateinit var timerLabel: TextView
     private lateinit var messageLabel: TextView
     private lateinit var movesLabel: TextView
+    private lateinit var progressLabel: TextView
+    private lateinit var chartView: PuzzleChartView
     private lateinit var hintButton: Button
     private lateinit var nextButton: Button
     private val difficultyButtons = ArrayList<Button>()
+
+    /** Survives leaving the screen: solved/earned/streak and the chart's history. */
+    private lateinit var prefs: SharedPreferences
+
+    /** Cumulative clean-solve counter, one entry per finished puzzle. */
+    private val stats = ArrayList<Int>()
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    /** Renders the elapsed clock once a second while [startedAt] is running. */
+    private val tick = object : Runnable {
+        override fun run() {
+            if (startedAt > 0) {
+                timerLabel.text =
+                    DateUtils.formatElapsedTime((System.currentTimeMillis() - startedAt) / 1000)
+            }
+            handler.postDelayed(this, 1000)
+        }
+    }
+
+    /** Seconds frozen on the timer after a solve; -1 while the clock runs. */
+    private var elapsedSeconds = -1
 
     private var book: PuzzleBook? = null
     private var session: PuzzleSession? = null
@@ -73,13 +100,28 @@ class PuzzleActivity : UiActivity() {
         window.statusBarColor = backgroundColor
         window.navigationBarColor = backgroundColor
         title = "Puzzle-uri"
+        prefs = getSharedPreferences("puzzles", MODE_PRIVATE)
+        loadProgress()
         pending = savedInstanceState?.let(::readState)
         difficulty = savedInstanceState?.getInt(KEY_DIFFICULTY, difficulty) ?: difficulty
-        solvedCount = savedInstanceState?.getInt(KEY_SOLVED, 0) ?: 0
-        earned = savedInstanceState?.getInt(KEY_EARNED, 0) ?: 0
-        streak = savedInstanceState?.getInt(KEY_STREAK, 0) ?: 0
+        // The bundle wins over the saved file only when it actually carried a value.
+        solvedCount = savedInstanceState?.getInt(KEY_SOLVED, solvedCount) ?: solvedCount
+        earned = savedInstanceState?.getInt(KEY_EARNED, earned) ?: earned
+        streak = savedInstanceState?.getInt(KEY_STREAK, streak) ?: streak
+        startedAt = savedInstanceState?.getLong(KEY_STARTED_AT, 0L) ?: 0L
+        elapsedSeconds = savedInstanceState?.getInt(KEY_ELAPSED, -1) ?: -1
         build()
+        if (elapsedSeconds >= 0) {
+            timerLabel.text = DateUtils.formatElapsedTime(elapsedSeconds.toLong())
+        }
+        updateChart()
+        handler.post(tick)
         loadBook()
+    }
+
+    override fun onDestroy() {
+        handler.removeCallbacksAndMessages(null)
+        super.onDestroy()
     }
 
     override fun onPause() {
@@ -93,6 +135,8 @@ class PuzzleActivity : UiActivity() {
         outState.putInt(KEY_SOLVED, solvedCount)
         outState.putInt(KEY_EARNED, earned)
         outState.putInt(KEY_STREAK, streak)
+        outState.putLong(KEY_STARTED_AT, startedAt)
+        outState.putInt(KEY_ELAPSED, elapsedSeconds)
         run?.let { active ->
             outState.putInt(KEY_RUN_POINTS, active.points)
             outState.putBoolean(KEY_RUN_HINT, active.hintUsed)
@@ -150,6 +194,9 @@ class PuzzleActivity : UiActivity() {
         turnLabel = label("", 13f, accentColor, bold = true)
         root.addView(turnLabel, fullWidth())
 
+        timerLabel = label("00:00", 13f, mutedColor)
+        root.addView(timerLabel, fullWidth())
+
         boardView = ChessBoardView(this).apply {
             setOnSquareTapped { square -> onSquareTapped(square) }
         }
@@ -165,6 +212,11 @@ class PuzzleActivity : UiActivity() {
         movesLabel = label("", 12f, mutedColor)
         root.addView(movesLabel, fullWidth())
         root.addView(space(8))
+
+        progressLabel = label("Progres", 12f, mutedColor)
+        root.addView(progressLabel, fullWidth())
+        chartView = PuzzleChartView(this)
+        root.addView(chartView, LinearLayout.LayoutParams(-1, dp(72)).apply { topMargin = dp(4) })
 
         val actions = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         hintButton = button("Indiciu") { showHint() }
@@ -264,6 +316,8 @@ class PuzzleActivity : UiActivity() {
         session = PuzzleSession(puzzle)
         run = PuzzleRun(puzzle.pointsPerMove)
         startedAt = System.currentTimeMillis()
+        elapsedSeconds = -1
+        timerLabel.text = DateUtils.formatElapsedTime(0L)
         selected = null
         lastMove = session?.lastApplied?.let { it.from to it.to }
         hintArrow = null
@@ -284,7 +338,14 @@ class PuzzleActivity : UiActivity() {
         restored.restore(state)
         session = restored
         run = PuzzleRun(state.puzzle.pointsPerMove, state.runPoints, state.hintUsed, state.wrongUsed)
-        startedAt = System.currentTimeMillis()
+        // The clock comes from the bundle: frozen if the puzzle was solved, still
+        // running from its wall-clock start otherwise.
+        if (elapsedSeconds >= 0) {
+            startedAt = 0
+            timerLabel.text = DateUtils.formatElapsedTime(elapsedSeconds.toLong())
+        } else if (startedAt == 0L) {
+            startedAt = System.currentTimeMillis()
+        }
         selected = null
         lastMove = restored.lastApplied?.let { it.from to it.to }
         hintArrow = null
@@ -306,6 +367,8 @@ class PuzzleActivity : UiActivity() {
         active.reset()
         run = PuzzleRun(active.puzzle.pointsPerMove)
         startedAt = System.currentTimeMillis()
+        elapsedSeconds = -1
+        timerLabel.text = DateUtils.formatElapsedTime(0L)
         selected = null
         lastMove = active.lastApplied?.let { it.from to it.to }
         hintArrow = null
@@ -398,6 +461,35 @@ class PuzzleActivity : UiActivity() {
             "${puzzle.playerMoves.size} mutări • rezolvate $solvedCount ($earned p)$streakPart"
     }
 
+    /** Restores solved/earned/streak and the chart history from [prefs]. */
+    private fun loadProgress() {
+        solvedCount = prefs.getInt("solved", 0)
+        earned = prefs.getInt("earned", 0)
+        streak = prefs.getInt("streak", 0)
+        stats.clear()
+        prefs.getString("stats", "").orEmpty().split(",").forEach { token ->
+            token.toIntOrNull()?.let(stats::add)
+        }
+    }
+
+    private fun saveProgress() {
+        prefs.edit()
+            .putInt("solved", solvedCount)
+            .putInt("earned", earned)
+            .putInt("streak", streak)
+            .putString("stats", stats.joinToString(","))
+            .apply()
+    }
+
+    /** The chart needs at least two finished puzzles to draw a line. */
+    private fun updateChart() {
+        chartView.submit(stats)
+        val show = stats.size > 1
+        val visibility = if (show) View.VISIBLE else View.GONE
+        progressLabel.visibility = visibility
+        chartView.visibility = visibility
+    }
+
     /** " (3 la rând, 3 viteză)" — only the bonuses that actually pay. */
     private fun bonusSuffix(finish: PuzzleRun.Finish): String {
         val parts = ArrayList<String>()
@@ -444,18 +536,26 @@ class PuzzleActivity : UiActivity() {
                 if (outcome.solved) {
                     solvedCount++
                     val seconds = (System.currentTimeMillis() - startedAt) / 1000
+                    // Freeze the clock on the position that ended the run.
+                    elapsedSeconds = seconds.toInt()
+                    startedAt = 0
+                    timerLabel.text = DateUtils.formatElapsedTime(seconds)
                     val finish = run?.finish(streak, seconds, session.puzzle.playerMoves.size)
                     if (finish != null) {
                         streak++
                         val total = (run?.points ?: 0) + finish.total
                         earned += total
+                        stats += (stats.lastOrNull() ?: 0) + 1
                         messageLabel.setTextColor(successColor)
                         messageLabel.text = "Rezolvat! +$total puncte${bonusSuffix(finish)}"
                     } else {
                         streak = 0
+                        stats += stats.lastOrNull() ?: 0
                         messageLabel.setTextColor(successColor)
                         messageLabel.text = "Rezolvat fără puncte — ai greșit sau ai cerut indiciul."
                     }
+                    saveProgress()
+                    updateChart()
                     offerLineButton()
                     nextButton.isEnabled = true
                     statusLabel.text = statusLine(session.puzzle)
@@ -471,6 +571,7 @@ class PuzzleActivity : UiActivity() {
                 val firstWrong = run?.wrongUsed != true
                 run?.registerWrong()
                 streak = 0
+                saveProgress()
                 messageLabel.setTextColor(errorColor)
                 messageLabel.text = "Nu este mutarea soluției." +
                     (if (firstWrong) " Punctele pe puzzle s-au resetat." else "") +
@@ -545,5 +646,7 @@ class PuzzleActivity : UiActivity() {
         const val KEY_RUN_POINTS = "puzzleRunPoints"
         const val KEY_RUN_HINT = "puzzleRunHint"
         const val KEY_RUN_WRONG = "puzzleRunWrong"
+        const val KEY_STARTED_AT = "puzzleStartedAt"
+        const val KEY_ELAPSED = "puzzleElapsed"
     }
 }
