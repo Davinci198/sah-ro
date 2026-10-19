@@ -235,7 +235,7 @@ class LessonActivity : UiActivity() {
         if (boardView != null) {
             boardView.visibility = View.VISIBLE
             val stars = active.pendingStars.mapNotNull { square(it) }.toSet()
-            boardView.renderPosition(board.toFen(), marksFor(active), stars)
+            boardView.renderPosition(board.toFen(), marksFor(active), stars, lessonArrows(active))
         }
 
         prevButton?.isEnabled = !active.isFirst
@@ -269,6 +269,19 @@ class LessonActivity : UiActivity() {
 
     private fun movesText(active: LessonSession): String =
         if (active.moves.isEmpty()) "" else active.moves.joinToString("  ")
+
+    /** The screen's `arrows` drawn over the pieces, colored by their kind. */
+    private fun lessonArrows(active: LessonSession): List<BoardArrow> =
+        active.screen.arrows.mapNotNull { arrow ->
+            val from = square(arrow.from) ?: return@mapNotNull null
+            val to = square(arrow.to) ?: return@mapNotNull null
+            val color = when (arrow.kind) {
+                "good" -> goodColor
+                "bad" -> badColor
+                else -> hintColor
+            }
+            BoardArrow(from, to, color)
+        }
 
     private fun rebuildControls() {
         val active = session ?: return
