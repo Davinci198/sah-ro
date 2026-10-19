@@ -50,6 +50,7 @@ class PuzzleActivity : UiActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Effects.prepare(this)
         window.statusBarColor = backgroundColor
         window.navigationBarColor = backgroundColor
         title = "Puzzle-uri"
@@ -221,7 +222,7 @@ class PuzzleActivity : UiActivity() {
         }
         session = PuzzleSession(puzzle)
         selected = null
-        lastMove = lastMoveAt(puzzle, 0)
+        lastMove = session?.lastApplied?.let { it.from to it.to }
         hintArrow = null
         hintButton.isEnabled = true
         nextButton.isEnabled = false
@@ -229,6 +230,7 @@ class PuzzleActivity : UiActivity() {
         messageLabel.setTextColor(mutedColor)
         movesLabel.text = ""
         statusLabel.text = statusLine(puzzle)
+        Effects.start()
         render()
     }
 
@@ -238,7 +240,7 @@ class PuzzleActivity : UiActivity() {
         restored.restore(state)
         session = restored
         selected = null
-        lastMove = lastMoveAt(state.puzzle, state.found)
+        lastMove = restored.lastApplied?.let { it.from to it.to }
         hintArrow = null
         messageLabel.setTextColor(mutedColor)
         messageLabel.text =
@@ -253,18 +255,6 @@ class PuzzleActivity : UiActivity() {
     private fun statusLine(puzzle: Puzzle): String =
         "Dificultate ${puzzle.difficulty}/10 • rating ${puzzle.rating} • " +
             "${puzzle.playerMoves.size} mutări • rezolvate $solvedCount ($earned p)"
-
-    /**
-     * The move the board shows as "just played": the opening ply for a fresh
-     * puzzle, or the last ply a resumed run reached (opening at [found] 0,
-     * otherwise the last forced answer after the solver's [found] moves).
-     */
-    private fun lastMoveAt(puzzle: Puzzle, found: Int): Pair<Square, Square>? {
-        val moves = puzzle.moves
-        if (moves.isEmpty()) return null
-        val move = ChessMove.fromUci(moves[minOf(2 * found, moves.lastIndex)]) ?: return null
-        return move.from to move.to
-    }
 
     private fun onSquareTapped(square: Square) {
         val session = session ?: return
@@ -291,8 +281,15 @@ class PuzzleActivity : UiActivity() {
         selected = null
         when (val outcome = session.play(selectedNow, square)) {
             is PuzzleOutcome.Correct -> {
-                lastMove = selectedNow to square
+                Effects.moveOn(board, selectedNow, square)
+                outcome.reply?.let { uci ->
+                    ChessMove.fromUci(uci)?.let { Effects.moveOn(board, it.from, it.to) }
+                }
+                // When an answer was played back, the board is two plies ahead:
+                // the highlight belongs on that reply, not on the solver's move.
+                lastMove = session.lastApplied?.let { it.from to it.to } ?: (selectedNow to square)
                 hintArrow = null
+                if (MoveGenerator.isInCheck(session.board, session.board.whiteToMove)) Effects.check()
                 if (outcome.solved) {
                     solvedCount++
                     earned += session.score()
@@ -300,14 +297,18 @@ class PuzzleActivity : UiActivity() {
                     messageLabel.text = "Rezolvat! +${session.score()} puncte"
                     hintButton.isEnabled = false
                     nextButton.isEnabled = true
+                    statusLabel.text = statusLine(session.puzzle)
+                    Effects.taskCompleted()
                 } else {
                     messageLabel.setTextColor(successColor)
                     messageLabel.text = "Corect. Continuă."
+                    Effects.stepCorrect()
                 }
             }
             is PuzzleOutcome.Wrong -> {
                 messageLabel.setTextColor(errorColor)
                 messageLabel.text = "Nu este mutarea soluției. Încearcă din nou."
+                Effects.stepWrong()
             }
             PuzzleOutcome.Illegal -> {
                 messageLabel.setTextColor(mutedColor)
@@ -326,6 +327,7 @@ class PuzzleActivity : UiActivity() {
         hintArrow = BoardArrow(move.from, move.to, hintColor)
         messageLabel.setTextColor(accentColor)
         messageLabel.text = "Indiciu: ${session.hint()}"
+        Effects.hint()
         render()
     }
 

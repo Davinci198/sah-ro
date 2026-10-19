@@ -56,6 +56,13 @@ class PuzzleSession(val puzzle: Puzzle, private val startFen: String = puzzle.fe
     /** The moves played so far, in SAN: the opponent's opening move first, then solver and answers. */
     val history = ArrayList<String>()
 
+    /**
+     * The last move applied to [board] — the opening, a found move or a forced
+     * answer — so the UI can highlight the real last ply and pick its sound.
+     */
+    var lastApplied: ChessMove? = null
+        private set
+
     init {
         playOpening()
     }
@@ -150,6 +157,7 @@ class PuzzleSession(val puzzle: Puzzle, private val startFen: String = puzzle.fe
     private fun apply(move: ChessMove) {
         history += San.toSan(board, move)
         board = MoveGenerator.applyMove(board, move)
+        lastApplied = move
     }
 
     /** The original replays moves[0] — the opponent's last move — before the solver starts. */
