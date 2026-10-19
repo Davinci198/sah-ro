@@ -61,7 +61,7 @@ abstract class UiActivity : Activity() {
         setTextColor(textColor)
         setTextSize(size)
         setPadding(dp(14), dp(12), dp(14), dp(12))
-        background = controlBackground(cardColor)
+        background = controlBackground(cardColor, strokeColor = Color.rgb(86, 86, 86))
     }
 
     protected fun label(
@@ -94,11 +94,12 @@ abstract class UiActivity : Activity() {
     protected fun actionButton(value: String, color: Int, action: () -> Unit): Button =
         button(value, action).apply { background = controlBackground(color) }
 
-    protected fun controlBackground(color: Int): RippleDrawable {
+    protected fun controlBackground(color: Int, strokeColor: Int = Color.TRANSPARENT): RippleDrawable {
         val content = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             cornerRadius = dp(12).toFloat()
             setColor(color)
+            if (strokeColor != Color.TRANSPARENT) setStroke(dp(1), strokeColor)
         }
         return RippleDrawable(ColorStateList.valueOf(Color.argb(70, 255, 255, 255)), content, null)
     }
