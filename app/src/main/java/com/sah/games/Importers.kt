@@ -5,6 +5,7 @@ import com.sah.content.int
 import com.sah.content.objectList
 import com.sah.content.objectOrNull
 import com.sah.content.string
+import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -242,11 +243,12 @@ class GamesImporter(private val store: GamesStore) {
         var until: Long? = null
         while (!cancelled()) {
             page++
-            progress("Se descarcă de pe Lichess · pagina$page$pages · $added jocuri noi")
             val cursor = until?.let { "&until=$it" } ?: ""
-            val body = fetch(
+            val body = fetchStreamed(
                 "https://lichess.org/api/games/user/$user?opening=true&pgn=true&max=$PAGE_SIZE$cursor",
-            )
+            ) { kilobytes ->
+                progress("Se descarcă de pe Lichess · pagina$page$pages · $kilobytes KB")
+            }
             val blocks = LichessParser.splitBlocks(body)
             if (blocks.isEmpty()) break
             for (block in blocks) {
@@ -310,6 +312,39 @@ class GamesImporter(private val store: GamesStore) {
         }
     }
 
+    /**
+     * GET that reports the download through [onKilobytes] every
+     * [PROGRESS_CHUNK_KB] KB, so a page that takes half a minute on a slow
+     * connection visibly moves instead of looking frozen.
+     */
+    private fun fetchStreamed(url: String, onKilobytes: (Int) -> Unit): String {
+        val connection = open(url)
+        try {
+            val code = connection.responseCode
+            if (code != 200) throw HttpStatusError(code)
+            val out = ByteArrayOutputStream()
+            val buffer = ByteArray(16 * 1024)
+            var sinceReport = 0
+            onKilobytes(0)
+            connection.inputStream.use { input ->
+                while (true) {
+                    val read = input.read(buffer)
+                    if (read < 0) break
+                    out.write(buffer, 0, read)
+                    sinceReport += read
+                    if (sinceReport >= PROGRESS_CHUNK_KB * 1024) {
+                        onKilobytes(out.size() / 1024)
+                        sinceReport = 0
+                    }
+                }
+            }
+            onKilobytes(out.size() / 1024)
+            return out.toString("UTF-8")
+        } finally {
+            connection.disconnect()
+        }
+    }
+
     private fun open(url: String): HttpURLConnection =
         (URL(url).openConnection() as HttpURLConnection).apply {
             connectTimeout = CONNECT_TIMEOUT_MS
@@ -331,5 +366,8 @@ class GamesImporter(private val store: GamesStore) {
 
         /** Cursor steps back a little so same-second boundary games re-arrive. */
         const val CURSOR_BACK_MS = 2_000L
+
+        /** How often the page download reports its size while running. */
+        const val PROGRESS_CHUNK_KB = 64
     }
 }
