@@ -1,7 +1,18 @@
 # Third-party notices
 
-As of v1.2.1 the application bundles no third-party code and no third-party
-artwork.
+As of v1.2.2 the application bundles no third-party code. The bundled piece
+artwork is described below.
+
+## Piece artwork (v1.2.2)
+
+`app/src/main/res/drawable-nodpi/piece_{w,b}{p,n,b,r,q,k}.png` — the 12 monster
+chess pieces shown on the board. They are cropped from a reference screenshot of
+the original Checkmate app (`~/9remote-uploads/sah-board-ref/ref.png`), matted to
+transparency with ImageMagick (flood fill from the cell corners), and resized to
+200×200. Provenance: derivative of the original Checkmate board rendering; all
+credit for the underlying designs remains with the original authors. If you
+redistribute this app, confirm you are comfortable bundling artwork derived from
+the original before shipping.
 
 ## Removed in v1.2.1
 

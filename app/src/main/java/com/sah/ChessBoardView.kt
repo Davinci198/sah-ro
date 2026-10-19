@@ -2,7 +2,10 @@ package com.sah
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.view.Gravity
@@ -26,6 +29,10 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
     private val selectedAccent = Color.rgb(255, 199, 71)
     private val lastMoveColor = Color.rgb(120, 160, 220)
     private val checkColor = Color.rgb(255, 96, 96)
+    private val coordPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.CENTER
+        typeface = android.graphics.Typeface.DEFAULT_BOLD
+    }
     private val buttons = ArrayList<Button>(64)
     private var showDiagonals = true
     private var mode = TrainerMode.FIND
@@ -33,6 +40,8 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
     private var feedbackSquare: Square? = null
     private var feedbackCorrect: Boolean? = null
     private var onSquareTapped: ((Square) -> Unit)? = null
+    private var pieceSprites: Map<Char, Bitmap>? = null
+    private var positionSquares: Array<Char?> = arrayOfNulls(64)
 
     init {
         setBackgroundColor(Color.BLACK)
@@ -73,6 +82,7 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
         this.target = target
         this.feedbackSquare = feedbackSquare
         this.feedbackCorrect = feedbackCorrect
+        positionSquares = arrayOfNulls(64)
         buttons.forEachIndexed { index, button ->
             val file = index % 8
             val rank = 7 - index / 8
@@ -120,12 +130,14 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
      */
     fun renderPosition(fen: String, marks: Map<Square, BoardMark> = emptyMap()) {
         val board = ChessBoard.fromFen(fen)
+        val sprites = pieceSprites()
         buttons.forEachIndexed { index, button ->
             val file = index % 8
             val rank = 7 - index / 8
             val square = Square(file, rank)
             val dark = DiagonalRules.isDarkSquare(file, rank)
             val piece = board.pieceAt(square)
+            positionSquares[index] = if (sprites.containsKey(piece)) piece else null
             val borderColor = when (marks[square]) {
                 BoardMark.SELECTED -> selectedAccent
                 BoardMark.TARGET -> highlightTarget
@@ -137,9 +149,7 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
                 null -> Color.TRANSPARENT
             }
             val borderWidth = if (borderColor == Color.TRANSPARENT) 0 else dp(3)
-            button.text = pieceGlyph(piece)
-            button.setTextColor(if (piece.isUpperCase()) Color.WHITE else Color.rgb(24, 24, 24))
-            button.textSize = 22f
+            button.text = ""
             button.isEnabled = true
             button.background = rippleBackground(if (dark) darkSquare else lightSquare, borderColor, borderWidth)
             button.contentDescription = positionDescription(square, dark, piece)
@@ -147,20 +157,65 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
         invalidate()
     }
 
-    private fun pieceGlyph(piece: Char): String = when (piece) {
-        'K' -> "♔"
-        'Q' -> "♕"
-        'R' -> "♖"
-        'B' -> "♗"
-        'N' -> "♘"
-        'P' -> "♙"
-        'k' -> "♚"
-        'q' -> "♛"
-        'r' -> "♜"
-        'b' -> "♝"
-        'n' -> "♞"
-        'p' -> "♟"
-        else -> ""
+    private fun pieceSprites(): Map<Char, Bitmap> {
+        pieceSprites?.let { return it }
+        val ids = mapOf(
+            'P' to R.drawable.piece_wp, 'N' to R.drawable.piece_wn, 'B' to R.drawable.piece_wb,
+            'R' to R.drawable.piece_wr, 'Q' to R.drawable.piece_wq, 'K' to R.drawable.piece_wk,
+            'p' to R.drawable.piece_bp, 'n' to R.drawable.piece_bn, 'b' to R.drawable.piece_bb,
+            'r' to R.drawable.piece_br, 'q' to R.drawable.piece_bq, 'k' to R.drawable.piece_bk,
+        )
+        val loaded = ids.mapNotNull { (piece, id) ->
+            val bitmap = android.graphics.BitmapFactory.decodeResource(resources, id) ?: return@mapNotNull null
+            piece to bitmap
+        }.toMap()
+        pieceSprites = loaded
+        return loaded
+    }
+
+    override fun dispatchDraw(canvas: Canvas) {
+        super.dispatchDraw(canvas)
+        drawPieceSprites(canvas)
+        drawCoordinates(canvas)
+    }
+
+    private fun drawPieceSprites(canvas: Canvas) {
+        val sprites = pieceSprites()
+        if (sprites.isEmpty()) return
+        val squareSize = width / 8f
+        val inset = squareSize * 0.08f
+        val dest = squareSize - inset * 2
+        buttons.forEachIndexed { index, button ->
+            val piece = positionSquares[index] ?: return@forEachIndexed
+            val bitmap = sprites[piece] ?: return@forEachIndexed
+            val left = button.left + inset
+            val top = button.top + inset
+            canvas.drawBitmap(bitmap, null, android.graphics.RectF(left, top, left + dest, top + dest), null)
+        }
+    }
+
+    /** Coordinate labels sit in the cell corners, exactly like the reference board. */
+    private fun drawCoordinates(canvas: Canvas) {
+        val squareSize = width / 8f
+        coordPaint.textSize = squareSize * 0.22f
+        val pad = squareSize * 0.16f
+        val baselineShift = -coordPaint.ascent()
+        // rank numbers: top-left corner of every a-file cell
+        for (row in 0..7) {
+            val dark = DiagonalRules.isDarkSquare(0, 7 - row)
+            coordPaint.color = if (dark) Color.rgb(214, 228, 190) else Color.rgb(120, 146, 90)
+            val text = (8 - row).toString()
+            canvas.drawText(text, row * squareSize + pad, pad + baselineShift, coordPaint)
+        }
+        // file letters: bottom-right corner of every rank-1 cell
+        for (file in 0..7) {
+            val dark = DiagonalRules.isDarkSquare(file, 0)
+            coordPaint.color = if (dark) Color.rgb(214, 228, 190) else Color.rgb(120, 146, 90)
+            val letter = ('a'.code + file).toChar().toString()
+            val cx = (file + 1) * squareSize - pad
+            val cy = 8 * squareSize - pad
+            canvas.drawText(letter, cx, cy, coordPaint)
+        }
     }
 
     private fun positionDescription(square: Square, dark: Boolean, piece: Char): String {
