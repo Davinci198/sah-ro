@@ -221,26 +221,50 @@ class LessonActivity : UiActivity() {
         val screen = active.screen
 
         progressLabel?.text = "Ecran ${active.index + 1}/${active.screenCount} • ${typeName(active.type)}"
-        turnLabel?.text = if (active.board.whiteToMove) {
-            if (language == Language.RO) "Mută albul." else "White to move"
-        } else {
-            if (language == Language.RO) "Mută negrul." else "Black to move"
-        }
+        // A `play` screen shows the engine game's board, not the lesson's copy.
+        val game = playSession
+        val board = game?.board ?: active.board
+        turnLabel?.text = turnText(board, game, active)
         textCard?.text = active.text.ifEmpty { "…" }
         feedbackLabel?.text = active.feedback.ifEmpty { movesText(active) }
         feedbackLabel?.setTextColor(if (active.hasFeedback) errorColor else mutedColor)
 
-        val board = active.board
         val boardView = this.boardView
         if (boardView != null) {
             boardView.visibility = View.VISIBLE
-            val stars = active.pendingStars.mapNotNull { square(it) }.toSet()
-            boardView.renderPosition(board.toFen(), marksFor(active), stars, lessonArrows(active))
+            if (game != null) {
+                boardView.renderPosition(board.toFen(), marks(board = board, selected = selected))
+            } else {
+                val stars = active.pendingStars.mapNotNull { square(it) }.toSet()
+                boardView.renderPosition(board.toFen(), marksFor(active), stars, lessonArrows(active))
+            }
         }
 
         prevButton?.isEnabled = !active.isFirst
         nextButton?.isEnabled = active.canAdvance && !active.isLast
         rebuildControls()
+    }
+
+    /**
+     * Who has to move on [board]: nobody when the game or a board task is over,
+     * nobody when the position is mate or stalemate, and the side to move else.
+     */
+    private fun turnText(board: ChessBoard, game: EnginePlay?, active: LessonSession): String {
+        val taskOver = game == null && active.solved &&
+            (active.screen.moves != null || active.screen.stars != null)
+        if (game?.isOver == true || taskOver) return ""
+        if (MoveGenerator.legalMoves(board).isEmpty()) {
+            return if (MoveGenerator.isInCheck(board, board.whiteToMove)) {
+                if (language == Language.RO) "Șah-mat." else "Checkmate."
+            } else {
+                if (language == Language.RO) "Remiză." else "Stalemate."
+            }
+        }
+        return if (board.whiteToMove) {
+            if (language == Language.RO) "Mută albul." else "White to move"
+        } else {
+            if (language == Language.RO) "Mută negrul." else "Black to move"
+        }
     }
 
     /** Combines the screen's guidance (marks, arrows, dots) with what was played. */
