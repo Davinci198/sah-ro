@@ -390,7 +390,14 @@ class PuzzleActivity : UiActivity() {
     private fun render() {
         val session = session ?: return
         val board = session.board
-        turnLabel.text = if (board.whiteToMove) "Mută albul." else "Mută negrul."
+        turnLabel.text = when {
+            // The puzzle is over: nobody has to move, the line is complete.
+            session.isSolved -> ""
+            MoveGenerator.legalMoves(board).isEmpty() ->
+                if (MoveGenerator.isInCheck(board, board.whiteToMove)) "Șah-mat." else "Remiză."
+            board.whiteToMove -> "Mută albul."
+            else -> "Mută negrul."
+        }
         val arrow = hintArrow
         val targets = if (arrow != null && selected == arrow.from) {
             // The hint arrow replaces the fan of candidate squares.
