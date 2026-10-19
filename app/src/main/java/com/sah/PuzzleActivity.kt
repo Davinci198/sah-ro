@@ -2,6 +2,8 @@ package com.sah
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.HorizontalScrollView
@@ -46,6 +48,14 @@ class PuzzleActivity : UiActivity() {
     private var solvedCount = 0
     private var earned = 0
 
+    /** Plays the solution line back move by move; true while the replay runs. */
+    private var replaying = false
+
+    /** Bumped to invalidate any replay still scheduled on [replayHandler]. */
+    private var replayToken = 0
+
+    private val replayHandler = Handler(Looper.getMainLooper())
+
     /** Clean puzzles in a row; the bonus ladder is min((wins+1)/2, 3). */
     private var streak = 0
 
@@ -70,6 +80,12 @@ class PuzzleActivity : UiActivity() {
         streak = savedInstanceState?.getInt(KEY_STREAK, 0) ?: 0
         build()
         loadBook()
+    }
+
+    override fun onPause() {
+        // A replay scheduled on the handler must not outlive the screen.
+        cancelReplay()
+        super.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -152,7 +168,7 @@ class PuzzleActivity : UiActivity() {
 
         val actions = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         hintButton = button("Indiciu") { showHint() }
-        val retry = button("Reia") { newPuzzle(keepCurrent = false) }
+        val retry = button("Reia") { restartPuzzle() }
         nextButton = button("Următorul") { newPuzzle(keepCurrent = false) }.apply { isEnabled = false }
         actions.addView(hintButton, weightParams())
         actions.addView(retry, weightParams())
@@ -182,7 +198,8 @@ class PuzzleActivity : UiActivity() {
         root.addView(
             label(
                 "Rezolvă poziția: mută piesa, adversarul răspunde singur.\n" +
-                    "„Indiciu” îți arată cu săgeata mutarea de făcut.",
+                    "„Indiciu” îți arată cu săgeata mutarea de făcut.\n" +
+                    "„Reia” pornește același puzzle de la capăt; „Linie” revede soluția.",
                 12f,
                 mutedColor,
             ),
@@ -238,6 +255,7 @@ class PuzzleActivity : UiActivity() {
     private fun newPuzzle(keepCurrent: Boolean) {
         if (keepCurrent && session != null) return
         val puzzles = book ?: return
+        cancelReplay()
         val puzzle = puzzles.random(difficulty, random) ?: puzzles.all().firstOrNull()
         if (puzzle == null) {
             messageLabel.text = "Nu există puzzle-uri pentru dificultatea asta."
@@ -249,7 +267,8 @@ class PuzzleActivity : UiActivity() {
         selected = null
         lastMove = session?.lastApplied?.let { it.from to it.to }
         hintArrow = null
-        hintButton.isEnabled = true
+        replaying = false
+        offerHintButton(enabled = true)
         nextButton.isEnabled = false
         messageLabel.text = ""
         messageLabel.setTextColor(mutedColor)
@@ -274,9 +293,103 @@ class PuzzleActivity : UiActivity() {
             if (restored.isSolved) "Rezolvat — apasă „Următorul”." else "Poziția dinainte de rotire."
         movesLabel.text = restored.history.joinToString("  ")
         statusLabel.text = statusLine(state.puzzle)
-        hintButton.isEnabled = !restored.isSolved
+        replaying = false
+        if (restored.isSolved) offerLineButton() else offerHintButton(enabled = false)
         nextButton.isEnabled = restored.isSolved
         render()
+    }
+
+    /** "Reia" — the same puzzle from its opening, with a fresh scoring run. */
+    private fun restartPuzzle() {
+        val active = session ?: return
+        cancelReplay()
+        active.reset()
+        run = PuzzleRun(active.puzzle.pointsPerMove)
+        startedAt = System.currentTimeMillis()
+        selected = null
+        lastMove = active.lastApplied?.let { it.from to it.to }
+        hintArrow = null
+        replaying = false
+        offerHintButton(enabled = true)
+        nextButton.isEnabled = false
+        messageLabel.text = ""
+        messageLabel.setTextColor(mutedColor)
+        movesLabel.text = ""
+        statusLabel.text = statusLine(active.puzzle)
+        Effects.start()
+        render()
+    }
+
+    /** After a solve, the hint slot offers the line replay instead. */
+    private fun offerLineButton() {
+        hintButton.text = "Linie"
+        hintButton.isEnabled = true
+        hintButton.setOnClickListener { replayLine() }
+    }
+
+    private fun offerHintButton(enabled: Boolean) {
+        hintButton.text = "Indiciu"
+        hintButton.setOnClickListener { showHint() }
+        hintButton.isEnabled = enabled
+    }
+
+    // ------------------------------------------------------------------ replay
+
+    /** Plays the whole solution line back from the opening, then leaves the board
+     * on the solved position so the learner can restart with "Reia". */
+    private fun replayLine() {
+        val active = session ?: return
+        cancelReplay()
+        val token = replayToken
+        active.reset()
+        replaying = true
+        selected = null
+        hintArrow = null
+        lastMove = active.lastApplied?.let { it.from to it.to }
+        hintButton.isEnabled = false
+        nextButton.isEnabled = false
+        messageLabel.setTextColor(mutedColor)
+        messageLabel.text = "Se redă linia…"
+        movesLabel.text = ""
+        render()
+        replay(active, 0, token)
+    }
+
+    private fun replay(active: PuzzleSession, index: Int, token: Int) {
+        if (token != replayToken) return
+        val moves = active.puzzle.playerMoves
+        if (index >= moves.size) {
+            replaying = false
+            hintButton.isEnabled = true
+            nextButton.isEnabled = true
+            messageLabel.setTextColor(mutedColor)
+            messageLabel.text = "Linia s-a terminat. Apasă „Reia” ca să o joci tu."
+            statusLabel.text = statusLine(active.puzzle)
+            Effects.taskCompleted()
+            render()
+            return
+        }
+        replayHandler.postDelayed({
+            if (token != replayToken || isFinishing) return@postDelayed
+            val before = active.board
+            val outcome = active.playUci(moves[index])
+            ChessMove.fromUci(moves[index])?.let { Effects.moveOn(before, it.from, it.to) }
+            val reply = (outcome as? PuzzleOutcome.Correct)?.reply
+            if (reply != null) {
+                ChessMove.fromUci(reply)?.let { Effects.moveOn(before, it.from, it.to) }
+            }
+            if (MoveGenerator.isInCheck(active.board, active.board.whiteToMove)) Effects.check()
+            lastMove = active.lastApplied?.let { it.from to it.to }
+            movesLabel.text = active.history.joinToString("  ")
+            render()
+            replay(active, index + 1, token)
+        }, 800)
+    }
+
+    private fun cancelReplay() {
+        replayToken++
+        replaying = false
+        replayHandler.removeCallbacksAndMessages(null)
     }
 
     private fun statusLine(puzzle: Puzzle): String {
@@ -295,7 +408,7 @@ class PuzzleActivity : UiActivity() {
 
     private fun onSquareTapped(square: Square) {
         val session = session ?: return
-        if (session.isSolved) return
+        if (session.isSolved || replaying) return
         val board = session.board
         val selectedNow = selected
         if (selectedNow == null) {
@@ -343,7 +456,7 @@ class PuzzleActivity : UiActivity() {
                         messageLabel.setTextColor(successColor)
                         messageLabel.text = "Rezolvat fără puncte — ai greșit sau ai cerut indiciul."
                     }
-                    hintButton.isEnabled = false
+                    offerLineButton()
                     nextButton.isEnabled = true
                     statusLabel.text = statusLine(session.puzzle)
                     Effects.taskCompleted()
