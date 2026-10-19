@@ -38,6 +38,7 @@ class LessonActivity : UiActivity() {
     private var boardView: ChessBoardView? = null
     private var textCard: TextView? = null
     private var progressLabel: TextView? = null
+    private var turnLabel: TextView? = null
     private var feedbackLabel: TextView? = null
     private var controls: LinearLayout? = null
     private var prevButton: Button? = null
@@ -161,6 +162,9 @@ class LessonActivity : UiActivity() {
         progressLabel = label("", 12f, mutedColor)
         root.addView(progressLabel, fullWidth())
 
+        turnLabel = label("", 13f, accentColor, bold = true)
+        root.addView(turnLabel, fullWidth())
+
         textCard = card("", 15f)
         root.addView(textCard, fullWidth())
         root.addView(space(8))
@@ -215,6 +219,11 @@ class LessonActivity : UiActivity() {
         val screen = active.screen
 
         progressLabel?.text = "Ecran ${active.index + 1}/${active.screenCount} • ${typeName(active.type)}"
+        turnLabel?.text = if (active.board.whiteToMove) {
+            if (language == Language.RO) "Mută albul." else "White to move"
+        } else {
+            if (language == Language.RO) "Mută negrul." else "Black to move"
+        }
         textCard?.text = active.text.ifEmpty { "…" }
         feedbackLabel?.text = active.feedback.ifEmpty { movesText(active) }
         feedbackLabel?.setTextColor(if (active.hasFeedback) errorColor else mutedColor)
