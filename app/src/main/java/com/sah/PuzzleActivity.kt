@@ -28,6 +28,7 @@ class PuzzleActivity : UiActivity() {
 
     private lateinit var boardView: ChessBoardView
     private lateinit var statusLabel: TextView
+    private lateinit var turnLabel: TextView
     private lateinit var messageLabel: TextView
     private lateinit var movesLabel: TextView
     private lateinit var hintButton: Button
@@ -105,6 +106,9 @@ class PuzzleActivity : UiActivity() {
 
         statusLabel = label("Se încarcă puzzle-urile…", 12f, mutedColor)
         root.addView(statusLabel, fullWidth())
+
+        turnLabel = label("", 13f, accentColor, bold = true)
+        root.addView(turnLabel, fullWidth())
 
         boardView = ChessBoardView(this).apply {
             setOnSquareTapped { square -> onSquareTapped(square) }
@@ -316,6 +320,7 @@ class PuzzleActivity : UiActivity() {
     private fun render() {
         val session = session ?: return
         val board = session.board
+        turnLabel.text = if (board.whiteToMove) "Mută albul." else "Mută negrul."
         val arrow = hintArrow
         val targets = if (arrow != null && selected == arrow.from) {
             // The hint arrow replaces the fan of candidate squares.
