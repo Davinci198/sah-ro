@@ -3,9 +3,10 @@ package com.sah.content
 /**
  * One bundled puzzle.
  *
- * [moves] is the full UCI solution line, alternating player and opponent: even
- * indices are the moves the solver has to find, odd indices are the forced
- * answers played back automatically.
+ * [moves] is the full UCI line. The original app replays the first entry when
+ * the puzzle opens — the opponent's last move, the one that created the
+ * position — and then the solver answers it: the odd-indexed moves are the
+ * solver's, the even-indexed ones are played automatically.
  */
 data class Puzzle(
     val fen: String,
@@ -16,13 +17,13 @@ data class Puzzle(
     val plies: Int,
     val source: String,
 ) {
-    /** Moves the solver must find, in order (indices 0, 2, 4, …). */
+    /** Moves the solver must find, in order (indices 1, 3, 5, …). */
     val playerMoves: List<String>
-        get() = moves.filterIndexed { index, _ -> index % 2 == 0 }
-
-    /** Forced opponent answers (indices 1, 3, 5, …). */
-    val opponentMoves: List<String>
         get() = moves.filterIndexed { index, _ -> index % 2 == 1 }
+
+    /** Opponent moves (indices 0, 2, 4, …); index 0 opens the puzzle. */
+    val opponentMoves: List<String>
+        get() = moves.filterIndexed { index, _ -> index % 2 == 0 }
 }
 
 /**

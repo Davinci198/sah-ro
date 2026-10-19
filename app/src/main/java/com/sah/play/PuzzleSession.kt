@@ -35,9 +35,11 @@ sealed interface PuzzleOutcome {
 data class PuzzleState(val puzzle: Puzzle, val found: Int = 0, val mistakes: Int = 0)
 
 /**
- * Plays one bundled [Puzzle]: the solver has to find the even-indexed
- * [Puzzle.playerMoves] in order, the odd-indexed [Puzzle.opponentMoves] are answered
- * automatically.
+ * Plays one bundled [Puzzle]: the session opens by replaying the opponent's
+ * first [Puzzle.opponentMoves] entry — moves[0], the move that led to the
+ * position — then the solver finds [Puzzle.playerMoves] in order while the
+ * remaining opponent moves are answered automatically. This is the original
+ * app's flow: the solver plays the punishing side, not the side that blundered.
  *
  * The puzzle itself is never modified — [board] is the live position and [history]
  * the moves played so far in SAN — so a session can be thrown away and restarted by
@@ -51,8 +53,12 @@ class PuzzleSession(val puzzle: Puzzle, private val startFen: String = puzzle.fe
     var board: ChessBoard = ChessBoard.fromFen(startFen)
         private set
 
-    /** The moves played so far, in SAN, alternating solver and forced answer. */
+    /** The moves played so far, in SAN: the opponent's opening move first, then solver and answers. */
     val history = ArrayList<String>()
+
+    init {
+        playOpening()
+    }
 
     /** How many times the solver tried a wrong move. */
     var mistakes = 0
@@ -98,12 +104,13 @@ class PuzzleSession(val puzzle: Puzzle, private val startFen: String = puzzle.fe
         return playUci(uci)
     }
 
-    /** Rewinds to the start of the puzzle. */
+    /** Rewinds to the start of the puzzle (opening move replayed again). */
     fun reset() {
         board = ChessBoard.fromFen(startFen)
         history.clear()
         steps = 0
         mistakes = 0
+        playOpening()
     }
 
     /** The resume point, to be handed back to [restore]. */
@@ -129,7 +136,7 @@ class PuzzleSession(val puzzle: Puzzle, private val startFen: String = puzzle.fe
         }
         apply(move)
         steps++
-        val reply = puzzle.opponentMoves.getOrNull(steps - 1)
+        val reply = puzzle.opponentMoves.getOrNull(steps)
         val playedReply = if (reply == null) null else {
             val replyMove = MoveGenerator.resolveUci(board, reply)
             if (replyMove == null) null else {
@@ -143,5 +150,12 @@ class PuzzleSession(val puzzle: Puzzle, private val startFen: String = puzzle.fe
     private fun apply(move: ChessMove) {
         history += San.toSan(board, move)
         board = MoveGenerator.applyMove(board, move)
+    }
+
+    /** The original replays moves[0] — the opponent's last move — before the solver starts. */
+    private fun playOpening() {
+        val uci = puzzle.opponentMoves.firstOrNull() ?: return
+        val move = MoveGenerator.resolveUci(board, uci) ?: return
+        apply(move)
     }
 }

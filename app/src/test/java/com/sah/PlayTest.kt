@@ -126,22 +126,24 @@ class PlayTest {
         val session = PuzzleSession(testPuzzle(listOf("f2f3", "e7e5", "g2g4", "d8h4")))
         assertEquals(2, session.total)
         assertEquals(0, session.found)
-        assertEquals("f2f3", session.expected)
+        assertEquals("e7e5", session.expected)
         assertFalse(session.isSolved)
-        assertEquals(ChessBoard.START_FEN, session.board.toFen())
-        assertEquals("f3", session.hint())
+        // The opening ply (moves[0]) is replayed before the solver's turn.
+        assertEquals("rnbqkbnr/pppppppp/8/8/8/5P2/PPPPP1PP/RNBQKBNR b KQkq - 0 1", session.board.toFen())
+        assertEquals(listOf("f3"), session.history)
+        assertEquals("e5", session.hint())
 
-        assertEquals(PuzzleOutcome.Wrong("f2f3"), session.playUci("e2e4"))
+        assertEquals(PuzzleOutcome.Wrong("e7e5"), session.playUci("g8f6"))
         assertEquals(1, session.mistakes)
         assertEquals(PuzzleOutcome.Illegal, session.playUci("e2e5"))
         assertEquals(1, session.mistakes)
-        assertEquals(emptyList<String>(), session.history)
+        assertEquals(listOf("f3"), session.history)
 
-        assertEquals(PuzzleOutcome.Correct("e7e5", false), session.playUci("f2f3"))
-        assertEquals(listOf("f3", "e5"), session.history)
+        assertEquals(PuzzleOutcome.Correct("g2g4", false), session.playUci("e7e5"))
+        assertEquals(listOf("f3", "e5", "g4"), session.history)
         assertEquals(1, session.found)
-        assertEquals("g2g4", session.expected)
-        assertEquals(PuzzleOutcome.Correct("d8h4", true), session.playUci("g2g4"))
+        assertEquals("d8h4", session.expected)
+        assertEquals(PuzzleOutcome.Correct(null, true), session.playUci("d8h4"))
         assertTrue(session.isSolved)
         assertEquals(listOf("f3", "e5", "g4", "Qh4#"), session.history)
         assertEquals(9, session.score())
@@ -152,24 +154,24 @@ class PlayTest {
     @Test
     fun puzzlePromotionTapAndSolveAndReset() {
         val promotion = PuzzleSession(
-            testPuzzle(listOf("a7a8q"), fen = "7k/P7/8/8/8/8/8/7K w - - 0 1", points = 3),
+            testPuzzle(listOf("h8g8", "a7a8q"), fen = "7k/P7/8/8/8/8/8/7K b - - 0 1", points = 3),
         )
         assertEquals(PuzzleOutcome.Correct(null, true), promotion.play(square("a7"), square("a8")))
-        assertEquals(listOf("a8=Q+"), promotion.history)
+        assertEquals(listOf("Kg8", "a8=Q+"), promotion.history)
         assertEquals(3, promotion.score())
 
         val solver = PuzzleSession(
-            testPuzzle(listOf("e2e4", "e7e5", "f1c4", "b8c6", "d1h5", "g8f6", "h5f7"), points = 2),
+            testPuzzle(listOf("f2f3", "e7e5", "g2g4", "d8h4"), points = 2),
         )
-        repeat(4) { index -> assertTrue("solve ${index + 1}", solver.solve() is PuzzleOutcome.Correct) }
+        repeat(2) { index -> assertTrue("solve ${index + 1}", solver.solve() is PuzzleOutcome.Correct) }
         assertTrue(solver.isSolved)
-        assertEquals("Qxf7#", solver.history.last())
-        assertEquals(8, solver.score())
+        assertEquals("Qh4#", solver.history.last())
+        assertEquals(4, solver.score())
         solver.reset()
         assertEquals(0, solver.found)
         assertEquals(0, solver.mistakes)
-        assertEquals(ChessBoard.START_FEN, solver.board.toFen())
-        assertTrue(solver.history.isEmpty())
+        assertEquals("rnbqkbnr/pppppppp/8/8/8/5P2/PPPPP1PP/RNBQKBNR b KQkq - 0 1", solver.board.toFen())
+        assertEquals(listOf("f3"), solver.history)
     }
 
     @Test
@@ -177,7 +179,7 @@ class PlayTest {
         val puzzle = testPuzzle(listOf("e2e4", "e7e5"))
         val session = PuzzleSession(puzzle)
         assertEquals(1, session.total)
-        session.playUci("e2e4")
+        session.playUci("e7e5")
         val state = session.state()
         assertEquals(puzzle, state.puzzle)
         assertEquals(1, state.found)
@@ -190,7 +192,7 @@ class PlayTest {
 
         resumed.restore(PuzzleState(puzzle))
         assertEquals(0, resumed.found)
-        assertEquals(ChessBoard.START_FEN, resumed.board.toFen())
+        assertEquals("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", resumed.board.toFen())
     }
 
     // ------------------------------------------------------------ lesson driver
