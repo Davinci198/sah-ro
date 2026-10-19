@@ -123,6 +123,8 @@ class MainActivity : Activity() {
         root.addView(space(12))
         root.addView(buildContent(), fullWidthParams())
         root.addView(space(12))
+        root.addView(buildGamesCard(), fullWidthParams())
+        root.addView(space(12))
 
         diagonalButton = controlButton("") { game.toggleDiagonals(); refreshUi() }.apply {
             contentDescription = "Arată sau ascunde diagonalele tablei"
@@ -381,6 +383,39 @@ class MainActivity : Activity() {
             startActivity(Intent(this, PuzzleActivity::class.java))
         }, LinearLayout.LayoutParams(0, -2, 1f))
         card.addView(row, fullWidthParams())
+        return card
+    }
+
+    /** Entry point for importing and replaying the player's own games. */
+    private fun buildGamesCard(): View {
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(12), dp(10), dp(12), dp(12))
+            background = controlBackground(cardColor)
+        }
+        card.addView(
+            TextView(this).apply {
+                text = "Jocurile mele"
+                setTextColor(textColor)
+                setTextSize(13f)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(dp(2), 0, dp(2), dp(4))
+            },
+            fullWidthParams(),
+        )
+        card.addView(
+            TextView(this).apply {
+                text = "Importă partidele jucate pe Chess.com și Lichess și redă-le pe tablă."
+                setTextColor(mutedColor)
+                setTextSize(12f)
+                setPadding(dp(2), 0, dp(2), dp(8))
+            },
+            fullWidthParams(),
+        )
+        card.addView(
+            controlButton("Deschide") { startActivity(Intent(this, GamesActivity::class.java)) },
+            fullWidthParams(),
+        )
         return card
     }
 
