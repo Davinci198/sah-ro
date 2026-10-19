@@ -8,6 +8,9 @@ import com.sah.content.string
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import java.util.Calendar
+import java.util.GregorianCalendar
+import java.util.TimeZone
 
 /** An HTTP status that made the import impossible; message comes from [errorMessage]. */
 class HttpStatusError(val code: Int) : Exception("HTTP $code")
@@ -73,6 +76,65 @@ object ChessComParser {
 /** Pure parsing of one lichess PGN game. */
 object LichessParser {
 
+    private val utcDate = Regex("""\[UTCDate "(\d{4})\.(\d{2})\.(\d{2})"\]""")
+    private val utcTime = Regex("""\[UTCTime "(\d{2}):(\d{2}):(\d{2})"\]""")
+
+    /**
+     * Splits one PGN export page into raw per-game blocks. A blank line ends a
+     * game only after its movetext started; the blank line between the tags and
+     * the moves of the same game is dropped ([Pgn.parse] does not need it).
+     * Returns raw text, not games, so callers still see what this app filters.
+     */
+    fun splitBlocks(body: String): List<String> {
+        val blocks = ArrayList<String>()
+        val current = StringBuilder()
+        var sawMoves = false
+        for (line in body.lines()) {
+            if (line.isBlank()) {
+                if (sawMoves) {
+                    blocks.add(current.toString())
+                    current.setLength(0)
+                    sawMoves = false
+                }
+                continue
+            }
+            if (sawMoves && line.startsWith("[")) {
+                blocks.add(current.toString())
+                current.setLength(0)
+                sawMoves = false
+            }
+            if (!line.startsWith("[")) sawMoves = true
+            current.append(line).append('\n')
+        }
+        if (sawMoves) blocks.add(current.toString())
+        return blocks
+    }
+
+    /**
+     * Epoch milliseconds (UTC) of a game's start from its UTCDate/UTCTime
+     * headers, or 0 when the date is missing or unparseable. A date without a
+     * time falls back to the end of that day, so an `until` cursor re-reads the
+     * day instead of skipping games the page boundary split.
+     */
+    fun utcMillis(pgn: String): Long {
+        val date = utcDate.find(pgn)?.groupValues ?: return 0
+        val year = date[1].toIntOrNull() ?: return 0
+        val month = date[2].toIntOrNull() ?: return 0
+        val day = date[3].toIntOrNull() ?: return 0
+        val time = utcTime.find(pgn)?.groupValues
+        return GregorianCalendar(TimeZone.getTimeZone("UTC")).apply {
+            set(
+                year,
+                month - 1,
+                day,
+                time?.get(1)?.toIntOrNull() ?: 23,
+                time?.get(2)?.toIntOrNull() ?: 59,
+                time?.get(3)?.toIntOrNull() ?: 59,
+            )
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+    }
+
     fun game(pgn: String, username: String): ImportedGame? {
         val parsed = Pgn.parse(pgn)
         val headers = parsed.headers
@@ -107,55 +169,15 @@ object LichessParser {
     }
 }
 
-/**
- * Feeds a lichess PGN export stream line by line and completes one game per
- * block, so an account with tens of thousands of games never has to be held
- * in memory at once. A blank line ends the movetext of a game; a new tag
- * line right after moves also closes the previous game (defensive).
- */
-class LichessStreamParser(private val username: String) {
-
-    private val buffer = StringBuilder()
-    private var sawMoves = false
-
-    /** Returns the game completed by this line, if the line closed one. */
-    fun feed(line: String): ImportedGame? {
-        if (line.isBlank()) {
-            if (!sawMoves) {
-                buffer.append('\n')
-                return null
-            }
-            return complete()
-        }
-        if (sawMoves && line.startsWith("[")) {
-            val done = complete()
-            buffer.append(line).append('\n')
-            return done
-        }
-        if (!line.startsWith("[")) sawMoves = true
-        buffer.append(line).append('\n')
-        return null
-    }
-
-    /** Flushes the game in flight when the stream ends. */
-    fun finish(): ImportedGame? = if (sawMoves) complete() else null
-
-    private fun complete(): ImportedGame? {
-        val game = LichessParser.game(buffer.toString(), username)
-        buffer.setLength(0)
-        sawMoves = false
-        return game
-    }
-}
-
 /** Summary of one finished (or cancelled) import run. */
 data class ImportSummary(val added: Int, val total: Int)
 
 /**
  * Downloads every game of a player: chess.com month by month from the
- * archives list, lichess as one long PGN stream. Both need a real
- * User-Agent or the server answers 403. Games are appended to the [GamesStore]
- * as they arrive, and [cancelled] stops between units of work.
+ * archives list, lichess page by page with an `until` cursor. Both need a
+ * real User-Agent or the server answers 403. Games are appended to the
+ * [GamesStore] as each unit of work finishes, and [cancelled] stops between
+ * units, so an interrupted run keeps everything it already fetched.
  */
 class GamesImporter(private val store: GamesStore) {
 
@@ -197,50 +219,60 @@ class GamesImporter(private val store: GamesStore) {
         return ImportSummary(added, known.size)
     }
 
+    /**
+     * Imports every lichess game page by page. The export endpoint answers
+     * newest first, so each page of [PAGE_SIZE] games is saved and the next
+     * request continues just before the oldest game seen (`until` cursor in
+     * milliseconds). One huge stream runs for tens of minutes on a big
+     * account and dies mid-transfer on a phone; pages of ~1000 games finish
+     * in seconds each, are saved as they arrive, and the dedupe makes an
+     * interrupted run resume cleanly on the next import.
+     */
     private fun importLichess(
         username: String,
         progress: (String) -> Unit,
         cancelled: () -> Boolean,
     ): ImportSummary {
         val user = encodePath(username)
-        fetch("https://lichess.org/api/user/$user")
-        progress("Se descarcă jocurile de pe Lichess…")
+        val expected = totalGamesGuess(fetch("https://lichess.org/api/user/$user"))
+        val pages = if (expected > 0) " din ~${(expected + PAGE_SIZE - 1) / PAGE_SIZE}" else ""
         val known = store.knownIds(Platform.LICHESS)
         var added = 0
-        var seen = 0
-        val connection = open("https://lichess.org/api/games/user/$user?opening=true&pgn=true")
-        try {
-            val code = connection.responseCode
-            if (code != 200) throw HttpStatusError(code)
-            connection.inputStream.bufferedReader(Charsets.UTF_8).use { reader ->
-                val parser = LichessStreamParser(username)
-                var line: String? = reader.readLine()
-                while (line != null) {
-                    if (cancelled()) break
-                    val done = parser.feed(line)
-                    if (done != null) {
-                        seen++
-                        if (known.add(done.id)) {
-                            store.append(Platform.LICHESS, done)
-                            added++
-                        }
-                        if (seen % 25 == 0) progress("Se descarcă de pe Lichess · $added jocuri")
-                    }
-                    line = reader.readLine()
-                }
-                if (!cancelled()) {
-                    parser.finish()?.let { game ->
-                        if (known.add(game.id)) {
-                            store.append(Platform.LICHESS, game)
-                            added++
-                        }
-                    }
+        var page = 0
+        var until: Long? = null
+        while (!cancelled()) {
+            page++
+            progress("Se descarcă de pe Lichess · pagina$page$pages · $added jocuri noi")
+            val cursor = until?.let { "&until=$it" } ?: ""
+            val body = fetch(
+                "https://lichess.org/api/games/user/$user?opening=true&pgn=true&max=$PAGE_SIZE$cursor",
+            )
+            val blocks = LichessParser.splitBlocks(body)
+            if (blocks.isEmpty()) break
+            for (block in blocks) {
+                val game = LichessParser.game(block, username) ?: continue
+                if (known.add(game.id)) {
+                    store.append(Platform.LICHESS, game)
+                    added++
                 }
             }
-        } finally {
-            connection.disconnect()
+            if (blocks.size < PAGE_SIZE) break
+            val oldest = blocks
+                .mapNotNull { block -> LichessParser.utcMillis(block).takeIf { it > 0 } }
+                .minOrNull() ?: break
+            until = oldest - CURSOR_BACK_MS
+            sleep(PAGE_PAUSE_MS)
         }
         return ImportSummary(added, known.size)
+    }
+
+    /** Rough game count from the profile's perfs; only used for progress text. */
+    private fun totalGamesGuess(profileJson: String): Int {
+        val perfs = runCatching { Json.parseObject(profileJson)["perfs"] as? Map<*, *> }.getOrNull()
+        return perfs?.values
+            ?.filterIsInstance<Map<*, *>>()
+            ?.sumOf { (it["games"] as? Number)?.toInt() ?: 0 }
+            ?: 0
     }
 
     private fun encodePath(username: String): String =
@@ -290,5 +322,14 @@ class GamesImporter(private val store: GamesStore) {
         const val USER_AGENT = "sah-app/1.3 (github.com/Davinci198/sah-ro)"
         const val CONNECT_TIMEOUT_MS = 15_000
         const val READ_TIMEOUT_MS = 60_000
+
+        /** Games per lichess page; the server accepts up to 1000. */
+        const val PAGE_SIZE = 1000
+
+        /** Pause between lichess pages; their limit is 15 requests per minute. */
+        const val PAGE_PAUSE_MS = 4_300L
+
+        /** Cursor steps back a little so same-second boundary games re-arrive. */
+        const val CURSOR_BACK_MS = 2_000L
     }
 }
