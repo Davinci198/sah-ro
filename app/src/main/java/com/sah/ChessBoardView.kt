@@ -26,14 +26,16 @@ data class BoardArrow(val from: Square, val to: Square, val color: Int)
 /** Violet that marks "hint" everywhere: lesson focus squares and puzzle hint arrows. */
 val hintColor = Color.rgb(139, 92, 246)
 
+/** Green "corect" and red "greșit", shared by lesson marks, arrows and feedback. */
+val goodColor = Color.rgb(34, 197, 94)
+val badColor = Color.rgb(239, 68, 68)
+
 class ChessBoardView(context: Context) : ViewGroup(context) {
     private val density = resources.displayMetrics.density
     private val darkSquare = Color.rgb(118, 150, 86)
     private val lightSquare = Color.rgb(238, 238, 210)
     private val darkDiagonal = Color.rgb(60, 82, 43)
     private val lightDiagonal = Color.rgb(255, 244, 177)
-    private val selectedCorrect = Color.rgb(34, 197, 94)
-    private val selectedWrong = Color.rgb(239, 68, 68)
     private val highlightTarget = Color.rgb(34, 211, 238)
     private val selectedAccent = Color.rgb(255, 199, 71)
     private val lastMoveColor = Color.rgb(120, 160, 220)
@@ -106,8 +108,8 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
             val feedback = feedbackSquare == square
             val targetMarked = mode == TrainerMode.GUESS && target == square
             val borderColor = when {
-                feedback && feedbackCorrect == true -> selectedCorrect
-                feedback && feedbackCorrect == false -> selectedWrong
+                feedback && feedbackCorrect == true -> goodColor
+                feedback && feedbackCorrect == false -> badColor
                 targetMarked -> highlightTarget
                 isDarkDiagonal -> darkDiagonal
                 isLightDiagonal -> lightDiagonal
@@ -162,8 +164,8 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
             val borderColor = when (mark) {
                 BoardMark.SELECTED -> selectedAccent
                 BoardMark.TARGET -> highlightTarget
-                BoardMark.GOOD -> selectedCorrect
-                BoardMark.BAD -> selectedWrong
+                BoardMark.GOOD -> goodColor
+                BoardMark.BAD -> badColor
                 BoardMark.FOCUS -> hintColor
                 BoardMark.LAST -> lastMoveColor
                 BoardMark.CHECK -> checkColor
