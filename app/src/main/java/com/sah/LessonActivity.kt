@@ -11,6 +11,7 @@ import com.sah.analysis.HeuristicEngine
 import com.sah.analysis.PositionEngine
 import com.sah.chess.ChessBoard
 import com.sah.chess.ChessMove
+import com.sah.chess.MoveGenerator
 import com.sah.chess.Pieces
 import com.sah.content.Language
 import com.sah.content.Lesson
@@ -55,6 +56,7 @@ class LessonActivity : UiActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Effects.prepare(this)
         window.statusBarColor = backgroundColor
         window.navigationBarColor = backgroundColor
         title = "Lecții"
@@ -278,7 +280,12 @@ class LessonActivity : UiActivity() {
         if (screen.demo.isNotEmpty()) {
             box.addView(
                 button("Rulează demo (${active.demoPly}/${active.demoCount})") {
-                    if (!active.demoNext()) active.demoReset()
+                    val before = active.board
+                    if (active.demoNext()) {
+                        active.lastMove?.let { Effects.moveOn(before, it.first, it.second) }
+                    } else {
+                        active.demoReset()
+                    }
                     render()
                 },
                 fullWidth(),
@@ -319,8 +326,14 @@ class LessonActivity : UiActivity() {
         if (quiz != null) {
             quiz.options.forEachIndexed { index, key ->
                 val option = button(book.text(key, language)) {
-                    val outcome = active.answer(index)
-                    if (outcome == PlayOutcome.WRONG) show("Mai încearcă.")
+                    when (active.answer(index)) {
+                        PlayOutcome.WRONG -> {
+                            show("Mai încearcă.")
+                            Effects.stepWrong()
+                        }
+                        PlayOutcome.SOLVED -> Effects.taskCompleted()
+                        else -> Unit
+                    }
                     render()
                 }
                 if (active.answerPicked == index) {
@@ -365,7 +378,15 @@ class LessonActivity : UiActivity() {
             return
         }
         val outcome = active.tap(square)
-        if (outcome == PlayOutcome.WRONG) show("Nu chiar — mai încearcă.")
+        when (outcome) {
+            PlayOutcome.WRONG -> {
+                show("Nu chiar — mai încearcă.")
+                Effects.stepWrong()
+            }
+            PlayOutcome.SOLVED -> Effects.taskCompleted()
+            PlayOutcome.PROGRESS -> Effects.stepCorrect()
+            else -> Unit
+        }
         render()
     }
 
@@ -389,8 +410,25 @@ class LessonActivity : UiActivity() {
             return
         }
         selected = null
+        val before = active.board
         val outcome = active.play(from, square)
-        if (outcome == PlayOutcome.WRONG) show("Nu este mutarea lecției.")
+        when (outcome) {
+            PlayOutcome.WRONG -> {
+                show("Nu este mutarea lecției.")
+                Effects.stepWrong()
+            }
+            PlayOutcome.ILLEGAL -> show("Mutare imposibilă.")
+            PlayOutcome.PROGRESS, PlayOutcome.SOLVED -> {
+                Effects.moveOn(before, from, square)
+                // A step reply (or the stars chase) can add a second ply of its own.
+                active.lastMove
+                    ?.takeIf { it != (from to square) }
+                    ?.let { Effects.moveOn(before, it.first, it.second) }
+                if (MoveGenerator.isInCheck(active.board, active.board.whiteToMove)) Effects.check()
+                if (outcome == PlayOutcome.SOLVED) Effects.taskCompleted() else Effects.stepCorrect()
+            }
+            else -> Unit
+        }
         render()
     }
 
@@ -416,7 +454,20 @@ class LessonActivity : UiActivity() {
             return
         }
         selected = null
-        if (game.play(from, square) != PlayOutcome.ILLEGAL) game.engineReply()
+        if (game.play(from, square) != PlayOutcome.ILLEGAL) {
+            val afterUser = game.board
+            Effects.moveOn(board, from, square)
+            if (MoveGenerator.isInCheck(afterUser, afterUser.whiteToMove)) Effects.check()
+            game.engineReply()?.let { uci ->
+                ChessMove.fromUci(uci)?.let { reply -> Effects.moveOn(afterUser, reply.from, reply.to) }
+            }
+            when {
+                game.won == true -> Effects.victory()
+                game.won == false -> Effects.stepWrong()
+                MoveGenerator.isInCheck(game.board, game.board.whiteToMove) -> Effects.check()
+                else -> Unit
+            }
+        }
         render()
     }
 
