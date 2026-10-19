@@ -26,6 +26,7 @@ import com.sah.play.LessonFeedback
 import com.sah.play.LessonSession
 import com.sah.play.PlayOutcome
 import com.sah.play.PuzzleOutcome
+import com.sah.play.PuzzleRun
 import com.sah.play.PuzzleSession
 import com.sah.play.PuzzleState
 import org.junit.Assert.assertEquals
@@ -146,7 +147,6 @@ class PlayTest {
         assertEquals(PuzzleOutcome.Correct(null, true), session.playUci("d8h4"))
         assertTrue(session.isSolved)
         assertEquals(listOf("f3", "e5", "g4", "Qh4#"), session.history)
-        assertEquals(9, session.score())
         assertEquals(PuzzleOutcome.Idle, session.playUci("a2a3"))
         assertNull(session.hint())
     }
@@ -158,7 +158,6 @@ class PlayTest {
         )
         assertEquals(PuzzleOutcome.Correct(null, true), promotion.play(square("a7"), square("a8")))
         assertEquals(listOf("Kg8", "a8=Q+"), promotion.history)
-        assertEquals(3, promotion.score())
 
         val solver = PuzzleSession(
             testPuzzle(listOf("f2f3", "e7e5", "g2g4", "d8h4"), points = 2),
@@ -166,12 +165,46 @@ class PlayTest {
         repeat(2) { index -> assertTrue("solve ${index + 1}", solver.solve() is PuzzleOutcome.Correct) }
         assertTrue(solver.isSolved)
         assertEquals("Qh4#", solver.history.last())
-        assertEquals(4, solver.score())
         solver.reset()
         assertEquals(0, solver.found)
         assertEquals(0, solver.mistakes)
         assertEquals("rnbqkbnr/pppppppp/8/8/8/5P2/PPPPP1PP/RNBQKBNR b KQkq - 0 1", solver.board.toFen())
         assertEquals(listOf("f3"), solver.history)
+    }
+
+    @Test
+    fun puzzleRunScoresLikeTheOriginal() {
+        val run = PuzzleRun(5)
+        // Every correct move pays the puzzle's price…
+        assertEquals(5, run.registerCorrect())
+        assertEquals(5, run.registerCorrect())
+        assertEquals(10, run.points)
+        // …but a wrong move resets the run to zero and dirties it.
+        run.registerWrong()
+        assertEquals(0, run.points)
+        assertEquals(5, run.registerCorrect())
+        run.useHint()
+        assertEquals(0, run.points)
+        // After a hint every further move pays just 1, and a dirty run
+        // earns no bonuses and finishes with nothing.
+        assertEquals(1, run.registerCorrect())
+        assertFalse(run.isClean)
+        assertNull(run.finish(streakWins = 3, seconds = 1, playerMoves = 2))
+        assertEquals(0, run.points)
+
+        val clean = PuzzleRun(2)
+        clean.registerCorrect()
+        clean.registerCorrect()
+        assertTrue(clean.isClean)
+        // First clean win: wins 1, no streak points yet; under 2 s per move = full speed.
+        assertEquals(PuzzleRun.Finish(wins = 1, streakPoints = 0, speed = 3), clean.finish(0, 1, 2))
+        // Streak 4 → this is win 5, paying min(5/2, 3) = 2; 5 s / 2 moves → speed 2.
+        assertEquals(PuzzleRun.Finish(wins = 5, streakPoints = 2, speed = 2), clean.finish(4, 5, 2))
+        // The speed ladder is <2 → 3, <4 → 2, <6 → 1, then nothing.
+        assertEquals(1, clean.finish(9, 10, 2)!!.speed)
+        assertEquals(0, clean.finish(9, 12, 2)!!.speed)
+        // The streak points cap at 3.
+        assertEquals(3, clean.finish(20, 1, 2)!!.streakPoints)
     }
 
     @Test

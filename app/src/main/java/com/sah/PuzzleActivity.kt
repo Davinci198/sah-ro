@@ -13,6 +13,7 @@ import com.sah.chess.Pieces
 import com.sah.content.Puzzle
 import com.sah.content.PuzzleBook
 import com.sah.play.PuzzleOutcome
+import com.sah.play.PuzzleRun
 import com.sah.play.PuzzleSession
 import com.sah.play.PuzzleState
 import kotlin.random.Random
@@ -37,12 +38,20 @@ class PuzzleActivity : UiActivity() {
 
     private var book: PuzzleBook? = null
     private var session: PuzzleSession? = null
+    private var run: PuzzleRun? = null
     private var difficulty = 4
     private var selected: Square? = null
     private var lastMove: Pair<Square, Square>? = null
     private var hintArrow: BoardArrow? = null
     private var solvedCount = 0
     private var earned = 0
+
+    /** Clean puzzles in a row; the bonus ladder is min((wins+1)/2, 3). */
+    private var streak = 0
+
+    /** Wall-clock start of the current puzzle, feeding the speed bonus. */
+    private var startedAt = 0L
+
     private val random = Random(System.currentTimeMillis())
 
     /** Set when the activity is re-created and the open puzzle has to be resumed. */
@@ -58,6 +67,7 @@ class PuzzleActivity : UiActivity() {
         difficulty = savedInstanceState?.getInt(KEY_DIFFICULTY, difficulty) ?: difficulty
         solvedCount = savedInstanceState?.getInt(KEY_SOLVED, 0) ?: 0
         earned = savedInstanceState?.getInt(KEY_EARNED, 0) ?: 0
+        streak = savedInstanceState?.getInt(KEY_STREAK, 0) ?: 0
         build()
         loadBook()
     }
@@ -66,6 +76,12 @@ class PuzzleActivity : UiActivity() {
         outState.putInt(KEY_DIFFICULTY, difficulty)
         outState.putInt(KEY_SOLVED, solvedCount)
         outState.putInt(KEY_EARNED, earned)
+        outState.putInt(KEY_STREAK, streak)
+        run?.let { active ->
+            outState.putInt(KEY_RUN_POINTS, active.points)
+            outState.putBoolean(KEY_RUN_HINT, active.hintUsed)
+            outState.putBoolean(KEY_RUN_WRONG, active.wrongUsed)
+        }
         session?.let { active ->
             val puzzle = active.puzzle
             outState.putString(KEY_FEN, puzzle.fen)
@@ -94,7 +110,14 @@ class PuzzleActivity : UiActivity() {
             plies = state.getInt(KEY_PLIES, moves.size),
             source = state.getString(KEY_SOURCE).orEmpty(),
         )
-        return PuzzleState(puzzle, state.getInt(KEY_FOUND, 0), state.getInt(KEY_MISTAKES, 0))
+        return PuzzleState(
+            puzzle,
+            state.getInt(KEY_FOUND, 0),
+            state.getInt(KEY_MISTAKES, 0),
+            state.getInt(KEY_RUN_POINTS, 0),
+            state.getBoolean(KEY_RUN_HINT, false),
+            state.getBoolean(KEY_RUN_WRONG, false),
+        )
     }
 
     // ------------------------------------------------------------------- setup
@@ -221,6 +244,8 @@ class PuzzleActivity : UiActivity() {
             return
         }
         session = PuzzleSession(puzzle)
+        run = PuzzleRun(puzzle.pointsPerMove)
+        startedAt = System.currentTimeMillis()
         selected = null
         lastMove = session?.lastApplied?.let { it.from to it.to }
         hintArrow = null
@@ -239,6 +264,8 @@ class PuzzleActivity : UiActivity() {
         val restored = PuzzleSession(state.puzzle)
         restored.restore(state)
         session = restored
+        run = PuzzleRun(state.puzzle.pointsPerMove, state.runPoints, state.hintUsed, state.wrongUsed)
+        startedAt = System.currentTimeMillis()
         selected = null
         lastMove = restored.lastApplied?.let { it.from to it.to }
         hintArrow = null
@@ -252,9 +279,19 @@ class PuzzleActivity : UiActivity() {
         render()
     }
 
-    private fun statusLine(puzzle: Puzzle): String =
-        "Dificultate ${puzzle.difficulty}/10 • rating ${puzzle.rating} • " +
-            "${puzzle.playerMoves.size} mutări • rezolvate $solvedCount ($earned p)"
+    private fun statusLine(puzzle: Puzzle): String {
+        val streakPart = if (streak > 0) " • $streak la rând" else ""
+        return "Dificultate ${puzzle.difficulty}/10 • rating ${puzzle.rating} • " +
+            "${puzzle.playerMoves.size} mutări • rezolvate $solvedCount ($earned p)$streakPart"
+    }
+
+    /** " (3 la rând, 3 viteză)" — only the bonuses that actually pay. */
+    private fun bonusSuffix(finish: PuzzleRun.Finish): String {
+        val parts = ArrayList<String>()
+        if (finish.streakPoints > 0) parts += "${finish.wins} la rând"
+        if (finish.speed > 0) parts += "${finish.speed} viteză"
+        return if (parts.isEmpty()) "" else " (" + parts.joinToString(", ") + ")"
+    }
 
     private fun onSquareTapped(square: Square) {
         val session = session ?: return
@@ -290,24 +327,42 @@ class PuzzleActivity : UiActivity() {
                 lastMove = session.lastApplied?.let { it.from to it.to } ?: (selectedNow to square)
                 hintArrow = null
                 if (MoveGenerator.isInCheck(session.board, session.board.whiteToMove)) Effects.check()
+                val added = run?.registerCorrect() ?: 0
                 if (outcome.solved) {
                     solvedCount++
-                    earned += session.score()
-                    messageLabel.setTextColor(successColor)
-                    messageLabel.text = "Rezolvat! +${session.score()} puncte"
+                    val seconds = (System.currentTimeMillis() - startedAt) / 1000
+                    val finish = run?.finish(streak, seconds, session.puzzle.playerMoves.size)
+                    if (finish != null) {
+                        streak++
+                        val total = (run?.points ?: 0) + finish.total
+                        earned += total
+                        messageLabel.setTextColor(successColor)
+                        messageLabel.text = "Rezolvat! +$total puncte${bonusSuffix(finish)}"
+                    } else {
+                        streak = 0
+                        messageLabel.setTextColor(successColor)
+                        messageLabel.text = "Rezolvat fără puncte — ai greșit sau ai cerut indiciul."
+                    }
                     hintButton.isEnabled = false
                     nextButton.isEnabled = true
                     statusLabel.text = statusLine(session.puzzle)
                     Effects.taskCompleted()
                 } else {
                     messageLabel.setTextColor(successColor)
-                    messageLabel.text = "Corect. Continuă."
+                    messageLabel.text =
+                        if (added > 0) "Corect. +$added puncte. Continuă." else "Corect. Continuă."
                     Effects.stepCorrect()
                 }
             }
             is PuzzleOutcome.Wrong -> {
+                val firstWrong = run?.wrongUsed != true
+                run?.registerWrong()
+                streak = 0
                 messageLabel.setTextColor(errorColor)
-                messageLabel.text = "Nu este mutarea soluției. Încearcă din nou."
+                messageLabel.text = "Nu este mutarea soluției." +
+                    (if (firstWrong) " Punctele pe puzzle s-au resetat." else "") +
+                    " Încearcă din nou."
+                statusLabel.text = statusLine(session.puzzle)
                 Effects.stepWrong()
             }
             PuzzleOutcome.Illegal -> {
@@ -323,10 +378,11 @@ class PuzzleActivity : UiActivity() {
     private fun showHint() {
         val session = session ?: return
         val move = ChessMove.fromUci(session.expected ?: return) ?: return
+        run?.useHint()
         selected = move.from
         hintArrow = BoardArrow(move.from, move.to, hintColor)
         messageLabel.setTextColor(accentColor)
-        messageLabel.text = "Indiciu: ${session.hint()}"
+        messageLabel.text = "Indiciu: ${session.hint()} — fără puncte pe acest puzzle."
         Effects.hint()
         render()
     }
@@ -365,5 +421,9 @@ class PuzzleActivity : UiActivity() {
         const val KEY_DIFFICULTY = "puzzleDifficulty"
         const val KEY_SOLVED = "puzzleSolved"
         const val KEY_EARNED = "puzzleEarned"
+        const val KEY_STREAK = "puzzleStreak"
+        const val KEY_RUN_POINTS = "puzzleRunPoints"
+        const val KEY_RUN_HINT = "puzzleRunHint"
+        const val KEY_RUN_WRONG = "puzzleRunWrong"
     }
 }

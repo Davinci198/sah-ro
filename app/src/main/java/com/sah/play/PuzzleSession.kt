@@ -29,10 +29,18 @@ sealed interface PuzzleOutcome {
 
 /**
  * The resume point of a played puzzle: the puzzle itself plus how far the solver
- * got. Keeping it as plain data keeps [PuzzleSession] free of `android.os.Bundle`,
- * so a UI can persist the two numbers and the JVM tests can check the round trip.
+ * got, and the scoring state of the current run (see [PuzzleRun]). Keeping it as
+ * plain data keeps [PuzzleSession] free of `android.os.Bundle`, so a UI can
+ * persist the numbers and the JVM tests can check the round trip.
  */
-data class PuzzleState(val puzzle: Puzzle, val found: Int = 0, val mistakes: Int = 0)
+data class PuzzleState(
+    val puzzle: Puzzle,
+    val found: Int = 0,
+    val mistakes: Int = 0,
+    val runPoints: Int = 0,
+    val hintUsed: Boolean = false,
+    val wrongUsed: Boolean = false,
+)
 
 /**
  * Plays one bundled [Puzzle]: the session opens by replaying the opponent's
@@ -131,9 +139,6 @@ class PuzzleSession(val puzzle: Puzzle, private val startFen: String = puzzle.fe
         }
         mistakes = saved.mistakes
     }
-
-    /** Each found move is worth [Puzzle.pointsPerMove]; every wrong try costs one point. */
-    fun score(): Int = maxOf(0, puzzle.pointsPerMove * steps - mistakes)
 
     private fun submit(move: ChessMove): PuzzleOutcome {
         val expectedUci = expected ?: return PuzzleOutcome.Idle
