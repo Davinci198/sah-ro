@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 /**
  * The original app's `EffectsMaker`, without the parts the port has no use for
- * (chat, billing): a SoundPool over the bundled `assets/sounds/*.m4a`.
+ * (chat, billing): a SoundPool over the bundled m4a files of `assets/sounds`.
  *
  * The files are copied out of the APK into the cache on first use, because
  * `SoundPool` needs real paths and compressed assets have none. Every activity
