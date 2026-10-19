@@ -110,8 +110,8 @@ class ContentAssetTest {
         assertTrue(puzzles.all { it.moves.size % 2 == 0 })
         assertEquals(399 to 1996, puzzles.minOf { it.rating } to puzzles.maxOf { it.rating })
         assertEquals(setOf("puzzles_0.csv", "puzzles_1.csv"), puzzles.map { it.source }.toSet())
-        assertEquals(listOf("f1f8", "b3d1", "f8f1"), puzzles.first().playerMoves)
-        assertEquals(listOf("b2b1", "b1d1", "d1f1"), puzzles.first().opponentMoves)
+        assertEquals(listOf("b2b1", "b1d1", "d1f1"), puzzles.first().playerMoves)
+        assertEquals(listOf("f1f8", "b3d1", "f8f1"), puzzles.first().opponentMoves)
     }
 
     @Test

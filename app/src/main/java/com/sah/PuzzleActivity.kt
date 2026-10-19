@@ -221,7 +221,7 @@ class PuzzleActivity : UiActivity() {
         }
         session = PuzzleSession(puzzle)
         selected = null
-        lastMove = null
+        lastMove = lastMoveAt(puzzle, 0)
         hintArrow = null
         hintButton.isEnabled = true
         nextButton.isEnabled = false
@@ -238,7 +238,7 @@ class PuzzleActivity : UiActivity() {
         restored.restore(state)
         session = restored
         selected = null
-        lastMove = null
+        lastMove = lastMoveAt(state.puzzle, state.found)
         hintArrow = null
         messageLabel.setTextColor(mutedColor)
         messageLabel.text =
@@ -253,6 +253,18 @@ class PuzzleActivity : UiActivity() {
     private fun statusLine(puzzle: Puzzle): String =
         "Dificultate ${puzzle.difficulty}/10 • rating ${puzzle.rating} • " +
             "${puzzle.playerMoves.size} mutări • rezolvate $solvedCount ($earned p)"
+
+    /**
+     * The move the board shows as "just played": the opening ply for a fresh
+     * puzzle, or the last ply a resumed run reached (opening at [found] 0,
+     * otherwise the last forced answer after the solver's [found] moves).
+     */
+    private fun lastMoveAt(puzzle: Puzzle, found: Int): Pair<Square, Square>? {
+        val moves = puzzle.moves
+        if (moves.isEmpty()) return null
+        val move = ChessMove.fromUci(moves[minOf(2 * found, moves.lastIndex)]) ?: return null
+        return move.from to move.to
+    }
 
     private fun onSquareTapped(square: Square) {
         val session = session ?: return
