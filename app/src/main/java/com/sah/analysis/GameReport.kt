@@ -13,6 +13,8 @@ data class ReportMoment(
     val bestSan: String,
     val category: MoveCategory,
     val loss: Double,
+    /** Why the move was wrong and what to play instead; filled by the AI coach. */
+    val lesson: String = "",
 )
 
 /**
@@ -30,6 +32,8 @@ data class GameReport(
     val playerIsWhite: Boolean,
     val moments: List<ReportMoment>,
     val takeaway: String,
+    /** Who produced it — "AI · <model>" or "Local"; empty for reports saved before this existed. */
+    val source: String = "",
 ) {
     val playerAccuracy: Double get() = if (playerIsWhite) whiteAccuracy else blackAccuracy
 

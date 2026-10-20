@@ -125,6 +125,8 @@ class MainActivity : Activity() {
         root.addView(space(12))
         root.addView(buildGamesCard(), fullWidthParams())
         root.addView(space(12))
+        root.addView(buildSettingsCard(), fullWidthParams())
+        root.addView(space(12))
 
         diagonalButton = controlButton("") { game.toggleDiagonals(); refreshUi() }.apply {
             contentDescription = "Arată sau ascunde diagonalele tablei"
@@ -414,6 +416,39 @@ class MainActivity : Activity() {
         )
         card.addView(
             controlButton("Deschide") { startActivity(Intent(this, GamesActivity::class.java)) },
+            fullWidthParams(),
+        )
+        return card
+    }
+
+    /** Where the AI analysis endpoint, key and model get entered. */
+    private fun buildSettingsCard(): View {
+        val card = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(12), dp(10), dp(12), dp(12))
+            background = controlBackground(cardColor)
+        }
+        card.addView(
+            TextView(this).apply {
+                text = "Setări"
+                setTextColor(textColor)
+                setTextSize(13f)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                setPadding(dp(2), 0, dp(2), dp(4))
+            },
+            fullWidthParams(),
+        )
+        card.addView(
+            TextView(this).apply {
+                text = "Analiză cu AI: alege endpoint, cheie și model compatibile OpenAI."
+                setTextColor(mutedColor)
+                setTextSize(12f)
+                setPadding(dp(2), 0, dp(2), dp(8))
+            },
+            fullWidthParams(),
+        )
+        card.addView(
+            controlButton("Deschide") { startActivity(Intent(this, SettingsActivity::class.java)) },
             fullWidthParams(),
         )
         return card

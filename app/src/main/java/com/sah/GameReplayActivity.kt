@@ -11,6 +11,9 @@ import android.widget.Button
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.sah.analysis.AiAnalyzer
+import com.sah.analysis.AiReportParser
+import com.sah.analysis.AiSettings
 import com.sah.analysis.GameAnalyzer
 import com.sah.analysis.GameReport
 import com.sah.analysis.GameReportsStore
@@ -242,21 +245,52 @@ class GameReplayActivity : UiActivity() {
         analysisLabel.setTextColor(mutedColor)
         analysisLabel.text = "Se pregătește analiza…"
         Thread {
+            val settings = AiSettings.load(this)
+            var note: String? = null
             val result = runCatching {
-                analyzeGame { message -> runOnUiThread { if (!cancelled && !isFinishing) analysisLabel.text = message } }
+                if (!settings.isConfigured) {
+                    analyzeGame { message -> progress(message) }
+                } else {
+                    // The model is asked first; anything it gets wrong about the
+                    // call itself falls back to the local engine rather than to
+                    // no report at all.
+                    runCatching { analyzeWithAi(settings) { message -> progress(message) } }
+                        .onFailure { failure ->
+                            val reason = failure.message.orEmpty().take(160).ifEmpty { "eroare" }
+                            note = "Analiza AI a eșuat: $reason — s-a folosit analiza locală."
+                        }
+                        .getOrElse { analyzeGame { message -> progress(message) } }
+                }
             }
             runOnUiThread {
                 if (cancelled || isFinishing) return@runOnUiThread
                 analyzing = false
                 analyzeButton.isEnabled = true
                 if (result.isSuccess) {
-                    adoptReport(result.getOrThrow().copy(id = gameId), save = true)
+                    adoptReport(result.getOrThrow().copy(id = gameId), save = true, note = note)
                 } else {
                     analysisLabel.setTextColor(errorColor)
                     analysisLabel.text = "Analiza a eșuat: ${result.exceptionOrNull()?.message}"
                 }
             }
         }.start()
+    }
+
+    private fun progress(message: String) {
+        runOnUiThread { if (!cancelled && !isFinishing) analysisLabel.text = message }
+    }
+
+    /** The configured model writes the whole report; parsing decides if it can be used. */
+    private fun analyzeWithAi(settings: AiSettings, progress: (String) -> Unit): GameReport {
+        val parsed = Pgn.parse(pgn)
+        val playerIsWhite = myColor != "black"
+        progress("Se trimite jocul la model…")
+        val reply = AiAnalyzer(settings).analyze(pgn, playerIsWhite, progress)
+        val opening = OpeningRepository.parse(readAsset("openings/openings.csv"))
+            .nameFor(parsed.moves, Language.RO)
+        val report = AiReportParser.parse(reply, parsed.startFen, parsed.moves, playerIsWhite, opening)
+            ?: error("răspunsul modelului nu a putut fi citit")
+        return report.copy(source = "AI · ${settings.model.trim()}")
     }
 
     /** Restores an analysis the player already paid for, without running the engine again. */
@@ -274,11 +308,11 @@ class GameReplayActivity : UiActivity() {
     }
 
     /** Puts [report] on screen, keeping it for later and (when asked) on disk. */
-    private fun adoptReport(report: GameReport, save: Boolean) {
+    private fun adoptReport(report: GameReport, save: Boolean, note: String? = null) {
         currentReport = report
         if (save && report.id.isNotEmpty()) runCatching { reportsStore.save(report) }
         analyzeButton.text = "Re-analizează jocul"
-        renderReport(report)
+        renderReport(report, note)
     }
 
     /** Runs the engine over the loaded game and turns the result into a report. */
@@ -292,12 +326,21 @@ class GameReplayActivity : UiActivity() {
         return GameAnalyzer(HeuristicEngine(REPORT_PROFILE), book) { progress ->
             report("Se analizează… ${progress.finalized}/${progress.total}")
         }.use { it.analyze(parsed.startFen, uci, playerIsWhite) }
-            .let { GameReport.build(it, playerIsWhite, opening) }
+            .let { GameReport.build(it, playerIsWhite, opening).copy(source = "Local") }
     }
 
-    private fun renderReport(report: GameReport) {
+    private fun renderReport(report: GameReport, note: String? = null) {
         analysisLabel.visibility = View.GONE
         analysisContainer.removeAllViews()
+        if (note != null) {
+            analysisContainer.addView(card(note).apply { setTextColor(mutedColor) }, fullWidth())
+        }
+        if (report.source.isNotBlank()) {
+            analysisContainer.addView(
+                card("Analiză: ${report.source}").apply { setTextColor(mutedColor) },
+                fullWidth(),
+            )
+        }
         if (report.opening.isNotBlank()) {
             analysisContainer.addView(card("Deschidere: ${report.opening}"), fullWidth())
         }
@@ -317,6 +360,15 @@ class GameReplayActivity : UiActivity() {
                     card(line).apply { setTextColor(categoryColor(moment.category)) },
                     fullWidth(),
                 )
+                if (moment.lesson.isNotBlank()) {
+                    analysisContainer.addView(
+                        card(moment.lesson).apply {
+                            setTextColor(mutedColor)
+                            setTextSize(12f)
+                        },
+                        fullWidth(),
+                    )
+                }
             }
         }
         analysisContainer.addView(card(report.takeaway), fullWidth())
