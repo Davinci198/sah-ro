@@ -89,6 +89,14 @@ class OpeningBook(val openings: List<Opening>) {
         return best
     }
 
+    /**
+     * Localised name of the opening [sanMoves] follows, or empty when unknown.
+     * English by default because that is what the lichess import already stores,
+     * so chess.com games end up labelled the same way.
+     */
+    fun nameFor(sanMoves: List<String>, language: Language = Language.EN): String =
+        deepest(sanMoves)?.name(language).orEmpty()
+
     /** Case-insensitive search on the Romanian and English names. */
     fun search(query: String, language: Language = Language.RO): List<Opening> {
         val needle = query.trim().lowercase()

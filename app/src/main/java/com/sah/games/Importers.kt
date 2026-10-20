@@ -1,6 +1,7 @@
 package com.sah.games
 
 import com.sah.content.Json
+import com.sah.content.OpeningBook
 import com.sah.content.int
 import com.sah.content.objectList
 import com.sah.content.objectOrNull
@@ -180,7 +181,7 @@ data class ImportSummary(val added: Int, val total: Int)
  * [GamesStore] as each unit of work finishes, and [cancelled] stops between
  * units, so an interrupted run keeps everything it already fetched.
  */
-class GamesImporter(private val store: GamesStore) {
+class GamesImporter(private val store: GamesStore, private val book: OpeningBook? = null) {
 
     fun import(
         platform: Platform,
@@ -190,6 +191,17 @@ class GamesImporter(private val store: GamesStore) {
     ): ImportSummary = when (platform) {
         Platform.CHESSCOM -> importChessCom(username, progress, cancelled)
         Platform.LICHESS -> importLichess(username, progress, cancelled)
+    }
+
+    /**
+     * Fills a game's opening from the bundled [book] when the platform did not
+     * supply one. Lichess is asked for openings in its PGN; chess.com has no such
+     * header, so its games are labelled from their moves instead.
+     */
+    private fun withOpening(game: ImportedGame): ImportedGame {
+        if (game.opening.isNotEmpty() || book == null) return game
+        val name = book.nameFor(Pgn.parse(game.pgn).moves)
+        return if (name.isEmpty()) game else game.copy(opening = name)
     }
 
     private fun importChessCom(
@@ -209,7 +221,7 @@ class GamesImporter(private val store: GamesStore) {
             if (cancelled()) return ImportSummary(added, known.size)
             progress("Se descarcă arhiva ${index + 1}/$total · $added jocuri noi")
             val json = fetch(url)
-            for (game in ChessComParser.games(json, username)) {
+            for (game in ChessComParser.games(json, username).map(::withOpening)) {
                 if (known.add(game.id)) {
                     store.append(Platform.CHESSCOM, game)
                     added++
@@ -252,7 +264,7 @@ class GamesImporter(private val store: GamesStore) {
             val blocks = LichessParser.splitBlocks(body)
             if (blocks.isEmpty()) break
             for (block in blocks) {
-                val game = LichessParser.game(block, username) ?: continue
+                val game = LichessParser.game(block, username)?.let(::withOpening) ?: continue
                 if (known.add(game.id)) {
                     store.append(Platform.LICHESS, game)
                     added++
