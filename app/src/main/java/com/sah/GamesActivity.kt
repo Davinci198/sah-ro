@@ -631,6 +631,7 @@ class GamesActivity : UiActivity() {
                     return@runOnUiThread
                 }
                 startActivity(Intent(this, GameReplayActivity::class.java).apply {
+                    putExtra(GameReplayActivity.EXTRA_GAME_ID, ref.id)
                     putExtra(GameReplayActivity.EXTRA_PGN, game.pgn)
                     putExtra(GameReplayActivity.EXTRA_OPPONENT, game.opponent)
                     putExtra(GameReplayActivity.EXTRA_DATE, game.date)

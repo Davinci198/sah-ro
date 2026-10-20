@@ -4,6 +4,7 @@ import com.sah.content.Json
 import com.sah.content.OpeningBook
 import com.sah.content.int
 import com.sah.content.string
+import com.sah.content.toJsonString
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -212,18 +213,3 @@ fun gameFromJson(line: String): ImportedGame? = runCatching {
     )
 }.getOrNull()
 
-private fun String.toJsonString(): String = buildString {
-    append('"')
-    for (c in this@toJsonString) {
-        when {
-            c == '"' -> append("\\\"")
-            c == '\\' -> append("\\\\")
-            c == '\n' -> append("\\n")
-            c == '\r' -> append("\\r")
-            c == '\t' -> append("\\t")
-            c < ' ' -> append("\\u").append(c.code.toString(16).padStart(4, '0'))
-            else -> append(c)
-        }
-    }
-    append('"')
-}
