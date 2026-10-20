@@ -350,7 +350,12 @@ class GamesImporter(private val store: GamesStore) {
             connectTimeout = CONNECT_TIMEOUT_MS
             readTimeout = READ_TIMEOUT_MS
             setRequestProperty("User-Agent", USER_AGENT)
-            setRequestProperty("Accept", "application/json, application/x-chess-pgn, */*")
+            // Accept must stay unrestricted: lichess content-negotiates the games
+            // endpoint, and a prioritised "application/json" makes it return NDJSON
+            // instead of PGN, which the PGN parser cannot read (import then reports
+            // 0 games). Sending only a wildcard lets it pick PGN for games and JSON
+            // for the profile.
+            setRequestProperty("Accept", "*/*")
         }
 
     private companion object {

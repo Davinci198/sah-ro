@@ -260,6 +260,27 @@ class GamesImportTest {
         assertNull(LichessParser.game(blocks.single(), "thibault"))
     }
 
+    /**
+     * Regression: a prioritised "application/json" Accept makes lichess answer the
+     * games endpoint with NDJSON instead of PGN. The parser must not turn that into
+     * games (the import then correctly reports 0); the fix is sending a wildcard
+     * Accept so the server picks PGN.
+     */
+    @Test
+    fun lichessNdjsonBodyYieldsNoGames() {
+        val ndjson = """
+            {"id":"ARYmNx9Z","rated":true,"variant":"standard","speed":"blitz","perf":"blitz",
+             "createdAt":1770279641386,"players":{"white":{"username":"Tryingagain1966","rating":1686},
+             "black":{"username":"LordXTX","rating":1684}}}
+            {"id":"NLp5BYdq","rated":true,"variant":"standard","speed":"blitz","perf":"blitz",
+             "createdAt":1770279418344,"players":{"white":{"username":"LordXTX","rating":1695},
+             "black":{"username":"adham1740","rating":1688}}}
+        """.trimIndent()
+        val blocks = LichessParser.splitBlocks(ndjson)
+        val games = blocks.mapNotNull { LichessParser.game(it, "LordXTX") }
+        assertTrue(games.isEmpty())
+    }
+
     @Test
     fun lichessCursorTimestampsParseFromHeaders() {
         val blocks = LichessParser.splitBlocks(lichessStream)
