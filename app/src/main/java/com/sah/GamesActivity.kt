@@ -5,22 +5,26 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.sah.analysis.MistakePuzzles
 import com.sah.content.GeneratedPuzzlesStore
 import com.sah.content.OpeningRepository
+import com.sah.games.GameRef
 import com.sah.games.GamesImporter
+import com.sah.games.GamesIndex
 import com.sah.games.GamesStore
 import com.sah.games.ImportSummary
-import com.sah.games.ImportedGame
 import com.sah.games.HttpStatusError
 import com.sah.games.Platform
 import com.sah.games.errorMessage
@@ -29,9 +33,12 @@ import java.io.File
 import java.io.IOException
 
 /**
- * Import screen: a username plus platform choice downloads every played game
- * into local storage, newest archives first, then lists them for the replay
- * screen. Partial imports keep what they managed to download.
+ * Import screen: a username plus platform choice downloads every played game into
+ * local storage, newest archives first. The list below is filterable — by opponent
+ * search, result, colour and time control — over a compact in-memory index that
+ * holds each game's metadata but not its PGN, so thirty thousand games stay a few
+ * megabytes instead of a hundred. Tapping a row fetches that one game's PGN on
+ * demand for the replay screen.
  */
 class GamesActivity : UiActivity() {
 
@@ -42,6 +49,9 @@ class GamesActivity : UiActivity() {
     private lateinit var statusLabel: TextView
     private lateinit var importButton: Button
     private lateinit var generateButton: Button
+    private lateinit var searchInput: EditText
+    private lateinit var countLabel: TextView
+    private lateinit var timeChipsRow: LinearLayout
     private lateinit var listContainer: LinearLayout
     private val platformButtons = LinkedHashMap<Platform, Button>()
     private var platform: Platform = Platform.CHESSCOM
@@ -51,8 +61,17 @@ class GamesActivity : UiActivity() {
     @Volatile
     private var cancelled = false
 
-    private var games: List<ImportedGame> = emptyList()
+    /** Every stored game's metadata, loaded without PGNs; [filtered] is what the list shows. */
+    private var refs: List<GameRef> = emptyList()
+    private var filtered: List<GameRef> = emptyList()
     private var visibleCount = PAGE_SIZE
+
+    private var outcomeFilter = "all"
+    private var colorFilter = "all"
+    private var timeFilter = "all"
+    private val outcomeButtons = LinkedHashMap<String, Button>()
+    private val colorButtons = LinkedHashMap<String, Button>()
+    private val timeButtons = LinkedHashMap<String, Button>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,9 +127,122 @@ class GamesActivity : UiActivity() {
 
         generateButton = button("Extrage puzzle-uri din jocurile tale") { startGenerate() }
         root.addView(generateButton, fullWidth())
+        root.addView(space(10))
+
+        // --- filters ---------------------------------------------------------
+        searchInput = EditText(this).apply {
+            hint = "Caută adversar…"
+            setHintTextColor(mutedColor)
+            setTextColor(textColor)
+            setTextSize(13f)
+            setSingleLine(true)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+            setPadding(dp(14), dp(10), dp(14), dp(10))
+            background = controlBackground(cardColor, strokeColor = Color.rgb(86, 86, 86))
+            addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) = Unit
+                override fun onTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) = Unit
+                override fun afterTextChanged(s: Editable?) = applyFilters()
+            })
+        }
+        root.addView(searchInput, fullWidth())
+
+        root.addView(label("Rezultat", 11f, mutedColor), fullWidth())
+        root.addView(
+            buildChipRow(
+                outcomeButtons,
+                listOf("all" to "Toate", "W" to "V", "L" to "Î", "D" to "Egal"),
+                fill = true,
+            ) { outcomeFilter = it },
+            fullWidth(),
+        )
+
+        root.addView(label("Culoare", 11f, mutedColor), fullWidth())
+        root.addView(
+            buildChipRow(
+                colorButtons,
+                listOf("all" to "Toate", "white" to "Albe", "black" to "Negre"),
+                fill = true,
+            ) { colorFilter = it },
+            fullWidth(),
+        )
+
+        root.addView(label("Timp", 11f, mutedColor), fullWidth())
+        timeChipsRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        val timeScroll = HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            addView(timeChipsRow, LinearLayout.LayoutParams(-2, -2))
+        }
+        root.addView(timeScroll, fullWidth())
+
+        countLabel = label("", 12f, mutedColor)
+        root.addView(countLabel, fullWidth())
+        root.addView(space(4))
 
         listContainer = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(listContainer, fullWidth())
+    }
+
+    /** Builds a horizontal row of toggle chips; [fill] spreads them across the width. */
+    private fun buildChipRow(
+        buttons: MutableMap<String, Button>,
+        options: List<Pair<String, String>>,
+        fill: Boolean,
+        onPick: (String) -> Unit,
+    ): LinearLayout {
+        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        options.forEachIndexed { index, (key, text) ->
+            val chip = button(text) {
+                onPick(key)
+                repaintFilters()
+                applyFilters()
+            }.apply {
+                minHeight = dp(38)
+                minimumHeight = dp(38)
+                contentDescription = text
+                if (fill && index < options.size - 1) layoutParams = weightParams()
+            }
+            buttons[key] = chip
+            row.addView(chip)
+        }
+        return row
+    }
+
+    /** Rebuilds the time-control chips from the classes actually present in the data. */
+    private fun populateTimeChips() {
+        timeButtons.clear()
+        timeChipsRow.removeAllViews()
+        val classes = refs.map { it.timeClass }.filter { it.isNotBlank() }.distinct().sorted()
+        val options = listOf("all" to "Toate") + classes.map { it to it.replaceFirstChar { c -> c.uppercase() } }
+        options.forEach { (key, text) ->
+            val chip = button(text) {
+                timeFilter = key
+                repaintFilters()
+                applyFilters()
+            }.apply {
+                minHeight = dp(38)
+                minimumHeight = dp(38)
+                contentDescription = text
+            }
+            timeButtons[key] = chip
+            timeChipsRow.addView(chip)
+        }
+        if (timeFilter !in timeButtons) timeFilter = "all"
+        repaintFilters()
+    }
+
+    private fun repaintFilters() {
+        repaintGroup(outcomeButtons, outcomeFilter)
+        repaintGroup(colorButtons, colorFilter)
+        repaintGroup(timeButtons, timeFilter)
+    }
+
+    private fun repaintGroup(buttons: Map<String, Button>, selected: String) {
+        buttons.forEach { (key, chip) ->
+            val active = key == selected
+            chip.setTextColor(if (active) Color.BLACK else textColor)
+            chip.background = controlBackground(if (active) accentColor else cardColor)
+        }
     }
 
     private fun header(): View {
@@ -256,33 +388,49 @@ class GamesActivity : UiActivity() {
 
     private fun reloadList() {
         Thread {
-            val loaded = runCatching { store.loadAll().sortedWith(compareByDescending { it.date }) }
+            val loaded = runCatching { GamesIndex(store).load().sortedWith(compareByDescending { it.date }) }
                 .getOrDefault(emptyList())
             runOnUiThread {
                 if (cancelled || isFinishing) return@runOnUiThread
-                games = loaded
+                refs = loaded
                 statusLabel.text = if (loaded.isEmpty()) "" else "${loaded.size} jocuri salvate"
-                visibleCount = PAGE_SIZE
-                renderList()
+                populateTimeChips()
+                applyFilters()
             }
         }.start()
     }
 
+    /** Narrows [refs] by the current search and chip filters, then re-renders the list. */
+    private fun applyFilters() {
+        val query = searchInput.text.toString().trim().lowercase()
+        filtered = refs.filter { ref ->
+            (outcomeFilter == "all" || ref.outcome == outcomeFilter) &&
+                (colorFilter == "all" || ref.myColor == colorFilter) &&
+                (timeFilter == "all" || ref.timeClass.equals(timeFilter, ignoreCase = true)) &&
+                (query.isEmpty() || ref.opponent.lowercase().contains(query))
+        }
+        countLabel.text = "${filtered.size} din ${refs.size} jocuri"
+        visibleCount = PAGE_SIZE
+        renderList()
+    }
+
     private fun renderList() {
         listContainer.removeAllViews()
-        if (games.isEmpty()) {
-            listContainer.addView(
-                card("Nu ai jocuri importate încă. Introdu username-ul de pe Chess.com sau Lichess și apasă „Importă toate jocurile”."),
-                fullWidth(),
-            )
+        if (filtered.isEmpty()) {
+            val message = if (refs.isEmpty()) {
+                "Nu ai jocuri importate încă. Introdu username-ul de pe Chess.com sau Lichess și apasă „Importă toate jocurile”."
+            } else {
+                "Niciun joc nu corespunde filtrelor."
+            }
+            listContainer.addView(card(message), fullWidth())
             return
         }
-        for (game in games.take(visibleCount)) {
-            listContainer.addView(gameRow(game), fullWidth())
+        for (ref in filtered.take(visibleCount)) {
+            listContainer.addView(gameRow(ref), fullWidth())
             listContainer.addView(space(6))
         }
-        if (games.size > visibleCount) {
-            val remaining = games.size - visibleCount
+        if (filtered.size > visibleCount) {
+            val remaining = filtered.size - visibleCount
             listContainer.addView(button("Mai multe ($remaining rămân)") {
                 visibleCount += PAGE_SIZE
                 renderList()
@@ -290,34 +438,33 @@ class GamesActivity : UiActivity() {
         }
     }
 
-    private fun gameRow(game: ImportedGame): View {
+    private fun gameRow(ref: GameRef): View {
         val row = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(14), dp(12), dp(14), dp(12))
             background = controlBackground(cardColor, strokeColor = Color.rgb(86, 86, 86))
             isClickable = true
             isFocusable = true
-            setOnClickListener { openReplay(game) }
+            setOnClickListener { openReplay(ref) }
             contentDescription = buildString {
-                append(outcomeWord(game.outcome))
+                append(outcomeWord(ref.outcome))
                 append(" contra ")
-                append(game.opponent)
+                append(ref.opponent)
                 append(", ")
-                append(game.date)
+                append(ref.date)
                 append(". Deschide redarea jocului.")
             }
         }
         val title = SpannableStringBuilder()
-        val outcome = outcomeWord(game.outcome)
-        title.append(outcome)
+        title.append(outcomeWord(ref.outcome))
         title.setSpan(
-            ForegroundColorSpan(outcomeColor(game.outcome)),
+            ForegroundColorSpan(outcomeColor(ref.outcome)),
             0,
             title.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
         )
-        title.append(" vs ${game.opponent}")
-        game.opponentRating?.let { title.append(" ($it)") }
+        title.append(" vs ${ref.opponent}")
+        ref.opponentRating?.let { title.append(" ($it)") }
         row.addView(TextView(this).apply {
             text = title
             setTextColor(textColor)
@@ -325,11 +472,11 @@ class GamesActivity : UiActivity() {
             setTypeface(typeface, Typeface.BOLD)
         }, fullWidth())
         val detail = listOf(
-            game.date,
-            colorWord(game),
-            game.timeClass,
-            game.timeControl,
-            game.opening,
+            ref.date,
+            colorWord(ref),
+            ref.timeClass,
+            ref.timeControl,
+            ref.opening,
         ).filter { it.isNotBlank() }.joinToString(" · ")
         row.addView(TextView(this).apply {
             text = detail
@@ -346,22 +493,34 @@ class GamesActivity : UiActivity() {
         else -> mutedColor
     }
 
-    private fun colorWord(game: ImportedGame): String =
-        if (game.myColor == "white") "cu albele" else "cu negrele"
+    private fun colorWord(ref: GameRef): String =
+        if (ref.myColor == "white") "cu albele" else "cu negrele"
 
-    private fun openReplay(game: ImportedGame) {
-        startActivity(Intent(this, GameReplayActivity::class.java).apply {
-            putExtra(GameReplayActivity.EXTRA_PGN, game.pgn)
-            putExtra(GameReplayActivity.EXTRA_OPPONENT, game.opponent)
-            putExtra(GameReplayActivity.EXTRA_DATE, game.date)
-            putExtra(
-                GameReplayActivity.EXTRA_TIME,
-                listOf(game.timeClass, game.timeControl, game.opening)
-                    .filter { it.isNotBlank() }
-                    .joinToString(" · "),
-            )
-            putExtra(GameReplayActivity.EXTRA_OUTCOME, game.outcome)
-        })
+    /** Fetches the one game's PGN on a background thread, then opens the replay. */
+    private fun openReplay(ref: GameRef) {
+        Thread {
+            val game = runCatching { store.findById(ref.id) }.getOrNull()
+            runOnUiThread {
+                if (cancelled || isFinishing) return@runOnUiThread
+                if (game == null) {
+                    progressLabel.setTextColor(errorColor)
+                    progressLabel.text = "Jocul nu a putut fi încărcat."
+                    return@runOnUiThread
+                }
+                startActivity(Intent(this, GameReplayActivity::class.java).apply {
+                    putExtra(GameReplayActivity.EXTRA_PGN, game.pgn)
+                    putExtra(GameReplayActivity.EXTRA_OPPONENT, game.opponent)
+                    putExtra(GameReplayActivity.EXTRA_DATE, game.date)
+                    putExtra(
+                        GameReplayActivity.EXTRA_TIME,
+                        listOf(game.timeClass, game.timeControl, game.opening)
+                            .filter { it.isNotBlank() }
+                            .joinToString(" · "),
+                    )
+                    putExtra(GameReplayActivity.EXTRA_OUTCOME, game.outcome)
+                })
+            }
+        }.start()
     }
 
     private companion object {
