@@ -81,6 +81,23 @@ class GamesStore(private val directory: File) {
 
     fun knownIds(platform: Platform): MutableSet<String> = load(platform).mapTo(HashSet()) { it.id }
 
+    /**
+     * Loads one stored game by id, scanning the platform files until it is found.
+     * The list screen keeps only metadata in memory and calls this on a tap, so a
+     * single PGN is read instead of thirty thousand.
+     */
+    fun findById(id: String): ImportedGame? {
+        for (platform in Platform.values()) {
+            val file = fileFor(platform)
+            if (!file.exists()) continue
+            val match = file.bufferedReader().useLines { lines ->
+                lines.mapNotNull { gameFromJson(it.trim()) }.firstOrNull { it.id == id }
+            }
+            if (match != null) return match
+        }
+        return null
+    }
+
     fun append(platform: Platform, game: ImportedGame) {
         synchronized(LOCK) {
             fileFor(platform).appendText(game.toJsonLine() + "\n", Charsets.UTF_8)
