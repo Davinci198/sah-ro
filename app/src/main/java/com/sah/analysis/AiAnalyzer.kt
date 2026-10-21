@@ -136,7 +136,9 @@ class AiAnalyzer(private val settings: AiSettings) {
             append("{")
             append("\"model\":${settings.model.toJsonString()}")
             append(",\"temperature\":0.2")
-            append(",\"max_tokens\":1200")
+            // A reasoning model thinks inside its output budget; 1200 tokens of
+            // thinking left no room for the JSON at all.
+            append(",\"max_tokens\":2048")
             append(",\"messages\":[")
             append("{\"role\":\"system\",\"content\":${system.toJsonString()}}")
             append(",{\"role\":\"user\",\"content\":${user.toJsonString()}}")

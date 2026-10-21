@@ -297,7 +297,10 @@ class GameReplayActivity : UiActivity() {
         val opening = OpeningRepository.parse(readAsset("openings/openings.csv"))
             .nameFor(parsed.moves, Language.RO)
         val report = AiReportParser.parse(reply, parsed.startFen, parsed.moves, playerIsWhite, opening)
-            ?: error("răspunsul modelului nu a putut fi citit")
+            ?: run {
+                Log.w(TAG, "unreadable reply, tail=${reply.takeLast(600)}")
+                error("răspunsul modelului nu a putut fi citit")
+            }
         Log.i(TAG, "parsed ok white=${report.whiteAccuracy} black=${report.blackAccuracy} moments=${report.moments.size}")
         return report.copy(source = "AI · ${settings.model.trim()}")
     }

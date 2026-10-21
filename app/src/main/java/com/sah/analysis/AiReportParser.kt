@@ -34,7 +34,7 @@ object AiReportParser {
         playerIsWhite: Boolean,
         fallbackOpening: String = "",
     ): GameReport? {
-        val map = runCatching { Json.parseObject(extractJson(reply)) }.getOrNull() ?: return null
+        val map = answerObject(reply) ?: return null
         val whiteAccuracy = map.num("whiteAccuracy")?.coerceIn(0.0, 100.0) ?: return null
         val blackAccuracy = map.num("blackAccuracy")?.coerceIn(0.0, 100.0) ?: return null
         val takeaway = (map.string("takeaway") ?: map.string("concluzie"))?.trim().orEmpty()
@@ -152,15 +152,57 @@ object AiReportParser {
     }
 
     /**
-     * The object out of whatever the model produced: fenced blocks, a sentence
-     * of preamble and trailing commentary all fall away, the braces stay.
+     * The reply's own object. A reasoning model restates the task — sometimes
+     * even echoes the example JSON — before it answers, so the first braces in
+     * the text are not the answer: every balanced `{…}` region is offered to
+     * the parser, the last one first, and the first that carries our fields
+     * wins. Fenced blocks are kept as a last resort for the rare JSON whose
+     * braces do not balance.
      */
-    private fun extractJson(reply: String): String {
-        val fenced = FENCE.find(reply)?.groupValues?.get(1)
-        if (fenced != null) return fenced.trim()
-        val start = reply.indexOf('{')
-        val end = reply.lastIndexOf('}')
-        return if (start in 0 until end) reply.substring(start, end + 1) else reply.trim()
+    private fun answerObject(reply: String): Map<String, Any?>? {
+        val regions = balancedObjects(reply).asReversed()
+        val fenced = FENCE.find(reply)?.groupValues?.get(1)?.trim()
+        val candidates = if (fenced != null) regions + fenced else regions
+        return candidates.firstNotNullOfOrNull { region ->
+            runCatching { Json.parseObject(region) }.getOrNull()?.takeIf { it.hasReportFields() }
+        }
+    }
+
+    /** A parsed region is ours when it speaks about the report at all. */
+    private fun Map<String, Any?>.hasReportFields(): Boolean =
+        REPORT_KEYS.any { containsKey(it) }
+
+    private val REPORT_KEYS = listOf("whiteAccuracy", "blackAccuracy", "moments", "takeaway", "concluzie")
+
+    /**
+     * Every top-level `{…}` region of [text], in order of appearance; braces
+     * inside strings are ignored so a lesson like „a urmat {exemplu}” cannot
+     * fool the counter.
+     */
+    private fun balancedObjects(text: String): List<String> {
+        val out = ArrayList<String>()
+        var depth = 0
+        var start = -1
+        var inString = false
+        var escaped = false
+        for (i in text.indices) {
+            val c = text[i]
+            when {
+                escaped -> escaped = false
+                inString && c == '\\' -> escaped = true
+                c == '"' -> inString = !inString
+                inString -> Unit
+                c == '{' -> { if (depth == 0) start = i; depth++ }
+                c == '}' && depth > 0 -> {
+                    depth--
+                    if (depth == 0) {
+                        if (start >= 0) out += text.substring(start, i + 1)
+                        start = -1
+                    }
+                }
+            }
+        }
+        return out
     }
 
     private val FENCE = Regex("```(?:json)?\\s*(.*?)```", RegexOption.DOT_MATCHES_ALL)

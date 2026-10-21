@@ -66,6 +66,40 @@ class AiReportParserTest {
     }
 
     @Test
+    fun reasoningBeforeTheJsonDoesNotHideIt() {
+        // A reasoning model thinks aloud first — and even echoes the example —
+        // before the real answer; the answer must still be the one we read.
+        val thinking = """Gândesc: jocul e al negrului. Exemplul cerut era {"opening":"exemplu","whiteAccuracy":0,"blackAccuracy":0,"moments":[],"takeaway":"exemplu"} și acum răspund."""
+
+        val report = parse(thinking + "\n" + reply(moments = momentJson()))
+
+        assertNotNull(report)
+        assertEquals("Deschiderea Regelui", report?.opening)
+        assertEquals(87.5, report?.whiteAccuracy ?: 0.0, 0.001)
+        assertEquals(1, report?.moments?.size)
+    }
+
+    @Test
+    fun aFencedExampleFollowedByAPlainAnswerPicksTheAnswer() {
+        val text = "Exemplul din prompt:\n```json\n{\"opening\":\"exemplu\",\"whiteAccuracy\":0,\"blackAccuracy\":0,\"moments\":[],\"takeaway\":\"exemplu\"}\n```\nRăspunsul:\n" + reply(moments = momentJson())
+
+        val report = parse(text)
+
+        assertNotNull(report)
+        assertEquals("Deschiderea Regelui", report?.opening)
+    }
+
+    @Test
+    fun bracesInsideProseDoNotFoolTheScanner() {
+        val text = """Regula spune: „mutarea {Bb5} e carte”. Apoi vine răspunsul.""" + "\n" + reply(moments = momentJson())
+
+        val report = parse(text)
+
+        assertNotNull(report)
+        assertEquals(1, report?.moments?.size)
+    }
+
+    @Test
     fun momentKeepsTheMoveThePgnActuallyHolds() {
         val report = parse(reply(moments = momentJson(san = "Bb5")))
 
