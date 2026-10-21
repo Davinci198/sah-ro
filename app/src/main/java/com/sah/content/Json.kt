@@ -204,6 +204,13 @@ fun Map<String, Any?>.int(key: String): Int? = when (val value = this[key]) {
 
 fun Map<String, Any?>.boolean(key: String): Boolean? = this[key] as? Boolean
 
+/** Reads [key] as a number, whether the JSON held an integer or a decimal. */
+fun Map<String, Any?>.double(key: String): Double? = when (val value = this[key]) {
+    is Long -> value.toDouble()
+    is Double -> value
+    else -> null
+}
+
 fun Map<String, Any?>.objectOrNull(key: String): Map<String, Any?>? = this[key] as? Map<String, Any?>
 
 fun Map<String, Any?>.arrayOrNull(key: String): List<Any?>? = this[key] as? List<Any?>
@@ -215,3 +222,20 @@ fun Map<String, Any?>.stringList(key: String): List<String> =
 /** Reads [key] as a list of objects (each a string-keyed map). */
 fun Map<String, Any?>.objectList(key: String): List<Map<String, Any?>> =
     (this[key] as? List<*>)?.filterIsInstance<Map<String, Any?>>() ?: emptyList()
+
+/** Wraps this string as a quoted, escaped JSON string literal. */
+fun String.toJsonString(): String = buildString {
+    append('"')
+    for (c in this@toJsonString) {
+        when {
+            c == '"' -> append("\\\"")
+            c == '\\' -> append("\\\\")
+            c == '\n' -> append("\\n")
+            c == '\r' -> append("\\r")
+            c == '\t' -> append("\\t")
+            c < ' ' -> append("\\u").append(c.code.toString(16).padStart(4, '0'))
+            else -> append(c)
+        }
+    }
+    append('"')
+}

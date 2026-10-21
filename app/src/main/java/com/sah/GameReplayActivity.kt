@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.sah.analysis.GameAnalyzer
 import com.sah.analysis.GameReport
+import com.sah.analysis.GameReportsStore
 import com.sah.analysis.HeuristicEngine
 import com.sah.analysis.MoveCategory
 import com.sah.analysis.REPORT_PROFILE
@@ -25,6 +26,7 @@ import com.sah.content.OpeningRepository
 import com.sah.games.Pgn
 import com.sah.games.ReplayPosition
 import com.sah.games.outcomeWord
+import java.io.File
 
 /**
  * Replay of one imported game: the board plus a move strip with the current
@@ -66,6 +68,15 @@ class GameReplayActivity : UiActivity() {
     private val timeInfo: String by lazy { intent.getStringExtra(EXTRA_TIME).orEmpty() }
     private val outcome: String by lazy { intent.getStringExtra(EXTRA_OUTCOME).orEmpty() }
     private val myColor: String by lazy { intent.getStringExtra(EXTRA_MY_COLOR).orEmpty() }
+    private val gameId: String by lazy { intent.getStringExtra(EXTRA_GAME_ID).orEmpty() }
+
+    /** Analyses run by hand, kept so this game opens with its report already there. */
+    private val reportsStore: GameReportsStore by lazy {
+        GameReportsStore(File(filesDir, "game-reports"))
+    }
+
+    /** The report on screen now: restored from disk, or saved once a fresh run ends. */
+    private var currentReport: GameReport? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +87,7 @@ class GameReplayActivity : UiActivity() {
         Effects.prepare(this)
         buildUi()
         loadReplay()
+        loadStoredAnalysis()
     }
 
     override fun onDestroy() {
@@ -238,13 +250,35 @@ class GameReplayActivity : UiActivity() {
                 analyzing = false
                 analyzeButton.isEnabled = true
                 if (result.isSuccess) {
-                    renderReport(result.getOrThrow())
+                    adoptReport(result.getOrThrow().copy(id = gameId), save = true)
                 } else {
                     analysisLabel.setTextColor(errorColor)
                     analysisLabel.text = "Analiza a eșuat: ${result.exceptionOrNull()?.message}"
                 }
             }
         }.start()
+    }
+
+    /** Restores an analysis the player already paid for, without running the engine again. */
+    private fun loadStoredAnalysis() {
+        if (gameId.isEmpty()) return
+        Thread {
+            val stored = runCatching { reportsStore.find(gameId) }.getOrNull()
+            runOnUiThread {
+                if (cancelled || isFinishing || stored == null) return@runOnUiThread
+                // A fresh run that finished first wins; its report is the newer one.
+                if (currentReport != null) return@runOnUiThread
+                adoptReport(stored, save = false)
+            }
+        }.start()
+    }
+
+    /** Puts [report] on screen, keeping it for later and (when asked) on disk. */
+    private fun adoptReport(report: GameReport, save: Boolean) {
+        currentReport = report
+        if (save && report.id.isNotEmpty()) runCatching { reportsStore.save(report) }
+        analyzeButton.text = "Re-analizează jocul"
+        renderReport(report)
     }
 
     /** Runs the engine over the loaded game and turns the result into a report. */
@@ -295,6 +329,7 @@ class GameReplayActivity : UiActivity() {
     }
 
     companion object {
+        const val EXTRA_GAME_ID = "gameId"
         const val EXTRA_PGN = "gamePgn"
         const val EXTRA_OPPONENT = "gameOpponent"
         const val EXTRA_DATE = "gameDate"

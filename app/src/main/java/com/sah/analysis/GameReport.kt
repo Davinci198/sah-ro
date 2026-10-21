@@ -22,6 +22,8 @@ data class ReportMoment(
  * without an engine.
  */
 data class GameReport(
+    /** Id of the game this report describes; empty until the store tags it. */
+    val id: String = "",
     val opening: String,
     val whiteAccuracy: Double,
     val blackAccuracy: Double,
