@@ -46,6 +46,8 @@ data class GameReport(
     val takeaway: String,
     /** Who produced it — "AI · <model>" or "Local"; empty for reports saved before this existed. */
     val source: String = "",
+    /** Board step → category for every badge-worthy move of the game; empty for reports saved before this existed. */
+    val badges: Map<Int, MoveCategory> = emptyMap(),
 ) {
     val playerAccuracy: Double get() = if (playerIsWhite) whiteAccuracy else blackAccuracy
 
@@ -75,6 +77,7 @@ data class GameReport(
                 playerIsWhite = playerIsWhite,
                 moments = moments,
                 takeaway = takeawayOf(analysis, playerIsWhite, moments),
+                badges = MoveBadges.badgesOf(analysis.plies),
             )
         }
 

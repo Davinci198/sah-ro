@@ -23,6 +23,9 @@ enum class BoardMark { SELECTED, TARGET, GOOD, BAD, FOCUS, LAST, CHECK }
 /** An arrow overlay drawn above the pieces, from [from] to [to]. */
 data class BoardArrow(val from: Square, val to: Square, val color: Int)
 
+/** A classification glyph painted in a square's corner, like the reference badges. */
+data class BoardBadge(val symbol: String, val color: Int)
+
 /** Violet that marks "hint" everywhere: lesson focus squares and puzzle hint arrows. */
 val hintColor = Color.rgb(139, 92, 246)
 
@@ -55,6 +58,7 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
     private var positionSquares: Array<Char?> = arrayOfNulls(64)
     private var starSquares: Set<Square> = emptySet()
     private var arrowList: List<BoardArrow> = emptyList()
+    private var badgeMap: Map<Square, BoardBadge> = emptyMap()
 
     init {
         setBackgroundColor(Color.BLACK)
@@ -148,11 +152,13 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
         marks: Map<Square, BoardMark> = emptyMap(),
         stars: Set<Square> = emptySet(),
         arrows: List<BoardArrow> = emptyList(),
+        badges: Map<Square, BoardBadge> = emptyMap(),
     ) {
         val board = ChessBoard.fromFen(fen)
         val sprites = pieceSprites()
         starSquares = stars
         arrowList = arrows
+        badgeMap = badges
         buttons.forEachIndexed { index, button ->
             val file = index % 8
             val rank = 7 - index / 8
@@ -202,8 +208,9 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
         super.dispatchDraw(canvas)
         drawPieceSprites(canvas)
         drawStars(canvas)
-        drawArrows(canvas)
         drawCoordinates(canvas)
+        drawBadges(canvas)
+        drawArrows(canvas)
     }
 
     private fun drawPieceSprites(canvas: Canvas) {
@@ -252,6 +259,36 @@ class ChessBoardView(context: Context) : ViewGroup(context) {
             canvas.drawText("★", centerX, baseline, starPaint)
         }
         starPaint.style = Paint.Style.FILL
+    }
+
+    private val badgePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.RIGHT
+        typeface = android.graphics.Typeface.DEFAULT_BOLD
+    }
+
+    /**
+     * Classification glyphs in the bottom-right corner of every square that
+     * earned one, with the same dark outline as the stars so they read on
+     * both square colours. A badge wins over the file letter when they meet.
+     */
+    private fun drawBadges(canvas: Canvas) {
+        if (badgeMap.isEmpty()) return
+        val squareSize = width / 8f
+        val pad = squareSize * 0.14f
+        badgePaint.textSize = squareSize * 0.34f
+        badgePaint.strokeWidth = squareSize * 0.05f
+        for ((square, badge) in badgeMap) {
+            val x = (square.file + 1) * squareSize - pad
+            val top = (7 - square.rank) * squareSize
+            val baseline = top + squareSize - pad - badgePaint.descent()
+            badgePaint.style = Paint.Style.STROKE
+            badgePaint.color = Color.rgb(24, 24, 24)
+            canvas.drawText(badge.symbol, x, baseline, badgePaint)
+            badgePaint.style = Paint.Style.FILL
+            badgePaint.color = badge.color
+            canvas.drawText(badge.symbol, x, baseline, badgePaint)
+        }
+        badgePaint.style = Paint.Style.FILL
     }
 
     /** Thick line with a big head from square centre to square centre, above everything. */

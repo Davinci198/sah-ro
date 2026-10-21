@@ -56,6 +56,14 @@ class AiReportParserTest {
     }
 
     @Test
+    fun momentsBecomeBoardBadgesOnTheStepAfterEachMove() {
+        val report = parse(reply(moments = momentJson()))
+
+        // Move 3 by white is ply 4; its badge belongs on the step it lands on.
+        assertEquals(mapOf(5 to MoveCategory.MISTAKE), report?.badges)
+    }
+
+    @Test
     fun fencedAndPreambleRepliesAreRead() {
         val fenced = "Iată analiza:\n```json\n${reply(moments = momentJson())}\n```"
 
