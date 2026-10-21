@@ -80,6 +80,12 @@ class GamesActivity : UiActivity() {
         buildUi()
         pickPlatform(Platform.CHESSCOM)
         reloadList()
+        maybeBackfillOpenings()
+    }
+
+    /** The opening book, parsed once from assets on whichever thread first needs it. */
+    private val openingBook: com.sah.content.OpeningBook? by lazy {
+        runCatching { OpeningRepository.parse(readAsset("openings/openings.csv")) }.getOrNull()
     }
 
     override fun onDestroy() {
@@ -289,7 +295,7 @@ class GamesActivity : UiActivity() {
         val chosen = platform
         Thread {
             val result = runCatching {
-                GamesImporter(store).import(
+                GamesImporter(store, openingBook).import(
                     chosen,
                     username,
                     { message -> runOnUiThread { if (!cancelled && !isFinishing) progressLabel.text = message } },
@@ -396,6 +402,29 @@ class GamesActivity : UiActivity() {
                 statusLabel.text = if (loaded.isEmpty()) "" else "${loaded.size} jocuri salvate"
                 populateTimeChips()
                 applyFilters()
+            }
+        }.start()
+    }
+
+    /**
+     * Chess.com games arrive without an opening name, so the first time the list
+     * is opened after this update every stored game missing one gets it detected
+     * from its moves. Runs once (guarded by a preference), off the UI thread, and
+     * re-reads the list afterwards so the freshly filled openings show up.
+     */
+    private fun maybeBackfillOpenings() {
+        if (preferences().getBoolean(KEY_OPENINGS_BACKFILLED, false)) return
+        Thread {
+            val filled = runCatching {
+                store.backfillOpenings(
+                    openingBook,
+                    onProgress = { message -> runOnUiThread { if (!cancelled && !isFinishing) statusLabel.text = message } },
+                )
+            }.getOrDefault(0)
+            runOnUiThread {
+                if (cancelled || isFinishing) return@runOnUiThread
+                preferences().edit().putBoolean(KEY_OPENINGS_BACKFILLED, true).apply()
+                if (filled > 0) reloadList()
             }
         }.start()
     }
@@ -518,6 +547,7 @@ class GamesActivity : UiActivity() {
                             .joinToString(" · "),
                     )
                     putExtra(GameReplayActivity.EXTRA_OUTCOME, game.outcome)
+                    putExtra(GameReplayActivity.EXTRA_MY_COLOR, game.myColor)
                 })
             }
         }.start()
@@ -526,6 +556,7 @@ class GamesActivity : UiActivity() {
     private companion object {
         const val PREFS = "games"
         const val PAGE_SIZE = 150
+        const val KEY_OPENINGS_BACKFILLED = "openingsBackfilled"
 
         /** Games mined per generation run; each tap walks one batch further back. */
         const val BATCH_PER_RUN = 30

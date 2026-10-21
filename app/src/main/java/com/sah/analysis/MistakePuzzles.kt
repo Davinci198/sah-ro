@@ -1,8 +1,5 @@
 package com.sah.analysis
 
-import com.sah.chess.ChessBoard
-import com.sah.chess.MoveGenerator
-import com.sah.chess.San
 import com.sah.content.OpeningBook
 import com.sah.content.Puzzle
 import com.sah.content.PuzzleRepository
@@ -49,7 +46,7 @@ object MistakePuzzles {
     /** Runs the engine over [game] and extracts the puzzles it contains. */
     fun extract(game: ImportedGame, book: OpeningBook? = null): List<Puzzle> {
         val parsed = Pgn.parse(game.pgn)
-        val uci = toUci(parsed.startFen, parsed.moves)
+        val uci = toUciMoves(parsed.startFen, parsed.moves)
         if (uci.size < 2) return emptyList()
         val playerIsWhite = game.myColor == "white"
         return GameAnalyzer(HeuristicEngine(BATCH_PROFILE), book).use { analyzer ->
@@ -100,17 +97,5 @@ object MistakePuzzles {
         loss >= 60.0 -> 3
         loss >= 40.0 -> 5
         else -> 7
-    }
-
-    /** SAN half-moves to UCI, stopping at the first that cannot be replayed. */
-    private fun toUci(startFen: String, sanMoves: List<String>): List<String> {
-        val uci = ArrayList<String>(sanMoves.size)
-        var board = runCatching { ChessBoard.fromFen(startFen) }.getOrNull() ?: return emptyList()
-        for (san in sanMoves) {
-            val move = San.parse(board, san) ?: break
-            uci += move.uci()
-            board = MoveGenerator.applyMove(board, move)
-        }
-        return uci
     }
 }

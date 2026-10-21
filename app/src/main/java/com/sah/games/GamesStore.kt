@@ -1,9 +1,12 @@
 package com.sah.games
 
 import com.sah.content.Json
+import com.sah.content.OpeningBook
 import com.sah.content.int
 import com.sah.content.string
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 /** Where an imported game came from. */
 enum class Platform(val label: String, val fileName: String) {
@@ -106,6 +109,60 @@ class GamesStore(private val directory: File) {
 
     fun clear(platform: Platform) {
         synchronized(LOCK) { fileFor(platform).delete() }
+    }
+
+    /**
+     * One-time pass that fills the opening of every stored game whose field is
+     * empty, detecting it from the moves with the bundled [book]. Chess.com games
+     * arrive without an opening header (only lichess is asked for one), so without
+     * this their rows would stay blank. A platform file is rewritten only when at
+     * least one game changed; the work streams line by line so thirty thousand
+     * PGNs are never all held in memory, corrupt lines are copied through
+     * untouched, and the swap onto the real file is an atomic rename. Returns how
+     * many openings were filled.
+     */
+    fun backfillOpenings(
+        book: OpeningBook?,
+        onProgress: (String) -> Unit = {},
+        cancelled: () -> Boolean = { false },
+    ): Int {
+        if (book == null) return 0
+        var filled = 0
+        for (platform in Platform.values()) {
+            if (cancelled()) return filled
+            val file = fileFor(platform)
+            if (!file.exists()) continue
+            val temp = File(directory, platform.fileName + ".ndjson.tmp")
+            var changed = false
+            synchronized(LOCK) {
+                file.bufferedReader().use { reader ->
+                    temp.bufferedWriter().use { writer ->
+                        while (true) {
+                            val raw = reader.readLine() ?: break
+                            val game = gameFromJson(raw.trim())
+                            var out = raw
+                            if (game != null && game.opening.isEmpty()) {
+                                val name = book.nameFor(Pgn.parse(game.pgn).moves)
+                                if (name.isNotEmpty()) {
+                                    out = game.copy(opening = name).toJsonLine()
+                                    changed = true
+                                    filled++
+                                }
+                            }
+                            writer.write(out)
+                            writer.newLine()
+                        }
+                    }
+                }
+                if (changed) {
+                    Files.move(temp.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                } else {
+                    temp.delete()
+                }
+            }
+            if (changed) onProgress("Deschideri completate: $filled jocuri")
+        }
+        return filled
     }
 
     private companion object {
