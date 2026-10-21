@@ -20,7 +20,9 @@ import com.sah.analysis.GameReportsStore
 import com.sah.analysis.HeuristicEngine
 import com.sah.analysis.PositionEval
 import com.sah.analysis.REPORT_PROFILE
+import com.sah.analysis.REPORT_PROFILE_STOCKFISH
 import com.sah.analysis.ReportMoment
+import com.sah.analysis.UciEngine
 import com.sah.analysis.colorRgb
 import com.sah.analysis.roLabel
 import com.sah.analysis.roSymbol
@@ -45,11 +47,12 @@ import kotlin.math.abs
  * line of positions is computed once, up front, so navigation is instant
  * and never touches the network.
  *
- * An "Analizează" button runs the in-process engine over the game and reveals a
+ * An "Analizează" button runs the bundled Stockfish (when this device can
+ * execute it, else the pure-Kotlin engine) over the game and reveals a
  * summary below the controls: the opening, the accuracy per side and the
- * player's mistakes worth studying (worst first). The analysis profile is the
- * interactive [REPORT_PROFILE], a pass that costs seconds, not the minute the
- * full pipeline would.
+ * player's mistakes worth studying (worst first). The analysis profile is
+ * interactive ([REPORT_PROFILE] / [REPORT_PROFILE_STOCKFISH]), a pass that
+ * costs seconds, not the minute the full pipeline would.
  *
  * A report line is the door into practice: the first tap shows the position
  * before the mistake with the suggestion drawn over it, the second plays that
@@ -404,10 +407,17 @@ class GameReplayActivity : UiActivity() {
         if (uci.size < 2) error("Prea puține mutări pentru analiză.")
         val playerIsWhite = myColor != "black"
         val opening = book.nameFor(parsed.moves, Language.RO)
-        return GameAnalyzer(HeuristicEngine(REPORT_PROFILE), book) { progress ->
+        // The bundled Stockfish when this device can execute it, else the Kotlin engine.
+        val engine = UciEngine.create(applicationInfo.nativeLibraryDir, REPORT_PROFILE_STOCKFISH)
+            ?: HeuristicEngine(REPORT_PROFILE)
+        Log.i(TAG, "engine=${engine.javaClass.simpleName} profile=${engine.profile.name}")
+        return GameAnalyzer(engine, book) { progress ->
             report("Se analizează… ${progress.finalized}/${progress.total}")
         }.use { it.analyze(parsed.startFen, uci, playerIsWhite) }
-            .let { GameReport.build(it, playerIsWhite, opening).copy(source = "Local") }
+            .let { analysis ->
+                val source = (engine as? UciEngine)?.let { "Local · ${it.engineName}" } ?: "Local"
+                GameReport.build(analysis, playerIsWhite, opening).copy(source = source)
+            }
     }
 
     private fun renderReport(report: GameReport, note: String? = null) {
