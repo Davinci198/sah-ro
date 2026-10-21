@@ -75,6 +75,7 @@ fun GameReport.toJsonLine(): String {
     fields += "\"playerIsWhite\":$playerIsWhite"
     fields += "\"takeaway\":${takeaway.toJsonString()}"
     fields += "\"source\":${source.toJsonString()}"
+    fields += "\"badges\":${MoveBadges.encodeBadges(badges).toJsonString()}"
     fields += "\"moments\":[${moments.joinToString(",") { it.toJsonObject() }}]"
     return fields.joinToString(",", "{", "}")
 }
@@ -101,6 +102,7 @@ fun reportFromJson(line: String): GameReport? = runCatching {
         playerIsWhite = map.boolean("playerIsWhite") ?: return null,
         takeaway = map.string("takeaway") ?: "",
         source = map.string("source") ?: "",
+        badges = MoveBadges.parseBadges(map.string("badges")),
         moments = map.objectList("moments").mapNotNull { momentFromJson(it) },
     )
 }.getOrNull()

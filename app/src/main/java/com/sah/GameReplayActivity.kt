@@ -1,6 +1,5 @@
 package com.sah
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -19,11 +18,12 @@ import com.sah.analysis.GameAnalyzer
 import com.sah.analysis.GameReport
 import com.sah.analysis.GameReportsStore
 import com.sah.analysis.HeuristicEngine
-import com.sah.analysis.MoveCategory
 import com.sah.analysis.PositionEval
 import com.sah.analysis.REPORT_PROFILE
 import com.sah.analysis.ReportMoment
+import com.sah.analysis.colorRgb
 import com.sah.analysis.roLabel
+import com.sah.analysis.roSymbol
 import com.sah.analysis.toUciMoves
 import com.sah.chess.ChessBoard
 import com.sah.chess.ChessMove
@@ -239,6 +239,7 @@ class GameReplayActivity : UiActivity() {
             position.fen,
             marks(lastMove = position.lastMove, board = board),
             arrows = listOfNotNull(arrow),
+            badges = stepBadges(position),
         )
         stepLabel.text = when {
             positions.size <= 1 -> "Poziția de start"
@@ -260,6 +261,13 @@ class GameReplayActivity : UiActivity() {
         }
     }
 
+    /** The classification badge of the move that reached this step, if it earned one. */
+    private fun stepBadges(position: ReplayPosition): Map<Square, BoardBadge> {
+        val category = currentReport?.badges?.get(step) ?: return emptyMap()
+        val square = position.lastMove?.second ?: return emptyMap()
+        return mapOf(square to BoardBadge(category.roSymbol(), category.colorRgb()))
+    }
+
     private fun renderMoves() {
         val builder = SpannableStringBuilder()
         for (index in 1 until positions.size) {
@@ -267,7 +275,10 @@ class GameReplayActivity : UiActivity() {
             val start = builder.length
             builder.append(positions[index].san ?: "?")
             builder.setSpan(
-                ForegroundColorSpan(if (index == step) accentColor else mutedColor),
+                ForegroundColorSpan(
+                    currentReport?.badges?.get(index)?.colorRgb()
+                        ?: if (index == step) accentColor else mutedColor,
+                ),
                 start,
                 builder.length,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
@@ -431,12 +442,12 @@ class GameReplayActivity : UiActivity() {
             )
             for ((index, moment) in report.moments.withIndex()) {
                 val better = moment.bestSan.ifEmpty { "o mutare mai bună" }
-                val line = "Mutarea ${moment.moveNumber} · ${moment.san} (${moment.category.roLabel()}) — " +
+                val line = "${moment.category.roSymbol()} Mutarea ${moment.moveNumber} · ${moment.san} (${moment.category.roLabel()}) — " +
                     "mai bine $better · −${"%.0f".format(moment.loss)}%" +
                     if (index == previewMoment) " ▸" else ""
                 analysisContainer.addView(
                     card(line).apply {
-                        setTextColor(if (index == previewMoment) accentColor else categoryColor(moment.category))
+                        setTextColor(if (index == previewMoment) accentColor else moment.category.colorRgb())
                         isClickable = true
                         setOnClickListener { onMomentTapped(index) }
                     },
@@ -454,12 +465,6 @@ class GameReplayActivity : UiActivity() {
             }
         }
         analysisContainer.addView(card(report.takeaway), fullWidth())
-    }
-
-    private fun categoryColor(category: MoveCategory): Int = when (category) {
-        MoveCategory.BLUNDER -> errorColor
-        MoveCategory.MISTAKE -> Color.rgb(253, 186, 116)
-        else -> mutedColor
     }
 
     // -------------------------------------------------------------- exploration

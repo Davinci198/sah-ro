@@ -195,5 +195,20 @@ class GameReportsStoreTest {
         assertEquals("Ruy Lopez", found?.opening)
         assertEquals("", found?.source)
         assertEquals("", found?.moments?.firstOrNull()?.lesson)
+        assertTrue(found?.badges.isNullOrEmpty()) // written before badges existed
+    }
+
+    @Test
+    fun badgesSurviveTheRoundTrip() {
+        val store = store()
+        val original = report().copy(badges = mapOf(9 to MoveCategory.MISTAKE, 18 to MoveCategory.BLUNDER))
+
+        store.save(original)
+
+        assertEquals(original, store.find("chesscom:123"))
+        assertEquals(
+            mapOf(9 to MoveCategory.MISTAKE, 18 to MoveCategory.BLUNDER),
+            store.find("chesscom:123")?.badges,
+        )
     }
 }

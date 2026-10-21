@@ -52,6 +52,9 @@ object AiReportParser {
             playerIsWhite = playerIsWhite,
             moments = moments,
             takeaway = takeaway,
+            // The model grades only the player's moments, but the board still
+            // badges them the same way a local analysis badges its own list.
+            badges = moments.associate { (it.ply + 1) to it.category },
         )
     }
 
