@@ -15,7 +15,19 @@ data class ReportMoment(
     val loss: Double,
     /** Why the move was wrong and what to play instead; filled by the AI coach. */
     val lesson: String = "",
-)
+) {
+    /** Zero-based ply of the played move — the index [com.sah.games.Pgn.replay] positions use. */
+    val ply: Int get() = plyOf(moveNumber, moverWhite)
+}
+
+/**
+ * The zero-based ply of move [moveNumber] played by [moverWhite]: the full
+ * moves before it count twice, his own half-move once. Shared by the report,
+ * the parser's legality checks and the replay screen that jumps to the moment,
+ * so all three agree on which position a mistake lives in.
+ */
+fun plyOf(moveNumber: Int, moverWhite: Boolean): Int =
+    (moveNumber - 1) * 2 + if (moverWhite) 0 else 1
 
 /**
  * The readable summary of one analysed game: the opening, the per-side accuracy

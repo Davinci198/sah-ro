@@ -99,7 +99,7 @@ object AiReportParser {
         }
         // Only the player's own mistakes are worth studying — same rule as the local report.
         if (moverWhite != playerIsWhite) return null
-        val ply = (moveNumber - 1) * 2 + if (moverWhite) 0 else 1
+        val ply = plyOf(moveNumber, moverWhite)
         if (ply !in plies.indices) return null
 
         val at = plies[ply]
