@@ -14,6 +14,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.sah.analysis.MistakePuzzles
+import com.sah.content.GeneratedPuzzlesStore
+import com.sah.content.OpeningRepository
 import com.sah.games.GamesImporter
 import com.sah.games.GamesStore
 import com.sah.games.ImportSummary
@@ -33,14 +36,17 @@ import java.io.IOException
 class GamesActivity : UiActivity() {
 
     private lateinit var store: GamesStore
+    private lateinit var generatedStore: GeneratedPuzzlesStore
     private lateinit var usernameInput: EditText
     private lateinit var progressLabel: TextView
     private lateinit var statusLabel: TextView
     private lateinit var importButton: Button
+    private lateinit var generateButton: Button
     private lateinit var listContainer: LinearLayout
     private val platformButtons = LinkedHashMap<Platform, Button>()
     private var platform: Platform = Platform.CHESSCOM
     private var importing = false
+    private var generating = false
 
     @Volatile
     private var cancelled = false
@@ -51,6 +57,7 @@ class GamesActivity : UiActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = GamesStore(File(filesDir, "games"))
+        generatedStore = GeneratedPuzzlesStore(File(filesDir, "generated-puzzles"))
         buildUi()
         pickPlatform(Platform.CHESSCOM)
         reloadList()
@@ -99,6 +106,9 @@ class GamesActivity : UiActivity() {
         root.addView(statusLabel, fullWidth())
         root.addView(space(4))
 
+        generateButton = button("Extrage puzzle-uri din jocurile tale") { startGenerate() }
+        root.addView(generateButton, fullWidth())
+
         listContainer = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(listContainer, fullWidth())
     }
@@ -131,7 +141,7 @@ class GamesActivity : UiActivity() {
     private fun keyFor(option: Platform) = "user.${option.fileName}"
 
     private fun startImport() {
-        if (importing) return
+        if (importing || generating) return
         val username = usernameInput.text.toString().trim()
         if (username.isEmpty()) {
             progressLabel.setTextColor(errorColor)
@@ -141,6 +151,7 @@ class GamesActivity : UiActivity() {
         preferences().edit().putString(keyFor(platform), username).apply()
         importing = true
         importButton.isEnabled = false
+        generateButton.isEnabled = false
         progressLabel.setTextColor(mutedColor)
         progressLabel.text = "Se pornește importul…"
         val chosen = platform
@@ -157,6 +168,7 @@ class GamesActivity : UiActivity() {
                 if (cancelled || isFinishing) return@runOnUiThread
                 importing = false
                 importButton.isEnabled = true
+                generateButton.isEnabled = true
                 reportResult(result, username, chosen)
                 reloadList()
             }
@@ -188,6 +200,58 @@ class GamesActivity : UiActivity() {
                 progressLabel.text = result.exceptionOrNull()?.message ?: "Importul a eșuat."
             }
         }
+    }
+
+    private fun startGenerate() {
+        if (importing || generating) return
+        generating = true
+        generateButton.isEnabled = false
+        importButton.isEnabled = false
+        progressLabel.setTextColor(mutedColor)
+        progressLabel.text = "Se pregătește analiza jocurilor…"
+        Thread {
+            val result = runCatching { generatePuzzles { message -> runOnUiThread { if (!cancelled && !isFinishing) progressLabel.text = message } } }
+            runOnUiThread {
+                if (cancelled || isFinishing) return@runOnUiThread
+                generating = false
+                generateButton.isEnabled = true
+                importButton.isEnabled = true
+                val total = runCatching { generatedStore.load().size }.getOrDefault(0)
+                if (result.isSuccess) {
+                    val (analyzed, found) = result.getOrThrow()
+                    progressLabel.setTextColor(successColor)
+                    progressLabel.text =
+                        "Gata: $found puzzle-uri din $analyzed jocuri analizate · $total în total. " +
+                            "Mergi la „Puzzle-uri” și alege „Jocurile tale”."
+                } else {
+                    progressLabel.setTextColor(errorColor)
+                    progressLabel.text = "Analiza a eșuat: ${result.exceptionOrNull()?.message}"
+                }
+            }
+        }.start()
+    }
+
+    /**
+     * Mines the most recent not-yet-analyzed games for the player's mistakes and
+     * appends the puzzles they yield. Each run walks one batch further back through
+     * history (analyzed ids are skipped), so repeated taps grow the set gradually.
+     */
+    private fun generatePuzzles(report: (String) -> Unit): Pair<Int, Int> {
+        val book = OpeningRepository.parse(readAsset("openings/openings.csv"))
+        val analyzed = generatedStore.analyzedIds()
+        val pending = store.loadAll()
+            .filter { it.id !in analyzed }
+            .sortedWith(compareByDescending { it.date })
+            .take(BATCH_PER_RUN)
+        var found = 0
+        pending.forEachIndexed { index, game ->
+            report("Se analizează jocul ${index + 1}/${pending.size} · $found puzzle-uri…")
+            val puzzles = MistakePuzzles.extract(game, book)
+            generatedStore.append(puzzles)
+            generatedStore.markAnalyzed(listOf(game.id))
+            found += puzzles.size
+        }
+        return pending.size to found
     }
 
     private fun reloadList() {
@@ -303,5 +367,8 @@ class GamesActivity : UiActivity() {
     private companion object {
         const val PREFS = "games"
         const val PAGE_SIZE = 150
+
+        /** Games mined per generation run; each tap walks one batch further back. */
+        const val BATCH_PER_RUN = 30
     }
 }

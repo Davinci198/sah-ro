@@ -14,12 +14,14 @@ import android.widget.TextView
 import com.sah.chess.ChessMove
 import com.sah.chess.MoveGenerator
 import com.sah.chess.Pieces
+import com.sah.content.GeneratedPuzzlesStore
 import com.sah.content.Puzzle
 import com.sah.content.PuzzleBook
 import com.sah.play.PuzzleOutcome
 import com.sah.play.PuzzleRun
 import com.sah.play.PuzzleSession
 import com.sah.play.PuzzleState
+import java.io.File
 import kotlin.random.Random
 
 /**
@@ -66,6 +68,12 @@ class PuzzleActivity : UiActivity() {
     private var elapsedSeconds = -1
 
     private var book: PuzzleBook? = null
+    private var bundledBook: PuzzleBook? = null
+    private var generatedBook: PuzzleBook? = null
+    private var useGenerated = false
+    private lateinit var bundledButton: Button
+    private lateinit var generatedButton: Button
+    private var pendingSource: Boolean? = null
     private var session: PuzzleSession? = null
     private var run: PuzzleRun? = null
     private var difficulty = 4
@@ -110,6 +118,9 @@ class PuzzleActivity : UiActivity() {
         streak = savedInstanceState?.getInt(KEY_STREAK, streak) ?: streak
         startedAt = savedInstanceState?.getLong(KEY_STARTED_AT, 0L) ?: 0L
         elapsedSeconds = savedInstanceState?.getInt(KEY_ELAPSED, -1) ?: -1
+        pendingSource = savedInstanceState
+            ?.takeIf { it.containsKey(KEY_USE_GENERATED) }
+            ?.getBoolean(KEY_USE_GENERATED)
         build()
         if (elapsedSeconds >= 0) {
             timerLabel.text = DateUtils.formatElapsedTime(elapsedSeconds.toLong())
@@ -137,6 +148,7 @@ class PuzzleActivity : UiActivity() {
         outState.putInt(KEY_STREAK, streak)
         outState.putLong(KEY_STARTED_AT, startedAt)
         outState.putInt(KEY_ELAPSED, elapsedSeconds)
+        outState.putBoolean(KEY_USE_GENERATED, useGenerated)
         run?.let { active ->
             outState.putInt(KEY_RUN_POINTS, active.points)
             outState.putBoolean(KEY_RUN_HINT, active.hintUsed)
@@ -190,6 +202,14 @@ class PuzzleActivity : UiActivity() {
 
         statusLabel = label("Se încarcă puzzle-urile…", 12f, mutedColor)
         root.addView(statusLabel, fullWidth())
+
+        val sourceRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        generatedButton = button("Jocurile tale (0)") { pickSource(generate = true) }
+        bundledButton = button("Importate (0)") { pickSource(generate = false) }
+        sourceRow.addView(generatedButton, weightParams())
+        sourceRow.addView(bundledButton, weightParams())
+        root.addView(sourceRow, fullWidth())
+        paintSources()
 
         turnLabel = label("", 13f, accentColor, bold = true)
         root.addView(turnLabel, fullWidth())
@@ -269,23 +289,57 @@ class PuzzleActivity : UiActivity() {
 
     private fun loadBook() {
         Thread {
-            val loaded = try {
+            val bundled = try {
                 PuzzleBook(loadPuzzles())
             } catch (error: Exception) {
                 null
             }
+            val generatedList = try {
+                GeneratedPuzzlesStore(File(filesDir, "generated-puzzles")).load()
+            } catch (error: Exception) {
+                emptyList()
+            }
+            val generated = if (generatedList.isEmpty()) null else PuzzleBook(generatedList)
             runOnUiThread {
-                if (loaded == null && isFinishing) return@runOnUiThread
-                if (loaded == null) {
+                if (bundled == null && isFinishing) return@runOnUiThread
+                if (bundled == null) {
                     statusLabel.text = "Puzzle-urile nu au putut fi încărcate."
                     return@runOnUiThread
                 }
-                book = loaded
+                bundledBook = bundled
+                generatedBook = generated
+                // Default to the player's own games when they exist, unless the choice was saved.
+                useGenerated = pendingSource ?: (generated != null)
+                pendingSource = null
+                book = if (useGenerated) generated ?: bundled else bundled
+                paintSources()
                 val resume = pending
                 pending = null
                 if (resume == null) newPuzzle(keepCurrent = false) else resumePuzzle(resume)
             }
         }.start()
+    }
+
+    /** Switches between the player's own generated puzzles and the bundled library. */
+    private fun pickSource(generate: Boolean) {
+        if (useGenerated == generate) return
+        useGenerated = generate
+        book = if (generate) generatedBook ?: bundledBook else bundledBook
+        paintSources()
+        newPuzzle(keepCurrent = false)
+    }
+
+    private fun paintSources() {
+        val generatedCount = generatedBook?.all()?.size ?: 0
+        val bundledCount = bundledBook?.all()?.size ?: 0
+        generatedButton.text = "Jocurile tale ($generatedCount)"
+        bundledButton.text = "Importate ($bundledCount)"
+        generatedButton.isEnabled = generatedCount > 0
+        bundledButton.isEnabled = bundledCount > 0
+        generatedButton.setTextColor(if (useGenerated) Color.BLACK else textColor)
+        generatedButton.background = controlBackground(if (useGenerated) accentColor else cardColor)
+        bundledButton.setTextColor(if (!useGenerated) Color.BLACK else textColor)
+        bundledButton.background = controlBackground(if (!useGenerated) accentColor else cardColor)
     }
 
     // ---------------------------------------------------------------- gameplay
@@ -457,8 +511,10 @@ class PuzzleActivity : UiActivity() {
 
     private fun statusLine(puzzle: Puzzle): String {
         val streakPart = if (streak > 0) " • $streak la rând" else ""
-        return "Dificultate ${puzzle.difficulty}/10 • rating ${puzzle.rating} • " +
+        val base = "Dificultate ${puzzle.difficulty}/10 • rating ${puzzle.rating} • " +
             "${puzzle.playerMoves.size} mutări • rezolvate $solvedCount ($earned p)$streakPart"
+        // A generated puzzle names the game it came from; a bundled one stays terse.
+        return if (useGenerated && puzzle.source.isNotEmpty()) base + "\n" + puzzle.source else base
     }
 
     /** Restores solved/earned/streak and the chart history from [prefs]. */
@@ -648,5 +704,6 @@ class PuzzleActivity : UiActivity() {
         const val KEY_RUN_WRONG = "puzzleRunWrong"
         const val KEY_STARTED_AT = "puzzleStartedAt"
         const val KEY_ELAPSED = "puzzleElapsed"
+        const val KEY_USE_GENERATED = "puzzleUseGenerated"
     }
 }
