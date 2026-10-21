@@ -160,4 +160,40 @@ class GameReportsStoreTest {
         assertTrue(store.loadAll().isEmpty())
         assertNull(store.find("chesscom:123"))
     }
+
+    @Test
+    fun lessonsAndSourceSurviveTheRoundTrip() {
+        val store = store()
+        val original = report(
+            takeaway = "Concluzie.",
+            moments = listOf(
+                ReportMoment(
+                    9,
+                    true,
+                    "Bb5",
+                    "Nc3",
+                    MoveCategory.MISTAKE,
+                    29.0,
+                    lesson = "Ai uitat de d4; Nc3 îl apără și pregătește avansul.",
+                ),
+            ),
+        ).copy(source = "AI · gpt-4o-mini")
+
+        store.save(original)
+
+        assertEquals(original, store.find("chesscom:123"))
+    }
+
+    @Test
+    fun linesSavedBeforeSourceAndLessonExistedStillParse() {
+        val directory = temporaryFolder.newFolder("old")
+        val oldLine = """{"id":"chesscom:old","opening":"Ruy Lopez","white":80.0,"black":70.0,"playerIsWhite":true,"takeaway":"Concluzie veche.","moments":[{"moveNumber":3,"moverWhite":true,"san":"Bb5","bestSan":"Nc3","category":"MISTAKE","loss":25.0}]}"""
+        File(directory, "reports.ndjson").appendText(oldLine + "\n")
+
+        val found = GameReportsStore(directory).find("chesscom:old")
+
+        assertEquals("Ruy Lopez", found?.opening)
+        assertEquals("", found?.source)
+        assertEquals("", found?.moments?.firstOrNull()?.lesson)
+    }
 }

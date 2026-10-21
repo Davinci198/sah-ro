@@ -67,13 +67,14 @@ class GameReportsStore(private val directory: File) {
 
 /** One flat JSON object per report; the only on-disk format. */
 fun GameReport.toJsonLine(): String {
-    val fields = ArrayList<String>(7)
+    val fields = ArrayList<String>(8)
     fields += "\"id\":${id.toJsonString()}"
     fields += "\"opening\":${opening.toJsonString()}"
     fields += "\"white\":$whiteAccuracy"
     fields += "\"black\":$blackAccuracy"
     fields += "\"playerIsWhite\":$playerIsWhite"
     fields += "\"takeaway\":${takeaway.toJsonString()}"
+    fields += "\"source\":${source.toJsonString()}"
     fields += "\"moments\":[${moments.joinToString(",") { it.toJsonObject() }}]"
     return fields.joinToString(",", "{", "}")
 }
@@ -84,7 +85,9 @@ private fun ReportMoment.toJsonObject(): String = buildString {
     append(",\"san\":${san.toJsonString()}")
     append(",\"bestSan\":${bestSan.toJsonString()}")
     append(",\"category\":${category.name.toJsonString()}")
-    append(",\"loss\":$loss}")
+    append(",\"loss\":$loss")
+    append(",\"lesson\":${lesson.toJsonString()}")
+    append("}")
 }
 
 /** Parses one stored line; null when the line is corrupt or incomplete. */
@@ -97,6 +100,7 @@ fun reportFromJson(line: String): GameReport? = runCatching {
         blackAccuracy = map.double("black") ?: return null,
         playerIsWhite = map.boolean("playerIsWhite") ?: return null,
         takeaway = map.string("takeaway") ?: "",
+        source = map.string("source") ?: "",
         moments = map.objectList("moments").mapNotNull { momentFromJson(it) },
     )
 }.getOrNull()
@@ -110,5 +114,6 @@ private fun momentFromJson(map: Map<String, Any?>): ReportMoment? {
         bestSan = map.string("bestSan") ?: "",
         category = runCatching { MoveCategory.valueOf(rawCategory) }.getOrNull() ?: return null,
         loss = map.double("loss") ?: 0.0,
+        lesson = map.string("lesson") ?: "",
     )
 }

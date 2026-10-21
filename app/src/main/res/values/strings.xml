@@ -5,4 +5,5 @@
     <string name="puzzle_title">Puzzle-uri</string>
     <string name="games_title">Jocurile mele</string>
     <string name="game_replay_title">Redare joc</string>
+    <string name="settings_title">Setări</string>
 </resources>
