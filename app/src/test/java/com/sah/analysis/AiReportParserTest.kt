@@ -150,6 +150,45 @@ class AiReportParserTest {
     }
 
     @Test
+    fun numbersTheModelQuotedAsTextAreStillNumbers() {
+        // "87.5" instead of 87.5 is punctuation, not a different answer.
+        val report = parse(
+            reply(
+                whiteAccuracy = "\"87\"",
+                blackAccuracy = "\"62\"",
+                moments = momentJson(loss = "\"40.5\""),
+            ),
+        )
+
+        assertNotNull(report)
+        assertEquals(87.0, report?.whiteAccuracy ?: 0.0, 0.001)
+        assertEquals(62.0, report?.blackAccuracy ?: 0.0, 0.001)
+        assertEquals(40.5, report?.moments?.firstOrNull()?.loss ?: 0.0, 0.001)
+    }
+
+    @Test
+    fun aMomentWrittenEntirelyInRomanianIsRead() {
+        // The prompt is Romanian — a model answering in kind must not lose the game.
+        val moment = """{"moveNumber":"3","color":"alb","san":"Bb5","bestSan":"Nc3","category":"greseala","loss":"25.0","lesson":"Ai riscat dublarea calului."}"""
+
+        val report = parse(reply(moments = moment))
+
+        assertNotNull(report)
+        assertEquals(3, report?.moments?.firstOrNull()?.moveNumber)
+        assertEquals(MoveCategory.MISTAKE, report?.moments?.firstOrNull()?.category)
+    }
+
+    @Test
+    fun takeawayUnderItsRomanianNameIsAccepted() {
+        val text = """{"opening":"Ruy Lopez","whiteAccuracy":87.5,"blackAccuracy":64.0,"moments":[],"concluzie":"Ține centrul și nu grăbi calul."}"""
+
+        val report = parse(text)
+
+        assertNotNull(report)
+        assertEquals("Ține centrul și nu grăbi calul.", report?.takeaway)
+    }
+
+    @Test
     fun sixWorstMomentsSurviveWorstFirst() {
         val triples = listOf(
             Triple(1, "e4", "d4"),

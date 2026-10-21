@@ -22,14 +22,19 @@ data class AiSettings(
         get() = endpoint.isNotBlank() && model.isNotBlank()
 
     /**
-     * The POST target. A bare base URL (how providers document themselves) gets
-     * `/chat/completions` appended, while a URL that already points at it — or
-     * at anything deeper the user typed — is left as it is.
+     * The POST target. Providers document themselves in three sloppy ways and
+     * each is met where it stands: a URL already ending in `/chat/completions`
+     * is kept, a URL with any path (like `/v1`) gets the endpoint appended, a
+     * bare host gets the conventional `/v1` first — and a host typed without a
+     * scheme (the most common typo) is assumed to be https, never http.
      */
     fun chatUrl(): String {
-        val base = endpoint.trim().trimEnd('/')
-        if (base.isEmpty()) return ""
-        return if (base.endsWith("/chat/completions")) base else "$base/chat/completions"
+        val raw = endpoint.trim().trimEnd('/')
+        if (raw.isEmpty()) return ""
+        val base = if ("://" in raw) raw else "https://$raw"
+        if (base.endsWith("/chat/completions")) return base
+        val path = base.substringAfter("://").substringAfter('/', "")
+        return if (path.isEmpty()) "$base/v1/chat/completions" else "$base/chat/completions"
     }
 
     companion object {

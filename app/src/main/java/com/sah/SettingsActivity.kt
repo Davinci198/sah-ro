@@ -3,12 +3,16 @@ package com.sah
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.Gravity
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import com.sah.analysis.AiAnalyzer
 import com.sah.analysis.AiSettings
+
+/** Shared with the replay screen so `adb logcat -s SahAi` reads every step. */
+private const val TAG = "SahAi"
 
 /**
  * Sets up the AI analysis: the OpenAI-compatible endpoint, its key and the model
@@ -97,6 +101,7 @@ class SettingsActivity : UiActivity() {
     private fun save() {
         AiSettings.save(this, draft())
         val saved = AiSettings.load(this)
+        Log.i(TAG, "saved endpoint=${saved.endpoint} model=${saved.model} key=${saved.apiKey.isNotBlank()} configured=${saved.isConfigured}")
         status(
             if (saved.isConfigured) "Setări salvate — ${saved.model} e activ."
             else "Setări salvate — analiza AI rămâne închisă (lipsesc endpointul sau modelul).",
@@ -118,9 +123,11 @@ class SettingsActivity : UiActivity() {
                 if (cancelled || isFinishing) return@runOnUiThread
                 testButton.isEnabled = true
                 if (result.isSuccess) {
+                    Log.i(TAG, "ping ok: ${result.getOrThrow().trim().take(80)}")
                     status("Conectat: ${result.getOrThrow().trim().take(40).ifEmpty { "fără text" }}", successColor)
                 } else {
                     val message = result.exceptionOrNull()?.message.orEmpty().take(160)
+                    Log.w(TAG, "ping failed: ${result.exceptionOrNull()?.javaClass?.simpleName}: $message")
                     status("Nu mă pot conecta: ${message.ifEmpty { "eroare necunoscută" }}", errorColor)
                 }
             }

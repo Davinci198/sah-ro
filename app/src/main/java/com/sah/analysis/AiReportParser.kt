@@ -4,8 +4,6 @@ import com.sah.chess.ChessBoard
 import com.sah.chess.MoveGenerator
 import com.sah.chess.San
 import com.sah.content.Json
-import com.sah.content.double
-import com.sah.content.int
 import com.sah.content.objectList
 import com.sah.content.string
 
@@ -37,9 +35,9 @@ object AiReportParser {
         fallbackOpening: String = "",
     ): GameReport? {
         val map = runCatching { Json.parseObject(extractJson(reply)) }.getOrNull() ?: return null
-        val whiteAccuracy = map.double("whiteAccuracy")?.coerceIn(0.0, 100.0) ?: return null
-        val blackAccuracy = map.double("blackAccuracy")?.coerceIn(0.0, 100.0) ?: return null
-        val takeaway = map.string("takeaway")?.trim().orEmpty()
+        val whiteAccuracy = map.num("whiteAccuracy")?.coerceIn(0.0, 100.0) ?: return null
+        val blackAccuracy = map.num("blackAccuracy")?.coerceIn(0.0, 100.0) ?: return null
+        val takeaway = (map.string("takeaway") ?: map.string("concluzie"))?.trim().orEmpty()
         if (takeaway.isEmpty()) return null
         val plies = plies(startFen, moves) ?: return null
         val moments = map.objectList("moments")
@@ -71,17 +69,32 @@ object AiReportParser {
 
     private class Ply(val boardBefore: ChessBoard, val playedUci: String)
 
+    /**
+     * A number the model sometimes quotes as text (`"87"` instead of `87`) —
+     * read either way: failing on punctuation alone would throw the whole
+     * analysis back to the local engine for no chess reason at all.
+     */
+    private fun Map<String, Any?>.num(key: String): Double? = when (val value = this[key]) {
+        is Long -> value.toDouble()
+        is Double -> value
+        is String -> value.trim().toDoubleOrNull()
+        else -> null
+    }
+
+    /** [num] as a whole number — `"9"` and `"9.0"` both name move nine. */
+    private fun Map<String, Any?>.whole(key: String): Int? = num(key)?.toInt()
+
     /** One claimed moment, or null when any part of the claim does not hold. */
     private fun moment(
         map: Map<String, Any?>,
         plies: List<Ply>,
         playerIsWhite: Boolean,
     ): ReportMoment? {
-        val moveNumber = map.int("moveNumber") ?: return null
+        val moveNumber = map.whole("moveNumber") ?: return null
         if (moveNumber < 1) return null
         val moverWhite = when (map.string("color")?.trim()?.lowercase()) {
-            "white" -> true
-            "black" -> false
+            "white", "alb", "albe" -> true
+            "black", "negru", "negre" -> false
             else -> return null
         }
         // Only the player's own mistakes are worth studying — same rule as the local report.
@@ -97,7 +110,7 @@ object AiReportParser {
         val best = San.parse(at.boardBefore, map.string("bestSan").orEmpty()) ?: return null
         val category = categoryOf(map.string("category")) ?: return null
         if (!category.isError) return null
-        val reported = map.double("loss")
+        val reported = map.num("loss")
         val loss = if (reported != null && reported > 0.0) reported.coerceAtMost(100.0)
         else category.severity * 10.0
         return ReportMoment(
@@ -122,9 +135,13 @@ object AiReportParser {
         "inaccuracy" to MoveCategory.INACCURACY,
         "inaccurate" to MoveCategory.INACCURACY,
         "inexactitude" to MoveCategory.INACCURACY,
+        "inexactitate" to MoveCategory.INACCURACY,
+        "inexact" to MoveCategory.INACCURACY,
         "missed opportunity" to MoveCategory.MISSED_OPPORTUNITY,
         "missed" to MoveCategory.MISSED_OPPORTUNITY,
         "mistake" to MoveCategory.MISTAKE,
+        "greseala" to MoveCategory.MISTAKE,
+        "greșeală" to MoveCategory.MISTAKE,
         "blunder" to MoveCategory.BLUNDER,
     )
 

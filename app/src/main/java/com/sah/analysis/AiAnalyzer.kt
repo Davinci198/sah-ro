@@ -1,5 +1,6 @@
 package com.sah.analysis
 
+import android.util.Log
 import com.sah.content.Json
 import com.sah.content.asJsonObject
 import com.sah.content.toJsonString
@@ -33,6 +34,7 @@ class AiAnalyzer(private val settings: AiSettings) {
     private fun chat(system: String, user: String, onProgress: (String) -> Unit): String {
         val url = settings.chatUrl()
         if (url.isEmpty()) error("Endpoint-ul nu e configurat.")
+        Log.i(TAG, "POST $url model=${settings.model} key=${settings.apiKey.isNotBlank()}")
         val connection = (URL(url).openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"
             connectTimeout = CONNECT_TIMEOUT_MS
@@ -53,18 +55,29 @@ class AiAnalyzer(private val settings: AiSettings) {
             val body = (if (code in 200..299) connection.inputStream else connection.errorStream)
                 ?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }
                 .orEmpty()
+            Log.i(TAG, "HTTP $code, ${body.length} bytes")
             if (code !in 200..299) {
                 val detail = chatError(body)?.take(160)
+                Log.w(TAG, "provider said: $detail")
                 throw IOException("Serverul a răspuns $code" + (detail?.let { ": $it" } ?: ""))
             }
-            return chatReply(body)?.takeIf { it.isNotBlank() }
-                ?: throw IOException("Răspuns fără conținut de la model.")
+            val reply = chatReply(body)
+            if (reply.isNullOrBlank()) {
+                Log.w(TAG, "no content in reply, head=${body.take(300)}")
+                throw IOException("Răspuns fără conținut de la model.")
+            }
+            return reply
+        } catch (failure: Exception) {
+            Log.w(TAG, "call failed: ${failure.javaClass.simpleName}: ${failure.message}")
+            throw failure
         } finally {
             connection.disconnect()
         }
     }
 
     companion object {
+        /** Every AI request and its fate, so a failure is readable over adb. */
+        private const val TAG = "SahAi"
         private const val CONNECT_TIMEOUT_MS = 15_000
         private const val READ_TIMEOUT_MS = 120_000
 

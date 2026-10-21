@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
@@ -246,9 +247,11 @@ class GameReplayActivity : UiActivity() {
         analysisLabel.text = "Se pregătește analiza…"
         Thread {
             val settings = AiSettings.load(this)
+            Log.i(TAG, "start configured=${settings.isConfigured} endpoint=${settings.endpoint} model=${settings.model} key=${settings.apiKey.isNotBlank()}")
             var note: String? = null
             val result = runCatching {
                 if (!settings.isConfigured) {
+                    Log.i(TAG, "AI not configured -> local engine")
                     analyzeGame { message -> progress(message) }
                 } else {
                     // The model is asked first; anything it gets wrong about the
@@ -256,6 +259,7 @@ class GameReplayActivity : UiActivity() {
                     // no report at all.
                     runCatching { analyzeWithAi(settings) { message -> progress(message) } }
                         .onFailure { failure ->
+                            Log.w(TAG, "AI failed: ${failure.javaClass.simpleName}: ${failure.message}")
                             val reason = failure.message.orEmpty().take(160).ifEmpty { "eroare" }
                             note = "Analiza AI a eșuat: $reason — s-a folosit analiza locală."
                         }
@@ -267,8 +271,11 @@ class GameReplayActivity : UiActivity() {
                 analyzing = false
                 analyzeButton.isEnabled = true
                 if (result.isSuccess) {
-                    adoptReport(result.getOrThrow().copy(id = gameId), save = true, note = note)
+                    val report = result.getOrThrow()
+                    Log.i(TAG, "done source=${report.source} moments=${report.moments.size} note=$note")
+                    adoptReport(report.copy(id = gameId), save = true, note = note)
                 } else {
+                    Log.w(TAG, "analysis failed: ${result.exceptionOrNull()?.message}")
                     analysisLabel.setTextColor(errorColor)
                     analysisLabel.text = "Analiza a eșuat: ${result.exceptionOrNull()?.message}"
                 }
@@ -286,10 +293,12 @@ class GameReplayActivity : UiActivity() {
         val playerIsWhite = myColor != "black"
         progress("Se trimite jocul la model…")
         val reply = AiAnalyzer(settings).analyze(pgn, playerIsWhite, progress)
+        Log.i(TAG, "reply ${reply.length} chars, head=${reply.take(200)}")
         val opening = OpeningRepository.parse(readAsset("openings/openings.csv"))
             .nameFor(parsed.moves, Language.RO)
         val report = AiReportParser.parse(reply, parsed.startFen, parsed.moves, playerIsWhite, opening)
             ?: error("răspunsul modelului nu a putut fi citit")
+        Log.i(TAG, "parsed ok white=${report.whiteAccuracy} black=${report.blackAccuracy} moments=${report.moments.size}")
         return report.copy(source = "AI · ${settings.model.trim()}")
     }
 
@@ -381,6 +390,8 @@ class GameReplayActivity : UiActivity() {
     }
 
     companion object {
+        /** One tag for the whole AI path — `adb logcat -s SahAi` reads it all. */
+        private const val TAG = "SahAi"
         const val EXTRA_GAME_ID = "gameId"
         const val EXTRA_PGN = "gamePgn"
         const val EXTRA_OPPONENT = "gameOpponent"

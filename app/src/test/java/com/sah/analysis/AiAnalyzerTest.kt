@@ -43,6 +43,31 @@ class AiAnalyzerTest {
     }
 
     @Test
+    fun aBareHostGetsTheConventionalVersionPrefix() {
+        // api.openai.com alone would 404 — the path every provider documents is /v1.
+        assertEquals(
+            "https://api.openai.com/v1/chat/completions",
+            settings.copy(endpoint = "https://api.openai.com").chatUrl(),
+        )
+        assertEquals(
+            "http://192.168.1.10:11434/v1/chat/completions",
+            settings.copy(endpoint = "http://192.168.1.10:11434").chatUrl(),
+        )
+    }
+
+    @Test
+    fun aHostTypedWithoutASchemeIsAssumedSecure() {
+        assertEquals(
+            "https://api.openai.com/v1/chat/completions",
+            settings.copy(endpoint = "api.openai.com/v1").chatUrl(),
+        )
+        assertEquals(
+            "https://api.openai.com/v1/chat/completions",
+            settings.copy(endpoint = "api.openai.com").chatUrl(),
+        )
+    }
+
+    @Test
     fun withoutEndpointOrModelThereIsNothingToCall() {
         assertTrue(settings.isConfigured)
         // A key is only what hosted providers demand; local servers need no key.
