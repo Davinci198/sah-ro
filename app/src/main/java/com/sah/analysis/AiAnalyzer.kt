@@ -79,7 +79,9 @@ class AiAnalyzer(private val settings: AiSettings) {
         /** Every AI request and its fate, so a failure is readable over adb. */
         private const val TAG = "SahAi"
         private const val CONNECT_TIMEOUT_MS = 15_000
-        private const val READ_TIMEOUT_MS = 120_000
+        // A deep reasoner can spend two minutes thinking before its first token
+        // of answer; timing out at 120s threw away analysis it was about to finish.
+        private const val READ_TIMEOUT_MS = 300_000
 
         private const val SYSTEM_PROMPT =
             "Ești un analist de șah care explică în limba română partide jucate de amatori. " +
@@ -136,9 +138,10 @@ class AiAnalyzer(private val settings: AiSettings) {
             append("{")
             append("\"model\":${settings.model.toJsonString()}")
             append(",\"temperature\":0.2")
-            // A reasoning model thinks inside its output budget; 1200 tokens of
-            // thinking left no room for the JSON at all.
-            append(",\"max_tokens\":2048")
+            // A reasoning model thinks inside its output budget — Nemotron spent
+            // a full 2048 tokens replaying the game move by move and was cut
+            // off before its first brace; 8192 leaves room to think AND answer.
+            append(",\"max_tokens\":8192")
             append(",\"messages\":[")
             append("{\"role\":\"system\",\"content\":${system.toJsonString()}}")
             append(",{\"role\":\"user\",\"content\":${user.toJsonString()}}")
