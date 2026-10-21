@@ -13,6 +13,9 @@ import java.nio.file.StandardCopyOption
 enum class Platform(val label: String, val fileName: String) {
     CHESSCOM("Chess.com", "chesscom"),
     LICHESS("Lichess", "lichess"),
+
+    /** Games pasted by hand as PGN or FEN, with no account behind them. */
+    MANUAL("Lipite", "manual"),
 }
 
 /**

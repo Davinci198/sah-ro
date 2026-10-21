@@ -1,5 +1,7 @@
 package com.sah
 
+import android.app.AlertDialog
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -27,6 +29,7 @@ import com.sah.games.GamesIndex
 import com.sah.games.GamesStore
 import com.sah.games.ImportSummary
 import com.sah.games.HttpStatusError
+import com.sah.games.ManualImport
 import com.sah.games.Platform
 import com.sah.games.errorMessage
 import com.sah.games.gameCountWord
@@ -35,6 +38,7 @@ import com.sah.games.monthTitle
 import com.sah.games.outcomeWord
 import java.io.File
 import java.io.IOException
+import java.util.UUID
 
 /**
  * Import screen: a username plus platform choice downloads every played game into
@@ -121,7 +125,8 @@ class GamesActivity : UiActivity() {
         root.addView(space(8))
 
         val toggle = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        val platforms = Platform.values()
+        // Pasted games have no account behind them, so they stay out of the username row.
+        val platforms = Platform.values().filter { it != Platform.MANUAL }
         platforms.forEachIndexed { index, option ->
             val chip = button(option.label) { pickPlatform(option) }.apply {
                 if (index < platforms.size - 1) layoutParams = weightParams()
@@ -139,6 +144,9 @@ class GamesActivity : UiActivity() {
         statusLabel = label("", 12f, mutedColor)
         root.addView(statusLabel, fullWidth())
         root.addView(space(4))
+
+        root.addView(button("Adaugă joc lipit (PGN sau FEN)") { showPasteDialog() }, fullWidth())
+        root.addView(space(8))
 
         generateButton = button("Extrage puzzle-uri din jocurile tale") { startGenerate() }
         root.addView(generateButton, fullWidth())
@@ -194,7 +202,7 @@ class GamesActivity : UiActivity() {
         root.addView(
             buildChipRow(
                 platformFilterButtons,
-                listOf("all" to "Toate", "chesscom" to "Chess.com", "lichess" to "Lichess"),
+                listOf("all" to "Toate", "chesscom" to "Chess.com", "lichess" to "Lichess", "manual" to "Lipite"),
                 fill = true,
             ) { platformFilter = it },
             fullWidth(),
@@ -332,6 +340,88 @@ class GamesActivity : UiActivity() {
         getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
     private fun keyFor(option: Platform) = "user.${option.fileName}"
+
+    /** Reads the clipboard's plain text, for the paste dialog to start pre-filled. */
+    private fun clipboardText(): String? =
+        (getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager)
+            ?.primaryClip
+            ?.takeIf { it.itemCount > 0 }
+            ?.getItemAt(0)
+            ?.text
+            ?.toString()
+
+    /** One dialog for both shapes of hand-paste: a whole PGN or a bare FEN. */
+    private fun showPasteDialog() {
+        val input = EditText(this).apply {
+            setSingleLine(false)
+            minLines = 6
+            gravity = Gravity.TOP
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+            hint = "Lipește aici PGN-ul jocului sau poziția FEN"
+            setHintTextColor(mutedColor)
+            setTextColor(textColor)
+            setTextSize(13f)
+            setPadding(dp(14), dp(12), dp(14), dp(12))
+            background = controlBackground(cardColor, strokeColor = Color.rgb(86, 86, 86))
+        }
+        clipboardText()?.takeIf { it.isNotBlank() }?.let { input.setText(it) }
+
+        // The paste itself carries no notion of "me": the player says which side.
+        var isWhite = true
+        var repaint: () -> Unit = {}
+        val whiteChip = button("Cu albul") { isWhite = true; repaint() }
+        val blackChip = button("Cu negrul") { isWhite = false; repaint() }
+        repaint = {
+            whiteChip.setTextColor(if (isWhite) Color.BLACK else textColor)
+            whiteChip.background = controlBackground(if (isWhite) accentColor else cardColor)
+            blackChip.setTextColor(if (isWhite) textColor else Color.BLACK)
+            blackChip.background = controlBackground(if (isWhite) cardColor else accentColor)
+        }
+        repaint()
+        val colorRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            addView(whiteChip, weightParams())
+            addView(blackChip, weightParams())
+        }
+
+        val panel = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(20), dp(8), dp(20), 0)
+            addView(label("Ai jucat cu…", 12f, mutedColor), fullWidth())
+            addView(colorRow, fullWidth())
+            addView(space(10))
+            addView(input, fullWidth())
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Adaugă joc lipit")
+            .setView(panel)
+            .setNegativeButton("Renunță", null)
+            .setPositiveButton("Adaugă") { _, _ -> addPastedGame(input.text.toString(), isWhite) }
+            .show()
+    }
+
+    /** Validates the pasted text off the UI thread, stores it, then refreshes the list. */
+    private fun addPastedGame(text: String, isWhite: Boolean) {
+        statusLabel.setTextColor(mutedColor)
+        statusLabel.text = "Se adaugă jocul lipit…"
+        Thread {
+            val color = if (isWhite) "white" else "black"
+            val game = ManualImport.game(text, color, UUID.randomUUID().toString(), ManualImport.today())
+            if (game != null) runCatching { store.append(Platform.MANUAL, game) }
+            runOnUiThread {
+                if (cancelled || isFinishing) return@runOnUiThread
+                if (game == null) {
+                    statusLabel.setTextColor(errorColor)
+                    statusLabel.text = "Textul nu conține nici o poziție validă și nici mutări de șah."
+                } else {
+                    statusLabel.setTextColor(mutedColor)
+                    statusLabel.text = "Joc adăugat: ${game.opponent} (${outcomeWord(game.outcome)})."
+                    reloadList()
+                }
+            }
+        }.start()
+    }
 
     private fun startImport() {
         if (importing || generating) return
@@ -505,7 +595,7 @@ class GamesActivity : UiActivity() {
         listContainer.removeAllViews()
         if (filtered.isEmpty()) {
             val message = if (refs.isEmpty()) {
-                "Nu ai jocuri importate încă. Introdu username-ul de pe Chess.com sau Lichess și apasă „Importă toate jocurile”."
+                "Nu ai jocuri importate încă. Introdu username-ul de pe Chess.com sau Lichess și apasă „Importă toate jocurile”, sau lipește un joc PGN/FEN cu „Adaugă joc lipit”."
             } else {
                 "Niciun joc nu corespunde filtrelor."
             }

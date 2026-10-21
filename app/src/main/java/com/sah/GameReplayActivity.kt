@@ -207,16 +207,22 @@ class GameReplayActivity : UiActivity() {
 
     private fun loadReplay() {
         Thread {
-            val replayed = runCatching { Pgn.replay(Pgn.parse(pgn)) }.getOrDefault(emptyList())
+            val parsedGame = runCatching { Pgn.parse(pgn) }.getOrNull()
+            val replayed = parsedGame
+                ?.let { runCatching { Pgn.replay(it) }.getOrDefault(emptyList()) }
+                .orEmpty()
             runOnUiThread {
                 if (cancelled || isFinishing) return@runOnUiThread
                 positions = replayed
-                if (replayed.size <= 1) {
+                // A hand-pasted position has no moves: open it as a free board.
+                val positionOnly = replayed.size == 1 && parsedGame != null && parsedGame.moves.isEmpty()
+                if (replayed.size <= 1 && !positionOnly) {
                     stepLabel.text = "Mutările jocului nu au putut fi reconstruite."
                     render(0, fromUser = false)
                     return@runOnUiThread
                 }
                 render(0, fromUser = false)
+                if (positionOnly) startExploreFree()
             }
         }.start()
     }
@@ -500,17 +506,34 @@ class GameReplayActivity : UiActivity() {
                 true
             } ?: false
         }
-        controlsRow.visibility = View.GONE
-        exploreRow.visibility = View.VISIBLE
-        undoButton.isEnabled = line.movesPlayed > 0
-        hintButton.isEnabled = true
-        renderExplore()
+        beginExplore(line)
         stepLabel.text = if (played) {
             "Recomandarea ${moment.bestSan} e pe tablă — continuă cum vrei, cu ambele culori."
         } else {
             exploreStatus()
         }
         currentReport?.let { renderReport(it, reportNote) }
+    }
+
+    /** A pasted position carries no game behind it: the board opens ready to play. */
+    private fun startExploreFree() {
+        previewMoment = -1
+        selectedSquare = null
+        hintArrow = null
+        val line = ExploreLine(positions[0].fen)
+        explore = line
+        exploreOriginStep = 0
+        beginExplore(line)
+        stepLabel.text = "Poziție proprie — muți piesele cum vrei, cu ambele culori."
+    }
+
+    /** Hides the replay controls and paints the free board with its explore row. */
+    private fun beginExplore(line: ExploreLine) {
+        controlsRow.visibility = View.GONE
+        exploreRow.visibility = View.VISIBLE
+        undoButton.isEnabled = line.movesPlayed > 0
+        hintButton.isEnabled = true
+        renderExplore()
     }
 
     /** Tap handling while exploring: any piece of the side to move, then its target. */
