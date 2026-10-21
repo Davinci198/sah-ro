@@ -141,4 +141,85 @@ class GameReportTest {
             report.badges,
         )
     }
+
+    @Test
+    fun brilliantFindsFollowTheMistakesAsPositiveMoments() {
+        val a = analysis(
+            ply(0, true, "e4", "e2e4", MoveCategory.BRILLIANT, 0.0, 100.0, bestUci = "e2e4"),
+            ply(1, false, "e5", "e7e5", MoveCategory.GOOD, 0.0, 95.0),
+            ply(2, true, "Nc3", "b1c3", MoveCategory.MISTAKE, 30.0, 70.0, bestUci = "f1c4"),
+            ply(3, false, "Nf6", "g8f6", MoveCategory.GREAT, 0.0, 99.0, bestUci = "g8f6"),
+        )
+
+        val report = GameReport.build(a, playerIsWhite = true)
+
+        // The mistake leads, worst first; white's praises follow with no penalty.
+        assertEquals(
+            listOf(MoveCategory.MISTAKE, MoveCategory.BRILLIANT),
+            report.moments.map { it.category },
+        )
+        assertEquals(30.0, report.moments[0].loss, 0.001)
+        assertEquals(0.0, report.moments[1].loss, 0.001)
+        assertEquals("Mutare briliantă!", report.moments[1].lesson)
+    }
+
+    @Test
+    fun atMostThreePraisesSurviveInGameOrder() {
+        val a = analysis(
+            ply(0, true, "e4", "e2e4", MoveCategory.BRILLIANT, 0.0, 100.0),
+            ply(1, false, "e5", "e7e5", MoveCategory.GOOD, 0.0, 95.0),
+            ply(2, true, "Nc3", "b1c3", MoveCategory.GREAT, 0.0, 100.0),
+            ply(3, false, "Nf6", "g8f6", MoveCategory.GOOD, 0.0, 95.0),
+            ply(4, true, "Bc4", "f1c4", MoveCategory.BRILLIANT, 0.0, 100.0),
+            ply(5, false, "Bc5", "f8c5", MoveCategory.GOOD, 0.0, 95.0),
+            ply(6, true, "d3", "d2d3", MoveCategory.BRILLIANT, 0.0, 100.0),
+        )
+
+        val report = GameReport.build(a, playerIsWhite = true)
+
+        assertEquals(listOf("e4", "Nc3", "Bc4"), report.moments.map { it.san })
+    }
+
+    @Test
+    fun aGameOfOnlyPraisesGetsAPraiseTakeaway() {
+        val a = analysis(
+            ply(0, true, "e4", "e2e4", MoveCategory.BRILLIANT, 0.0, 100.0),
+            ply(1, false, "e5", "e7e5", MoveCategory.GOOD, 0.0, 95.0),
+            ply(2, true, "Nc3", "b1c3", MoveCategory.GREAT, 0.0, 100.0),
+        )
+
+        val report = GameReport.build(a, playerIsWhite = true)
+
+        assertEquals(2, report.moments.size)
+        assertTrue(report.takeaway.contains("2 mutări briliante"))
+        assertTrue(report.takeaway.contains("1.e4"))
+        assertTrue(report.takeaway.contains("2.Nc3"))
+        assertTrue(report.takeaway.startsWith("Ai jucat"))
+    }
+
+    @Test
+    fun aSinglePraiseIsWordedInTheSingular() {
+        val a = analysis(
+            ply(0, true, "e4", "e2e4", MoveCategory.BRILLIANT, 0.0, 100.0),
+            ply(1, false, "e5", "e7e5", MoveCategory.GOOD, 0.0, 95.0),
+        )
+
+        val report = GameReport.build(a, playerIsWhite = true)
+
+        assertEquals("Ai jucat o mutare briliantă: 1.e4.", report.takeaway)
+    }
+
+    @Test
+    fun mistakesKeepTheCostlyTakeawayEvenWhenPraisesExist() {
+        val a = analysis(
+            ply(0, true, "e4", "e2e4", MoveCategory.BRILLIANT, 0.0, 100.0, bestUci = "e2e4"),
+            ply(1, false, "e5", "e7e5", MoveCategory.GOOD, 0.0, 95.0),
+            ply(2, true, "Nc3", "b1c3", MoveCategory.BLUNDER, 55.0, 40.0, bestUci = "f1c4"),
+        )
+
+        val report = GameReport.build(a, playerIsWhite = true)
+
+        assertTrue(report.takeaway.contains("Cel mai costisitor moment"))
+        assertTrue(report.moments.any { it.category == MoveCategory.BRILLIANT })
+    }
 }

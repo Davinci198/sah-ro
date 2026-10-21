@@ -17,6 +17,10 @@ enum class MoveCategory {
     val isError: Boolean
         get() = this == INACCURACY || this == MISSED_OPPORTUNITY || this == MISTAKE || this == BLUNDER
 
+    /** The player's good finds — the report shows them as positive moments. */
+    val isPositive: Boolean
+        get() = this == BRILLIANT || this == GREAT
+
     /** Categories that get a badge in the move strip. */
     val hasBadge: Boolean
         get() = this in BADGES

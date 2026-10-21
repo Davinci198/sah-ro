@@ -92,7 +92,7 @@ class AiAnalyzer(private val settings: AiSettings) {
 
         /** The exact answer shape asked for, on one line so nothing is lost at a seam. */
         private const val EXAMPLE_JSON =
-            """{"opening":"deschiderea în română","whiteAccuracy":0.0,"blackAccuracy":0.0,"moments":[{"moveNumber":9,"color":"white","san":"Bb5","bestSan":"Nc3","category":"MISTAKE","loss":29.0,"lesson":"de ce e greșită și ce joci în loc"}],"takeaway":"concluzia în una-două fraze"}"""
+            """{"opening":"deschiderea în română","whiteAccuracy":0.0,"blackAccuracy":0.0,"moments":[{"moveNumber":9,"color":"white","san":"Bb5","bestSan":"Nc3","category":"MISTAKE","loss":29.0,"lesson":"de ce e greșită și ce joci în loc"},{"moveNumber":21,"color":"white","san":"Ng6+","bestSan":"Ng6+","category":"BRILLIANT","loss":0.0,"lesson":"de ce e o mutare atât de bună"}],"takeaway":"concluzia în una-două fraze"}"""
 
         /**
          * The prompt for one game: the exact shape of the answer, the rules that
@@ -106,8 +106,14 @@ class AiAnalyzer(private val settings: AiSettings) {
             appendLine()
             appendLine("Reguli:")
             appendLine(
-                "- \"moments\": maximum 6, doar greșelile jucătorului indicat mai jos, " +
+                "- \"moments\": maximum 6 greșelile jucătorului indicat mai jos, " +
                     "ordonate de la cea mai paguboasă la cea mai puțin; poți lăsa lista goală.",
+            )
+            appendLine(
+                "- După greșeli, adaugă 1-3 momente pozitive: cele mai bune mutări ale " +
+                    "jucătorului, cu \"category\" BRILLIANT sau GREAT, \"loss\" 0, " +
+                    "\"bestSan\" aceeași mutare ca \"san\" și \"lesson\" o laudă scurtă " +
+                    "în română. Sunt laude, nu greșeli.",
             )
             appendLine(
                 "- \"color\" e culoarea care a jucat mutarea; \"san\" e exact mutarea din partida " +
@@ -121,7 +127,10 @@ class AiAnalyzer(private val settings: AiSettings) {
                 "- \"loss\" e cu cât scade șansa (0-100); \"whiteAccuracy\" și \"blackAccuracy\" " +
                     "sunt procente (0-100).",
             )
-            appendLine("- \"lesson\" explică pe scurt greșeala, în română, și ce să joci în loc.")
+            appendLine(
+                "- \"lesson\" explică pe scurt greșeala (sau lauda, la momentele pozitive), " +
+                    "în română, și ce să joci în loc.",
+            )
             appendLine("- Nu inventa mutări care nu sunt în partidă.")
             appendLine()
             appendLine(
