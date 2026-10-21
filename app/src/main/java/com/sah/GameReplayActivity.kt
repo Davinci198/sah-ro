@@ -451,10 +451,14 @@ class GameReplayActivity : UiActivity() {
                 fullWidth(),
             )
             for ((index, moment) in report.moments.withIndex()) {
-                val better = moment.bestSan.ifEmpty { "o mutare mai bună" }
-                val line = "${moment.category.roSymbol()} Mutarea ${moment.moveNumber} · ${moment.san} (${moment.category.roLabel()}) — " +
-                    "mai bine $better · −${"%.0f".format(moment.loss)}%" +
-                    if (index == previewMoment) " ▸" else ""
+                val head = "${moment.category.roSymbol()} Mutarea ${moment.moveNumber} · " +
+                    "${moment.san} (${moment.category.roLabel()})"
+                // A praise lost nothing — it gets its badge and label, not a penalty.
+                val detail = if (moment.category.isPositive) "" else {
+                    val better = moment.bestSan.ifEmpty { "o mutare mai bună" }
+                    " — mai bine $better · −${"%.0f".format(moment.loss)}%"
+                }
+                val line = head + detail + if (index == previewMoment) " ▸" else ""
                 analysisContainer.addView(
                     card(line).apply {
                         setTextColor(if (index == previewMoment) accentColor else moment.category.colorRgb())
@@ -491,7 +495,9 @@ class GameReplayActivity : UiActivity() {
         if (moment.ply !in positions.indices) return
         previewMoment = index
         render(moment.ply, fromUser = false, arrow = previewArrow(moment))
-        stepLabel.text = "Poziția dinaintea greșelii · recomandare " +
+        // A praise shows the position it was found in, not a mistake's warning.
+        val before = if (moment.category.isPositive) "Poziția dinaintea mutării" else "Poziția dinaintea greșelii"
+        stepLabel.text = "$before · recomandare " +
             "${moment.bestSan.ifEmpty { "—" }} — apasă încă o dată pe linie ca să o joci."
         renderReport(report, reportNote)
     }

@@ -122,6 +122,17 @@ class AiAnalyzerTest {
     }
 
     @Test
+    fun promptAsksForThePlayersBrilliantMovesToo() {
+        val prompt = AiAnalyzer.promptFor("1. e4 *", playerIsWhite = true)
+
+        // Praises, not errors: 1-3 positive moments, zero loss, an honest category.
+        assertTrue(prompt.contains("1-3 momente pozitive"))
+        assertTrue(prompt.contains("BRILLIANT sau GREAT"))
+        assertTrue(prompt.contains("\"loss\" 0"))
+        assertTrue(prompt.contains("laude, nu greșeli"))
+    }
+
+    @Test
     fun blackPlayerPromptSaysSo() {
         val prompt = AiAnalyzer.promptFor("1. e4 *", playerIsWhite = false)
 
@@ -138,11 +149,15 @@ class AiAnalyzerTest {
 
         assertNotNull("example should be valid JSON but was: $jsonLine", parsed)
         val moments = parsed?.get("moments") as? List<*>
-        assertEquals(1, moments?.size)
-        val first = moments?.firstOrNull() as? Map<*, *>
-        assertEquals("Bb5", first?.get("san"))
-        assertEquals("MISTAKE", first?.get("category"))
-        assertEquals(29.0, first?.get("loss"))
+        assertEquals(2, moments?.size)
+        val mistake = moments?.getOrNull(0) as? Map<*, *>
+        assertEquals("Bb5", mistake?.get("san"))
+        assertEquals("MISTAKE", mistake?.get("category"))
+        assertEquals(29.0, mistake?.get("loss"))
+        val praise = moments?.getOrNull(1) as? Map<*, *>
+        assertEquals("Ng6+", praise?.get("san"))
+        assertEquals("BRILLIANT", praise?.get("category"))
+        assertEquals(0.0, praise?.get("loss"))
         assertNotNull(parsed?.get("takeaway"))
     }
 }

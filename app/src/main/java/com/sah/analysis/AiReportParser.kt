@@ -22,6 +22,9 @@ object AiReportParser {
     /** Same cap as the local report: the six moments worth studying. */
     const val MAX_MOMENTS = 6
 
+    /** How many of the player's briliants may follow the mistakes. */
+    const val MAX_POSITIVE_MOMENTS = 3
+
     /**
      * The report for one game, or null when [reply] is not the JSON we asked
      * for. [fallbackOpening] fills in when the model leaves the opening blank —
@@ -40,10 +43,15 @@ object AiReportParser {
         val takeaway = (map.string("takeaway") ?: map.string("concluzie"))?.trim().orEmpty()
         if (takeaway.isEmpty()) return null
         val plies = plies(startFen, moves) ?: return null
-        val moments = map.objectList("moments")
+        val found = map.objectList("moments")
             .mapNotNull { moment(it, plies, playerIsWhite) }
+        // Mistakes lead, worst first; the player's briliants follow, in game order.
+        val moments = found.filter { it.category.isError }
             .sortedByDescending { it.loss }
-            .take(MAX_MOMENTS)
+            .take(MAX_MOMENTS) +
+            found.filter { it.category.isPositive }
+                .sortedBy { it.ply }
+                .take(MAX_POSITIVE_MOMENTS)
         val opening = map.string("opening")?.trim().orEmpty().ifEmpty { fallbackOpening }
         return GameReport(
             opening = opening,
@@ -100,7 +108,7 @@ object AiReportParser {
             "black", "negru", "negre" -> false
             else -> return null
         }
-        // Only the player's own mistakes are worth studying — same rule as the local report.
+        // Only the player's own moments are worth studying — same rule as the local report.
         if (moverWhite != playerIsWhite) return null
         val ply = plyOf(moveNumber, moverWhite)
         if (ply !in plies.indices) return null
@@ -112,10 +120,15 @@ object AiReportParser {
         if (claimed.uci() != at.playedUci) return null
         val best = San.parse(at.boardBefore, map.string("bestSan").orEmpty()) ?: return null
         val category = categoryOf(map.string("category")) ?: return null
-        if (!category.isError) return null
+        // Mistakes and briliants are the report's moments; calm grades are not.
+        if (!category.isError && !category.isPositive) return null
         val reported = map.num("loss")
-        val loss = if (reported != null && reported > 0.0) reported.coerceAtMost(100.0)
-        else category.severity * 10.0
+        val loss = when {
+            // A praise's loss is 0 by definition — the move lost nothing.
+            category.isPositive -> 0.0
+            reported != null && reported > 0.0 -> reported.coerceAtMost(100.0)
+            else -> category.severity * 10.0
+        }
         return ReportMoment(
             moveNumber = moveNumber,
             moverWhite = moverWhite,

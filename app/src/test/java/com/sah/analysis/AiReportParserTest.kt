@@ -160,6 +160,59 @@ class AiReportParserTest {
     fun calmCategoriesAreNotLessons() {
         assertTrue(parse(reply(moments = momentJson(category = "GOOD")))?.moments.isNullOrEmpty())
         assertTrue(parse(reply(moments = momentJson(category = "BEST")))?.moments.isNullOrEmpty())
+        assertTrue(parse(reply(moments = momentJson(category = "BOOK")))?.moments.isNullOrEmpty())
+        assertTrue(parse(reply(moments = momentJson(category = "FORCED")))?.moments.isNullOrEmpty())
+    }
+
+    @Test
+    fun brilliantAndGreatMomentsAreKept() {
+        val moments = listOf(
+            momentJson(moveNumber = 1, san = "e4", bestSan = "e4", category = "BRILLIANT", loss = "0"),
+            momentJson(moveNumber = 3, san = "Bb5", bestSan = "Bb5", category = "GREAT", loss = "0"),
+        )
+
+        val report = parse(reply(moments = moments.joinToString(",")))
+
+        assertEquals(2, report?.moments?.size)
+        assertEquals(MoveCategory.BRILLIANT, report?.moments?.getOrNull(0)?.category)
+        assertEquals(MoveCategory.GREAT, report?.moments?.getOrNull(1)?.category)
+        // A praise lost nothing, whatever the model claims about the loss.
+        assertEquals(0.0, report?.moments?.getOrNull(0)?.loss ?: -1.0, 0.001)
+        assertEquals(0.0, report?.moments?.getOrNull(1)?.loss ?: -1.0, 0.001)
+    }
+
+    @Test
+    fun mistakesLeadAndBrilliantsFollow() {
+        val moments = listOf(
+            momentJson(moveNumber = 1, san = "e4", bestSan = "e4", category = "BRILLIANT", loss = "0"),
+            momentJson(moveNumber = 3, san = "Bb5", bestSan = "Nc3", loss = "25.0"),
+            momentJson(moveNumber = 5, san = "O-O", bestSan = "d3", category = "BLUNDER", loss = "50.0"),
+        )
+
+        val report = parse(reply(moments = moments.joinToString(",")))
+
+        // Worst mistake first, best find last — even when the model listed them mixed.
+        assertEquals(
+            listOf(MoveCategory.BLUNDER, MoveCategory.MISTAKE, MoveCategory.BRILLIANT),
+            report?.moments?.map { it.category },
+        )
+    }
+
+    @Test
+    fun atMostThreeBrilliantsSurviveInGameOrder() {
+        val moments = listOf(
+            momentJson(moveNumber = 7, san = "Ba4", bestSan = "Ba4", category = "GREAT", loss = "0"),
+            momentJson(moveNumber = 1, san = "e4", bestSan = "e4", category = "BRILLIANT", loss = "0"),
+            momentJson(moveNumber = 5, san = "O-O", bestSan = "O-O", category = "BRILLIANT", loss = "0"),
+            momentJson(moveNumber = 3, san = "Bb5", bestSan = "Bb5", category = "GREAT", loss = "0"),
+        )
+
+        val report = parse(reply(moments = moments.joinToString(",")))
+
+        assertEquals(
+            listOf("e4", "Bb5", "O-O"),
+            report?.moments?.map { it.san },
+        )
     }
 
     @Test

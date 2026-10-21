@@ -5,7 +5,7 @@ import com.sah.chess.ChessMove
 import com.sah.chess.MoveGenerator
 import com.sah.chess.San
 
-/** One of the player's mistakes, laid out for a single report line. */
+/** One of the player's report lines: a mistake worth studying, or a brilliant find. */
 data class ReportMoment(
     val moveNumber: Int,
     val moverWhite: Boolean,
@@ -13,7 +13,7 @@ data class ReportMoment(
     val bestSan: String,
     val category: MoveCategory,
     val loss: Double,
-    /** Why the move was wrong and what to play instead; filled by the AI coach. */
+    /** Why the move was wrong — or a cheer for a brilliant one; filled by the AI coach. */
     val lesson: String = "",
 ) {
     /** Zero-based ply of the played move — the index [com.sah.games.Pgn.replay] positions use. */
@@ -31,9 +31,9 @@ fun plyOf(moveNumber: Int, moverWhite: Boolean): Int =
 
 /**
  * The readable summary of one analysed game: the opening, the per-side accuracy
- * and the player's mistakes worth studying, worst first. Pure — built from an
- * already-computed [GameAnalysis], so the selection and wording can be tested
- * without an engine.
+ * and the player's mistakes worth studying, worst first, followed by a few of
+ * his brilliant finds. Pure — built from an already-computed [GameAnalysis],
+ * so the selection and wording can be tested without an engine.
  */
 data class GameReport(
     /** Id of the game this report describes; empty until the store tags it. */
@@ -55,9 +55,13 @@ data class GameReport(
         /** How many of the player's mistakes the summary lists. */
         const val MAX_MOMENTS = 6
 
+        /** How many of the player's brilliant finds follow the mistakes. */
+        const val MAX_POSITIVE_MOMENTS = 3
+
         fun build(analysis: GameAnalysis, playerIsWhite: Boolean, opening: String = ""): GameReport {
-            val moments = analysis.plies
-                .filter { it.moverWhite == playerIsWhite && it.category.isError && it.loss > 0 }
+            val playerPlies = analysis.plies.filter { it.moverWhite == playerIsWhite }
+            val mistakes = playerPlies
+                .filter { it.category.isError && it.loss > 0 }
                 .sortedByDescending { it.loss }
                 .take(MAX_MOMENTS)
                 .map { ply ->
@@ -70,6 +74,22 @@ data class GameReport(
                         loss = ply.loss,
                     )
                 }
+            // The briliants the player found deserve a line of their own, after the mistakes.
+            val praises = playerPlies
+                .filter { it.category.isPositive }
+                .take(MAX_POSITIVE_MOMENTS)
+                .map { ply ->
+                    ReportMoment(
+                        moveNumber = ply.ply / 2 + 1,
+                        moverWhite = ply.moverWhite,
+                        san = ply.san,
+                        bestSan = bestSanOf(ply),
+                        category = ply.category,
+                        loss = 0.0,
+                        lesson = praiseOf(ply.category),
+                    )
+                }
+            val moments = mistakes + praises
             return GameReport(
                 opening = opening,
                 whiteAccuracy = analysis.accuracy(true),
@@ -93,11 +113,24 @@ data class GameReport(
             playerIsWhite: Boolean,
             moments: List<ReportMoment>,
         ): String {
-            val worst = moments.firstOrNull()
+            val first = moments.firstOrNull()
                 ?: return "Nicio greșeală serioasă din partea ta. Acuratețe ${"%.1f".format(analysis.accuracy(playerIsWhite))}%."
-            return "Cel mai costisitor moment: mutarea ${worst.moveNumber} (${worst.san}) — " +
-                "mai bine era ${worst.bestSan.ifEmpty { "o mutare mai bună" }} " +
-                "(ai pierdut ${"%.0f".format(worst.loss)}% șansă de câștig)."
+            // Positives come after the mistakes — reaching first means there were none.
+            if (first.category.isPositive) {
+                val found = moments.joinToString(", ") { "${it.moveNumber}.${it.san}" }
+                return if (moments.size == 1) "Ai jucat o mutare briliantă: $found."
+                else "Ai jucat ${moments.size} mutări briliante: $found."
+            }
+            return "Cel mai costisitor moment: mutarea ${first.moveNumber} (${first.san}) — " +
+                "mai bine era ${first.bestSan.ifEmpty { "o mutare mai bună" }} " +
+                "(ai pierdut ${"%.0f".format(first.loss)}% șansă de câștig)."
+        }
+
+        /** A short Romanian cheer for a positive moment's category. */
+        private fun praiseOf(category: MoveCategory): String = when (category) {
+            MoveCategory.BRILLIANT -> "Mutare briliantă!"
+            MoveCategory.GREAT -> "Mutare excelentă!"
+            else -> ""
         }
     }
 }
