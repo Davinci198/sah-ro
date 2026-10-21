@@ -110,4 +110,17 @@ class GameReportTest {
         assertEquals(false, report.moments[0].moverWhite)
         assertEquals(45.0, report.playerAccuracy, 0.001) // black's accuracy
     }
+
+    @Test
+    fun momentPlyMatchesTheReplayIndexing() {
+        // Pgn.replay's positions[k] is the board after k plies — the board a
+        // mistake is made FROM must land on exactly that index.
+        assertEquals(0, plyOf(1, moverWhite = true))
+        assertEquals(1, plyOf(1, moverWhite = false))
+        assertEquals(12, plyOf(7, moverWhite = true))
+        assertEquals(13, plyOf(7, moverWhite = false))
+
+        val moment = ReportMoment(7, false, "Nxg4", "Bg6", MoveCategory.BLUNDER, 80.0)
+        assertEquals(13, moment.ply)
+    }
 }

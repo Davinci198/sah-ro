@@ -20,17 +20,24 @@ import com.sah.analysis.GameReport
 import com.sah.analysis.GameReportsStore
 import com.sah.analysis.HeuristicEngine
 import com.sah.analysis.MoveCategory
+import com.sah.analysis.PositionEval
 import com.sah.analysis.REPORT_PROFILE
+import com.sah.analysis.ReportMoment
 import com.sah.analysis.roLabel
 import com.sah.analysis.toUciMoves
 import com.sah.chess.ChessBoard
+import com.sah.chess.ChessMove
 import com.sah.chess.MoveGenerator
+import com.sah.chess.Pieces
+import com.sah.chess.San
 import com.sah.content.Language
 import com.sah.content.OpeningRepository
+import com.sah.games.ExploreLine
 import com.sah.games.Pgn
 import com.sah.games.ReplayPosition
 import com.sah.games.outcomeWord
 import java.io.File
+import kotlin.math.abs
 
 /**
  * Replay of one imported game: the board plus a move strip with the current
@@ -43,6 +50,12 @@ import java.io.File
  * player's mistakes worth studying (worst first). The analysis profile is the
  * interactive [REPORT_PROFILE], a pass that costs seconds, not the minute the
  * full pipeline would.
+ *
+ * A report line is the door into practice: the first tap shows the position
+ * before the mistake with the suggestion drawn over it, the second plays that
+ * suggestion and hands the board to a free exploration — both sides under the
+ * player's hand, undoable to the start, with the engine one tap away — and
+ * "Ieși" returns to the replay.
  */
 class GameReplayActivity : UiActivity() {
 
@@ -55,6 +68,11 @@ class GameReplayActivity : UiActivity() {
     private lateinit var previousButton: Button
     private lateinit var nextButton: Button
     private lateinit var lastButton: Button
+    private lateinit var controlsRow: LinearLayout
+    private lateinit var exploreRow: LinearLayout
+    private lateinit var undoButton: Button
+    private lateinit var hintButton: Button
+    private lateinit var exitButton: Button
     private lateinit var analyzeButton: Button
     private lateinit var analysisLabel: TextView
     private lateinit var analysisContainer: LinearLayout
@@ -62,6 +80,18 @@ class GameReplayActivity : UiActivity() {
     private var positions: List<ReplayPosition> = emptyList()
     private var step = 0
     private var analyzing = false
+
+    /** The exploration line while the board is off the replay; null on the replay. */
+    private var explore: ExploreLine? = null
+    private var exploreOriginStep = 0
+    private var selectedSquare: Square? = null
+    private var hintArrow: BoardArrow? = null
+
+    /** Index in the shown report of the moment under preview; -1 for none. */
+    private var previewMoment = -1
+
+    /** The note the current report was rendered with, kept for re-renders. */
+    private var reportNote: String? = null
 
     @Volatile
     private var cancelled = false
@@ -111,6 +141,7 @@ class GameReplayActivity : UiActivity() {
         root.addView(space(8))
 
         boardView = ChessBoardView(this)
+        boardView.setOnSquareTapped { square -> onBoardTapped(square) }
         root.addView(boardView, fullWidth())
         root.addView(space(6))
 
@@ -128,16 +159,30 @@ class GameReplayActivity : UiActivity() {
         root.addView(movesScroll, fullWidth())
         root.addView(space(6))
 
-        val controls = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        controlsRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         firstButton = button("⏮") { render(0, fromUser = true) }
         previousButton = button("◀") { render(step - 1, fromUser = true) }
         nextButton = button("▶") { render(step + 1, fromUser = true) }
         lastButton = button("⏭") { render(Int.MAX_VALUE, fromUser = true) }
-        controls.addView(firstButton, weightParams())
-        controls.addView(previousButton, weightParams())
-        controls.addView(nextButton, weightParams())
-        controls.addView(lastButton, LinearLayout.LayoutParams(0, -2, 1f))
-        root.addView(controls, fullWidth())
+        controlsRow.addView(firstButton, weightParams())
+        controlsRow.addView(previousButton, weightParams())
+        controlsRow.addView(nextButton, weightParams())
+        controlsRow.addView(lastButton, LinearLayout.LayoutParams(0, -2, 1f))
+        root.addView(controlsRow, fullWidth())
+
+        // While the board is explored the replay row hides and this one takes
+        // its place: undo, an engine suggestion on demand, and the way back.
+        exploreRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            visibility = View.GONE
+        }
+        undoButton = button("↩ Anulează") { undoExplore() }
+        hintButton = button("💡 Indiciu") { requestHint() }
+        exitButton = button("Ieși") { exitExplore() }
+        exploreRow.addView(undoButton, weightParams())
+        exploreRow.addView(hintButton, weightParams())
+        exploreRow.addView(exitButton, LinearLayout.LayoutParams(0, -2, 1f))
+        root.addView(exploreRow, fullWidth())
 
         root.addView(space(10))
         analyzeButton = button("Analizează jocul") { startAnalysis() }
@@ -176,13 +221,19 @@ class GameReplayActivity : UiActivity() {
         }.start()
     }
 
-    private fun render(target: Int, fromUser: Boolean) {
+    private fun render(target: Int, fromUser: Boolean, arrow: BoardArrow? = null) {
         if (positions.isEmpty()) return
+        // Moving through the game leaves any moment preview behind.
+        if (fromUser) cancelPreview()
         val previous = step
         step = target.coerceIn(0, positions.size - 1)
         val position = positions[step]
         val board = ChessBoard.fromFen(position.fen)
-        boardView.renderPosition(position.fen, marks(lastMove = position.lastMove, board = board))
+        boardView.renderPosition(
+            position.fen,
+            marks(lastMove = position.lastMove, board = board),
+            arrows = listOfNotNull(arrow),
+        )
         stepLabel.text = when {
             positions.size <= 1 -> "Poziția de start"
             step == 0 -> "Poziția inițială · ${positions.size - 1} mutări"
@@ -322,6 +373,7 @@ class GameReplayActivity : UiActivity() {
     /** Puts [report] on screen, keeping it for later and (when asked) on disk. */
     private fun adoptReport(report: GameReport, save: Boolean, note: String? = null) {
         currentReport = report
+        reportNote = note
         if (save && report.id.isNotEmpty()) runCatching { reportsStore.save(report) }
         analyzeButton.text = "Re-analizează jocul"
         renderReport(report, note)
@@ -364,12 +416,24 @@ class GameReplayActivity : UiActivity() {
             analysisContainer.addView(card("Nicio greșeală serioasă din partea ta."), fullWidth())
         } else {
             analysisContainer.addView(label("Momentele tale", 13f, accentColor, bold = true), fullWidth())
-            for (moment in report.moments) {
+            analysisContainer.addView(
+                card("Apasă pe o linie ca să vezi recomandarea pe tablă; apasă iar ca să o joci.").apply {
+                    setTextColor(mutedColor)
+                    setTextSize(12f)
+                },
+                fullWidth(),
+            )
+            for ((index, moment) in report.moments.withIndex()) {
                 val better = moment.bestSan.ifEmpty { "o mutare mai bună" }
                 val line = "Mutarea ${moment.moveNumber} · ${moment.san} (${moment.category.roLabel()}) — " +
-                    "mai bine $better · −${"%.0f".format(moment.loss)}%"
+                    "mai bine $better · −${"%.0f".format(moment.loss)}%" +
+                    if (index == previewMoment) " ▸" else ""
                 analysisContainer.addView(
-                    card(line).apply { setTextColor(categoryColor(moment.category)) },
+                    card(line).apply {
+                        setTextColor(if (index == previewMoment) accentColor else categoryColor(moment.category))
+                        isClickable = true
+                        setOnClickListener { onMomentTapped(index) }
+                    },
                     fullWidth(),
                 )
                 if (moment.lesson.isNotBlank()) {
@@ -392,9 +456,187 @@ class GameReplayActivity : UiActivity() {
         else -> mutedColor
     }
 
+    // -------------------------------------------------------------- exploration
+
+    /** First tap on a line: jump before the mistake, draw the suggestion. Second: play it. */
+    private fun onMomentTapped(index: Int) {
+        val report = currentReport ?: return
+        val moment = report.moments.getOrNull(index) ?: return
+        if (explore != null) exitExplore(renderFirst = false)
+        if (previewMoment == index) {
+            startExplore(moment)
+            return
+        }
+        if (moment.ply !in positions.indices) return
+        previewMoment = index
+        render(moment.ply, fromUser = false, arrow = previewArrow(moment))
+        stepLabel.text = "Poziția dinaintea greșelii · recomandare " +
+            "${moment.bestSan.ifEmpty { "—" }} — apasă încă o dată pe linie ca să o joci."
+        renderReport(report, reportNote)
+    }
+
+    /** The suggestion drawn over the position the mistake was made in. */
+    private fun previewArrow(moment: ReportMoment): BoardArrow? {
+        if (moment.bestSan.isEmpty() || moment.ply !in positions.indices) return null
+        val board = ChessBoard.fromFen(positions[moment.ply].fen)
+        val move = runCatching { San.parse(board, moment.bestSan) }.getOrNull() ?: return null
+        return BoardArrow(move.from, move.to, accentColor)
+    }
+
+    /** Takes over the board at the mistake, the AI's recommendation already played. */
+    private fun startExplore(moment: ReportMoment) {
+        if (moment.ply !in positions.indices) return
+        previewMoment = -1
+        selectedSquare = null
+        hintArrow = null
+        val line = ExploreLine(positions[moment.ply].fen)
+        explore = line
+        exploreOriginStep = moment.ply
+        var played = false
+        if (moment.bestSan.isNotEmpty()) {
+            val before = line.board
+            played = line.playSan(moment.bestSan)?.let { move ->
+                Effects.moveOn(before, move.from, move.to)
+                true
+            } ?: false
+        }
+        controlsRow.visibility = View.GONE
+        exploreRow.visibility = View.VISIBLE
+        undoButton.isEnabled = line.movesPlayed > 0
+        hintButton.isEnabled = true
+        renderExplore()
+        stepLabel.text = if (played) {
+            "Recomandarea ${moment.bestSan} e pe tablă — continuă cum vrei, cu ambele culori."
+        } else {
+            exploreStatus()
+        }
+        currentReport?.let { renderReport(it, reportNote) }
+    }
+
+    /** Tap handling while exploring: any piece of the side to move, then its target. */
+    private fun onBoardTapped(square: Square) {
+        val line = explore ?: return
+        val board = line.board
+        val selectedNow = selectedSquare
+        if (selectedNow == null) {
+            if (Pieces.colorOf(board.pieceAt(square)) == board.sideToMove) {
+                selectedSquare = square
+                renderExplore()
+            }
+            return
+        }
+        if (square == selectedNow || Pieces.colorOf(board.pieceAt(square)) == board.sideToMove) {
+            selectedSquare = if (square == selectedNow) null else square
+            renderExplore()
+            return
+        }
+        val before = board
+        val move = line.play(selectedNow, square)
+        selectedSquare = null
+        hintArrow = null
+        if (move == null) {
+            renderExplore()
+            stepLabel.text = "Mutarea nu e permisă în poziția asta."
+            return
+        }
+        undoButton.isEnabled = true
+        Effects.moveOn(before, move.from, move.to)
+        if (MoveGenerator.isInCheck(line.board, line.board.whiteToMove)) Effects.check()
+        renderExplore()
+        stepLabel.text = exploreStatus()
+    }
+
+    private fun renderExplore() {
+        val line = explore ?: return
+        val board = line.board
+        val targets = selectedSquare
+            ?.let { from -> MoveGenerator.legalMovesFrom(board, from).map { it.to } }
+            .orEmpty()
+        boardView.renderPosition(
+            board.toFen(),
+            marks = marks(targets = targets, lastMove = line.lastMove, board = board, selected = selectedSquare),
+            arrows = listOfNotNull(hintArrow),
+        )
+    }
+
+    private fun undoExplore() {
+        val line = explore ?: return
+        if (!line.undo()) return
+        selectedSquare = null
+        hintArrow = null
+        undoButton.isEnabled = line.movesPlayed > 0
+        renderExplore()
+        stepLabel.text = exploreStatus()
+    }
+
+    /** Back to the replay at the position the exploration started from. */
+    private fun exitExplore(renderFirst: Boolean = true) {
+        if (explore == null) return
+        explore = null
+        selectedSquare = null
+        hintArrow = null
+        exploreRow.visibility = View.GONE
+        controlsRow.visibility = View.VISIBLE
+        if (renderFirst) render(exploreOriginStep, fromUser = false)
+    }
+
+    /** The engine's best move drawn in violet, with the score in plain words. */
+    private fun requestHint() {
+        val line = explore ?: return
+        hintButton.isEnabled = false
+        val fen = line.board.toFen()
+        val whiteToMove = line.board.whiteToMove
+        Thread {
+            val result = runCatching {
+                HeuristicEngine(REPORT_PROFILE).use { it.evaluate(ChessBoard.fromFen(fen), HINT_MILLIS) }
+            }
+            runOnUiThread {
+                if (cancelled || isFinishing) return@runOnUiThread
+                hintButton.isEnabled = true
+                val eval = result.getOrNull()
+                val move = eval?.bestMove?.let { ChessMove.fromUci(it) }
+                if (eval == null || move == null) {
+                    stepLabel.text = "Motorul nu a găsit o mutare în timpul dat."
+                    return@runOnUiThread
+                }
+                hintArrow = BoardArrow(move.from, move.to, hintColor)
+                renderExplore()
+                val san = runCatching { San.toSan(ChessBoard.fromFen(fen), move) }.getOrDefault(move.uci())
+                stepLabel.text = "Motorul: $san · ${evalText(eval, whiteToMove)}"
+            }
+        }.start()
+    }
+
+    /** An evaluation for the report's audience: white-positive, in pawns. */
+    private fun evalText(eval: PositionEval, whiteToMove: Boolean): String {
+        eval.mateInPlies?.let { plies ->
+            val whiteMates = if (whiteToMove) plies > 0 else plies < 0
+            return "mat${if (whiteMates) " pentru alb" else " pentru negru"} în ${(abs(plies) + 1) / 2}"
+        }
+        val cp = if (whiteToMove) eval.scoreCp else -eval.scoreCp
+        val side = if (cp >= 0) "alb" else "negru"
+        return "$side +${"%.1f".format(abs(cp) / 100.0)}"
+    }
+
+    private fun exploreStatus(): String {
+        val line = explore ?: return ""
+        val turn = if (line.board.whiteToMove) "alb" else "negru"
+        return "Explorare · la rând: $turn · ↩ anulează ultima mutare, Indiciu cere motorul."
+    }
+
+    /** Navigation or a fresh report drops the moment preview and its arrow. */
+    private fun cancelPreview() {
+        if (previewMoment == -1) return
+        previewMoment = -1
+        currentReport?.let { renderReport(it, reportNote) }
+    }
+
     companion object {
         /** One tag for the whole AI path — `adb logcat -s SahAi` reads it all. */
         private const val TAG = "SahAi"
+
+        /** Thinking time for the on-demand exploration hint — quick, not deep. */
+        private const val HINT_MILLIS = 300
         const val EXTRA_GAME_ID = "gameId"
         const val EXTRA_PGN = "gamePgn"
         const val EXTRA_OPPONENT = "gameOpponent"
