@@ -11,6 +11,7 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
+import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -28,6 +29,9 @@ import com.sah.games.ImportSummary
 import com.sah.games.HttpStatusError
 import com.sah.games.Platform
 import com.sah.games.errorMessage
+import com.sah.games.gameCountWord
+import com.sah.games.monthKey
+import com.sah.games.monthTitle
 import com.sah.games.outcomeWord
 import java.io.File
 import java.io.IOException
@@ -69,9 +73,14 @@ class GamesActivity : UiActivity() {
     private var outcomeFilter = "all"
     private var colorFilter = "all"
     private var timeFilter = "all"
+    private var platformFilter = "all"
+    private var yearFilter = "all"
     private val outcomeButtons = LinkedHashMap<String, Button>()
     private val colorButtons = LinkedHashMap<String, Button>()
     private val timeButtons = LinkedHashMap<String, Button>()
+    private val platformFilterButtons = LinkedHashMap<String, Button>()
+    private val yearButtons = LinkedHashMap<String, Button>()
+    private lateinit var yearChipsRow: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -181,6 +190,24 @@ class GamesActivity : UiActivity() {
         }
         root.addView(timeScroll, fullWidth())
 
+        root.addView(label("Platformă", 11f, mutedColor), fullWidth())
+        root.addView(
+            buildChipRow(
+                platformFilterButtons,
+                listOf("all" to "Toate", "chesscom" to "Chess.com", "lichess" to "Lichess"),
+                fill = true,
+            ) { platformFilter = it },
+            fullWidth(),
+        )
+
+        root.addView(label("An", 11f, mutedColor), fullWidth())
+        yearChipsRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        val yearScroll = HorizontalScrollView(this).apply {
+            isHorizontalScrollBarEnabled = false
+            addView(yearChipsRow, LinearLayout.LayoutParams(-2, -2))
+        }
+        root.addView(yearScroll, fullWidth())
+
         countLabel = label("", 12f, mutedColor)
         root.addView(countLabel, fullWidth())
         root.addView(space(4))
@@ -237,10 +264,38 @@ class GamesActivity : UiActivity() {
         repaintFilters()
     }
 
+    /** Rebuilds the year chips from the years actually present in the data. */
+    private fun populateYearChips() {
+        yearButtons.clear()
+        yearChipsRow.removeAllViews()
+        val years = refs.map { it.date.take(4) }
+            .filter { it.length == 4 && it.all(Char::isDigit) }
+            .distinct()
+            .sortedDescending()
+        val options = listOf("all" to "Toate") + years.map { it to it }
+        options.forEach { (key, text) ->
+            val chip = button(text) {
+                yearFilter = key
+                repaintFilters()
+                applyFilters()
+            }.apply {
+                minHeight = dp(38)
+                minimumHeight = dp(38)
+                contentDescription = text
+            }
+            yearButtons[key] = chip
+            yearChipsRow.addView(chip)
+        }
+        if (yearFilter !in yearButtons) yearFilter = "all"
+        repaintFilters()
+    }
+
     private fun repaintFilters() {
         repaintGroup(outcomeButtons, outcomeFilter)
         repaintGroup(colorButtons, colorFilter)
         repaintGroup(timeButtons, timeFilter)
+        repaintGroup(platformFilterButtons, platformFilter)
+        repaintGroup(yearButtons, yearFilter)
     }
 
     private fun repaintGroup(buttons: Map<String, Button>, selected: String) {
@@ -401,6 +456,7 @@ class GamesActivity : UiActivity() {
                 refs = loaded
                 statusLabel.text = if (loaded.isEmpty()) "" else "${loaded.size} jocuri salvate"
                 populateTimeChips()
+                populateYearChips()
                 applyFilters()
             }
         }.start()
@@ -436,6 +492,8 @@ class GamesActivity : UiActivity() {
             (outcomeFilter == "all" || ref.outcome == outcomeFilter) &&
                 (colorFilter == "all" || ref.myColor == colorFilter) &&
                 (timeFilter == "all" || ref.timeClass.equals(timeFilter, ignoreCase = true)) &&
+                (platformFilter == "all" || ref.platform.equals(platformFilter, ignoreCase = true)) &&
+                (yearFilter == "all" || ref.date.take(4) == yearFilter) &&
                 (query.isEmpty() || ref.opponent.lowercase().contains(query))
         }
         countLabel.text = "${filtered.size} din ${refs.size} jocuri"
@@ -454,7 +512,17 @@ class GamesActivity : UiActivity() {
             listContainer.addView(card(message), fullWidth())
             return
         }
+        // One header per month, showing that month's true total across the whole
+        // filtered set (not just the rendered slice), so the list reads as a timeline.
+        val monthCounts = LinkedHashMap<String, Int>()
+        for (ref in filtered) monthCounts.merge(monthKey(ref.date), 1, Int::plus)
+        var lastKey: String? = null
         for (ref in filtered.take(visibleCount)) {
+            val key = monthKey(ref.date)
+            if (key != lastKey) {
+                listContainer.addView(monthHeader(key, monthCounts[key] ?: 1), fullWidth())
+                lastKey = key
+            }
             listContainer.addView(gameRow(ref), fullWidth())
             listContainer.addView(space(6))
         }
@@ -464,6 +532,17 @@ class GamesActivity : UiActivity() {
                 visibleCount += PAGE_SIZE
                 renderList()
             }, fullWidth())
+        }
+    }
+
+    private fun monthHeader(key: String, count: Int): View {
+        return TextView(this).apply {
+            text = "${monthTitle(key)} · ${gameCountWord(count)}"
+            setTextColor(accentColor)
+            setTextSize(13f)
+            setTypeface(typeface, Typeface.BOLD)
+            gravity = Gravity.START
+            setPadding(dp(4), dp(14), dp(4), dp(4))
         }
     }
 
@@ -500,13 +579,22 @@ class GamesActivity : UiActivity() {
             setTextSize(14f)
             setTypeface(typeface, Typeface.BOLD)
         }, fullWidth())
-        val detail = listOf(
+        val platformName = platformDisplayName(ref.platform)
+        val rest = listOf(
             ref.date,
             colorWord(ref),
             ref.timeClass,
             ref.timeControl,
             ref.opening,
         ).filter { it.isNotBlank() }.joinToString(" · ")
+        val detailText = if (rest.isEmpty()) platformName else "$platformName · $rest"
+        val detail = SpannableStringBuilder(detailText)
+        detail.setSpan(
+            ForegroundColorSpan(platformColor(ref.platform)),
+            0,
+            platformName.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+        )
         row.addView(TextView(this).apply {
             text = detail
             setTextColor(mutedColor)
@@ -515,6 +603,12 @@ class GamesActivity : UiActivity() {
         }, fullWidth())
         return row
     }
+
+    private fun platformDisplayName(platform: String): String =
+        if (platform.equals("chesscom", ignoreCase = true)) "Chess.com" else "Lichess"
+
+    private fun platformColor(platform: String): Int =
+        if (platform.equals("chesscom", ignoreCase = true)) Color.rgb(120, 170, 110) else Color.rgb(160, 150, 220)
 
     private fun outcomeColor(outcome: String): Int = when (outcome) {
         "W" -> successColor
