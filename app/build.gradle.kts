@@ -67,6 +67,15 @@ android {
             )
         }
     }
+
+    packaging {
+        jniLibs {
+            // The bundled Stockfish must land extracted (and executable) in
+            // nativeLibraryDir: Android refuses exec() from app-writable dirs.
+            useLegacyPackaging = true
+            keepDebugSymbols.add("**/libstockfish.so")
+        }
+    }
 }
 
 dependencies {

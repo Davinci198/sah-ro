@@ -115,6 +115,17 @@ val REPORT_PROFILE: EngineProfile = EngineProfile.CARBALLO.copy(
     suspectLoss = 8.0,
 )
 
+/**
+ * The interactive profile for the bundled Stockfish ([UciEngine]): the engine's
+ * own measured thresholds with thinking times trimmed so an 85-ply game still
+ * analyses in tens of seconds on a phone.
+ */
+val REPORT_PROFILE_STOCKFISH: EngineProfile = EngineProfile.STOCKFISH.copy(
+    quickMillis = 130,
+    deepMillis = 300,
+    checkMillis = 800,
+)
+
 /** SAN half-moves to UCI, stopping at the first that cannot be replayed. */
 fun toUciMoves(startFen: String, sanMoves: List<String>): List<String> {
     val uci = ArrayList<String>(sanMoves.size)

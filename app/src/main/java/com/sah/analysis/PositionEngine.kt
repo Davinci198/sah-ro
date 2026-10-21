@@ -32,8 +32,9 @@ data class PositionEval(
 
 /**
  * A source of evaluations. The original application talks to Stockfish over UCI and
- * falls back to a pure-Java engine; this port ships only the pure-Kotlin engine
- * (see [HeuristicEngine]) because no external binary can be executed here.
+ * falls back to a pure-Java engine; this port ships the pure-Kotlin [HeuristicEngine]
+ * plus the bundled Stockfish binary driven over UCI ([UciEngine]), which the report
+ * uses whenever the device can execute it.
  */
 interface PositionEngine : AutoCloseable {
 
@@ -53,8 +54,8 @@ object AnalysisEngines {
 
     /**
      * The evaluation profile used by default. The original picks Stockfish when its
-     * binary can be executed and Carballo otherwise; this port always uses the
-     * pure-Kotlin engine, for which the Carballo profile is the honest match.
+     * binary can be executed and Carballo otherwise; callers without the binary use
+     * the pure-Kotlin engine, for which the Carballo profile is the honest match.
      */
     val defaultProfile: EngineProfile = EngineProfile.CARBALLO
 
