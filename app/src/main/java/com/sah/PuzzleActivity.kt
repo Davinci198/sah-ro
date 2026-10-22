@@ -99,6 +99,16 @@ class PuzzleActivity : UiActivity() {
 
     private val random = Random(System.currentTimeMillis())
 
+    /** Shuffled puzzles still unspent at the current book and difficulty. */
+    private var deck: List<Puzzle> = emptyList()
+
+    /** Entries of [deck] already handed out; reaching its size forces a re-deal. */
+    private var deckIndex = 0
+
+    /** Book and difficulty [deck] was dealt for, so a change re-deals at once. */
+    private var deckBook: PuzzleBook? = null
+    private var deckDifficulty = 0
+
     /** Set when the activity is re-created and the open puzzle has to be resumed. */
     private var pending: PuzzleState? = null
 
@@ -362,9 +372,9 @@ class PuzzleActivity : UiActivity() {
         if (keepCurrent && session != null) return
         val puzzles = book ?: return
         cancelReplay()
-        val puzzle = puzzles.random(difficulty, random) ?: puzzles.all().firstOrNull()
+        val puzzle = deal(puzzles)
         if (puzzle == null) {
-            messageLabel.text = "Nu există puzzle-uri pentru dificultatea asta."
+            messageLabel.text = "Nu există puzzle-uri."
             return
         }
         session = PuzzleSession(puzzle)
@@ -384,6 +394,29 @@ class PuzzleActivity : UiActivity() {
         statusLabel.text = statusLine(puzzle)
         Effects.start()
         render()
+    }
+
+    /**
+     * The next puzzle to open, dealt from a shuffled bag.
+     *
+     * The puzzles generated from the player's own games only ever land on a few
+     * difficulties, so at most levels there is nothing to match and the old
+     * fallback — the first entry of the book — pinned the screen on a single
+     * puzzle forever. The bag walks an entire level before repeating, and falls
+     * back to the whole book when that level is empty, so even a small set is
+     * fully seen instead of bouncing between the same one or two entries.
+     */
+    private fun deal(puzzles: PuzzleBook): Puzzle? {
+        val spent = deckIndex >= deck.size
+        if (spent || deckBook !== puzzles || deckDifficulty != difficulty) {
+            val candidates = puzzles.byDifficulty(difficulty).ifEmpty { puzzles.all() }
+            if (candidates.isEmpty()) return null
+            deck = candidates.shuffled(random)
+            deckIndex = 0
+            deckBook = puzzles
+            deckDifficulty = difficulty
+        }
+        return deck[deckIndex++]
     }
 
     /** Re-opens the puzzle that was on screen before a configuration change. */
