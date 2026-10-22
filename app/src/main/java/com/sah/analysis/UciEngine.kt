@@ -39,13 +39,14 @@ class UciEngine private constructor(
         private set
 
     override fun evaluate(board: ChessBoard, milliseconds: Int): PositionEval {
+        val fen = engineFen(board)
         val lines = try {
-            ask(board.toFen(), milliseconds)
+            ask(fen, milliseconds)
         } catch (failure: IOException) {
             // A dead or wedged process: one clean restart, then the caller
             // sees the failure (the report path turns it into a message).
             restart()
-            ask(board.toFen(), milliseconds)
+            ask(fen, milliseconds)
         }
         return parseEval(lines)
     }
@@ -141,6 +142,31 @@ class UciEngine private constructor(
                 engine.close()
                 null
             }
+        }
+
+        /**
+         * The FEN this engine is actually handed, with every castling right
+         * checked against the pieces that must be home to claim it.
+         *
+         * Stockfish 11 does not validate what it is fed: a right naming a king
+         * or rook that is not on its home square kills the process with SIGSEGV,
+         * and so does a board without both kings. Both were measured on the
+         * device this ships to — `4k3/8/8/8/8/8/8/4K3 w KQkq - 0 1` and
+         * `8/8/8/8/8/8/8/8 w - - 0 1` exit with signal 11. An imported game whose
+         * `[FEN]` tag carries stale rights would otherwise take the whole report
+         * down with it, so the rights are dropped here instead of passed on.
+         */
+        internal fun engineFen(board: ChessBoard): String {
+            val trusted = board.castling.filter { flag ->
+                when (flag) {
+                    'K' -> board.pieceAt(4, 0) == 'K' && board.pieceAt(7, 0) == 'R'
+                    'Q' -> board.pieceAt(4, 0) == 'K' && board.pieceAt(0, 0) == 'R'
+                    'k' -> board.pieceAt(4, 7) == 'k' && board.pieceAt(7, 7) == 'r'
+                    'q' -> board.pieceAt(4, 7) == 'k' && board.pieceAt(0, 7) == 'r'
+                    else -> false
+                }
+            }
+            return if (trusted == board.castling) board.toFen() else board.copy(castling = trusted).toFen()
         }
 
         /**

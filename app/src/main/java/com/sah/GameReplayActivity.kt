@@ -18,6 +18,7 @@ import com.sah.analysis.GameAnalyzer
 import com.sah.analysis.GameReport
 import com.sah.analysis.GameReportsStore
 import com.sah.analysis.HeuristicEngine
+import com.sah.analysis.PositionEngine
 import com.sah.analysis.PositionEval
 import com.sah.analysis.REPORT_PROFILE
 import com.sah.analysis.REPORT_PROFILE_STOCKFISH
@@ -408,16 +409,28 @@ class GameReplayActivity : UiActivity() {
         val playerIsWhite = myColor != "black"
         val opening = book.nameFor(parsed.moves, Language.RO)
         // The bundled Stockfish when this device can execute it, else the Kotlin engine.
-        val engine = UciEngine.create(applicationInfo.nativeLibraryDir, REPORT_PROFILE_STOCKFISH)
-            ?: HeuristicEngine(REPORT_PROFILE)
+        val native = UciEngine.create(applicationInfo.nativeLibraryDir, REPORT_PROFILE_STOCKFISH)
+        val engine: PositionEngine = native ?: HeuristicEngine(REPORT_PROFILE)
         Log.i(TAG, "engine=${engine.javaClass.simpleName} profile=${engine.profile.name}")
-        return GameAnalyzer(engine, book) { progress ->
-            report("Se analizează… ${progress.finalized}/${progress.total}")
-        }.use { it.analyze(parsed.startFen, uci, playerIsWhite) }
-            .let { analysis ->
-                val source = (engine as? UciEngine)?.let { "Local · ${it.engineName}" } ?: "Local"
-                GameReport.build(analysis, playerIsWhite, opening).copy(source = source)
-            }
+        var ranOnNative = native != null
+        val analysis = runCatching {
+            GameAnalyzer(engine, book) { progress ->
+                report("Se analizează… ${progress.finalized}/${progress.total}")
+            }.use { it.analyze(parsed.startFen, uci, playerIsWhite) }
+        }.getOrElse { failure ->
+            // A native engine can die mid-game — the bundled Stockfish 11 aborts
+            // on positions it cannot represent. The report has to come out any-
+            // way, so the whole game is re-run on the pure-Kotlin engine.
+            if (native == null) throw failure
+            Log.w(TAG, "engine died mid-analysis: ${failure.javaClass.simpleName}: ${failure.message} -> HeuristicEngine")
+            ranOnNative = false
+            native.close()
+            GameAnalyzer(HeuristicEngine(REPORT_PROFILE), book) { progress ->
+                report("Se analizează… ${progress.finalized}/${progress.total}")
+            }.use { it.analyze(parsed.startFen, uci, playerIsWhite) }
+        }
+        val source = if (ranOnNative && native != null) "Local · ${native.engineName}" else "Local"
+        return GameReport.build(analysis, playerIsWhite, opening).copy(source = source)
     }
 
     private fun renderReport(report: GameReport, note: String? = null) {
