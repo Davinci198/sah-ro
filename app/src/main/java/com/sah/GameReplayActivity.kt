@@ -318,11 +318,11 @@ class GameReplayActivity : UiActivity() {
         analysisLabel.text = "Se pregătește analiza…"
         Thread {
             val settings = AiSettings.load(this)
-            Log.i(TAG, "start configured=${settings.isConfigured} endpoint=${settings.endpoint} model=${settings.model} key=${settings.apiKey.isNotBlank()}")
+            Log.i(TAG, "start enabled=${settings.enabled} configured=${settings.isConfigured} endpoint=${settings.endpoint} model=${settings.model} key=${settings.apiKey.isNotBlank()}")
             var note: String? = null
             val result = runCatching {
-                if (!settings.isConfigured) {
-                    Log.i(TAG, "AI not configured -> local engine")
+                if (!settings.isActive) {
+                    Log.i(TAG, "AI off -> local engine")
                     analyzeGame { message -> progress(message) }
                 } else {
                     // The model is asked first; anything it gets wrong about the

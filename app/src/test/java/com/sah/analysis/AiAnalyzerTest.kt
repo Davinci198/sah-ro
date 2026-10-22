@@ -78,6 +78,21 @@ class AiAnalyzerTest {
     }
 
     @Test
+    fun theSwitchOffStillNeedsBothFieldsBeforeItCanCall() {
+        // On by default, so an already-configured model keeps being asked.
+        assertTrue(settings.isActive)
+        // Switching off stops the call even with endpoint and model in place;
+        // this is the case a provider in cooldown is saved from waiting on.
+        val off = settings.copy(enabled = false)
+        assertFalse(off.isActive)
+        assertTrue(off.isConfigured)
+        // Switching off while unconfigured changes nothing: still no call.
+        assertFalse(settings.copy(enabled = false, endpoint = "").isActive)
+        // Switching on is not enough without endpoint and model.
+        assertFalse(settings.copy(enabled = true, model = "").isActive)
+    }
+
+    @Test
     fun requestIsJsonThatSurvivesAHostilePrompt() {
         val body = AiAnalyzer.chatRequestJson(settings, """Spui "salut" și atât.""", "Un PGN cu \" nu strică")
 

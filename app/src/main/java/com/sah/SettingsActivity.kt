@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Gravity
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Switch
 import android.widget.TextView
 import com.sah.analysis.AiAnalyzer
 import com.sah.analysis.AiSettings
@@ -25,6 +26,7 @@ class SettingsActivity : UiActivity() {
     private lateinit var endpointField: EditText
     private lateinit var keyField: EditText
     private lateinit var modelField: EditText
+    private lateinit var enabledSwitch: Switch
     private lateinit var testButton: Button
     private lateinit var statusLabel: TextView
     private var cancelled = false
@@ -36,11 +38,18 @@ class SettingsActivity : UiActivity() {
         endpointField.setText(saved.endpoint)
         keyField.setText(saved.apiKey)
         modelField.setText(saved.model)
-        status(
-            if (saved.isConfigured) "Analiza AI e activă pentru ${saved.model}."
-            else "Analiza AI nu e configurată — se folosește analiza locală.",
-            mutedColor,
-        )
+        enabledSwitch.isChecked = saved.enabled
+        // The switch writes itself the moment it is tapped, so "off" means off
+        // without a second trip through Salvează — a switch that still needs
+        // saving is one that reports being off while every game keeps calling
+        // the model. Wired after the text fields so the listener has something
+        // to read; the call below only paints the enabled/disabled state.
+        enabledSwitch.setOnCheckedChangeListener { _, checked ->
+            AiSettings.saveEnabled(this, checked)
+            Log.i(TAG, "switch enabled=$checked persisted")
+            onEnabledChanged(checked)
+        }
+        onEnabledChanged(saved.enabled)
     }
 
     override fun onDestroy() {
@@ -60,6 +69,26 @@ class SettingsActivity : UiActivity() {
             ),
             fullWidth(),
         )
+        root.addView(space(10))
+
+        enabledSwitch = Switch(this).apply {
+            text = "Folosește modelul AI pentru analiză"
+            setTextColor(textColor)
+            setTextSize(14f)
+            setPadding(dp(2), dp(4), dp(2), dp(4))
+        }
+        root.addView(enabledSwitch, fullWidth())
+        root.addView(
+            label(
+                "Oprit înseamnă niciun apel de rețea: fiecare „Analizează” merge direct la " +
+                    "Stockfish-ul local. Comutatorul se aplică imediat; câmpurile de mai " +
+                    "jos cer „Salvează”.",
+                11f,
+                mutedColor,
+            ),
+            fullWidth(),
+        )
+
         root.addView(space(10))
 
         root.addView(caption("Endpoint"), fullWidth())
@@ -98,19 +127,48 @@ class SettingsActivity : UiActivity() {
         )
     }
 
+    /**
+     * Turns the three fields and the test button on or off with the switch. A
+     * disabled field still holds its text, so saving while off keeps the setup
+     * on disk and only stops the model from being asked.
+     */
+    private fun onEnabledChanged(enabled: Boolean) {
+        endpointField.isEnabled = enabled
+        keyField.isEnabled = enabled
+        modelField.isEnabled = enabled
+        testButton.isEnabled = enabled
+        if (!enabled) {
+            status("Analiza AI e oprită — jocurile se analizează local, cu Stockfish.", accentColor)
+            return
+        }
+        val draft = draft()
+        status(
+            if (draft.isConfigured) "Analiza AI e activă pentru ${draft.model}."
+            else "Completează endpointul și modelul ca să activezi analiza AI.",
+            mutedColor,
+        )
+    }
+
     private fun save() {
         AiSettings.save(this, draft())
         val saved = AiSettings.load(this)
-        Log.i(TAG, "saved endpoint=${saved.endpoint} model=${saved.model} key=${saved.apiKey.isNotBlank()} configured=${saved.isConfigured}")
+        Log.i(TAG, "saved enabled=${saved.enabled} endpoint=${saved.endpoint} model=${saved.model} key=${saved.apiKey.isNotBlank()} configured=${saved.isConfigured}")
         status(
-            if (saved.isConfigured) "Setări salvate — ${saved.model} e activ."
-            else "Setări salvate — analiza AI rămâne închisă (lipsesc endpointul sau modelul).",
+            when {
+                !saved.enabled -> "Setări salvate — analiza AI rămâne oprită."
+                saved.isConfigured -> "Setări salvate — ${saved.model} e activ."
+                else -> "Setări salvate — analiza AI rămâne închisă (lipsesc endpointul sau modelul)."
+            },
             successColor,
         )
     }
 
     private fun testConnection() {
         val settings = draft()
+        if (!settings.enabled) {
+            status("Analiza AI e oprită — reactivează switch-ul de mai sus pentru test.", errorColor)
+            return
+        }
         if (settings.isConfigured.not()) {
             status("Completează endpointul și modelul înainte de test.", errorColor)
             return
@@ -138,6 +196,7 @@ class SettingsActivity : UiActivity() {
         endpoint = endpointField.text.toString(),
         apiKey = keyField.text.toString(),
         model = modelField.text.toString(),
+        enabled = enabledSwitch.isChecked,
     )
 
     private fun status(text: String, color: Int) {
