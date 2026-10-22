@@ -251,7 +251,7 @@ class PuzzleActivity : UiActivity() {
         val actions = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         hintButton = button("Indiciu") { showHint() }
         val retry = button("Reia") { restartPuzzle() }
-        nextButton = button("Următorul") { newPuzzle(keepCurrent = false) }.apply { isEnabled = false }
+        nextButton = button("Următorul") { newPuzzle(keepCurrent = false) }
         actions.addView(hintButton, weightParams())
         actions.addView(retry, weightParams())
         actions.addView(nextButton, weightParams())
@@ -281,7 +281,8 @@ class PuzzleActivity : UiActivity() {
             label(
                 "Rezolvă poziția: mută piesa, adversarul răspunde singur.\n" +
                     "„Indiciu” îți arată cu săgeata mutarea de făcut.\n" +
-                    "„Reia” pornește același puzzle de la capăt; „Linie” revede soluția.",
+                    "„Reia” pornește același puzzle de la capăt; „Linie” revede soluția.\n" +
+                    "„Următorul” trece la alt puzzle oricând, fără să-l rezolvi pe cel curent.",
                 12f,
                 mutedColor,
             ),
@@ -387,7 +388,7 @@ class PuzzleActivity : UiActivity() {
         hintArrow = null
         replaying = false
         offerHintButton(enabled = true)
-        nextButton.isEnabled = false
+        // "Următorul" stays live: skipping a puzzle must not require solving it.
         messageLabel.text = ""
         messageLabel.setTextColor(mutedColor)
         movesLabel.text = ""
@@ -443,7 +444,7 @@ class PuzzleActivity : UiActivity() {
         statusLabel.text = statusLine(state.puzzle)
         replaying = false
         if (restored.isSolved) offerLineButton() else offerHintButton(enabled = false)
-        nextButton.isEnabled = restored.isSolved
+        nextButton.isEnabled = true
         render()
     }
 
@@ -461,7 +462,6 @@ class PuzzleActivity : UiActivity() {
         hintArrow = null
         replaying = false
         offerHintButton(enabled = true)
-        nextButton.isEnabled = false
         messageLabel.text = ""
         messageLabel.setTextColor(mutedColor)
         movesLabel.text = ""
@@ -497,7 +497,6 @@ class PuzzleActivity : UiActivity() {
         hintArrow = null
         lastMove = active.lastApplied?.let { it.from to it.to }
         hintButton.isEnabled = false
-        nextButton.isEnabled = false
         messageLabel.setTextColor(mutedColor)
         messageLabel.text = "Se redă linia…"
         movesLabel.text = ""
