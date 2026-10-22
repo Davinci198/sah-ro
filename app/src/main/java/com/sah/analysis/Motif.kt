@@ -218,7 +218,7 @@ object MotifDetector {
             val frontPiece = board.pieceAt(front)
             val backPiece = board.pieceAt(back)
             if (Pieces.colorOf(frontPiece) != us &&
-                Pieces.colorOf(backPiece) == us &&
+                Pieces.colorOf(backPiece) != us &&
                 Pieces.typeOf(backPiece) == Pieces.KING
             ) {
                 return front
@@ -230,6 +230,10 @@ object MotifDetector {
     /**
      * The enemy piece shielding a lesser one from the slider on [square]: the
      * first enemy piece along a ray is worth more than the next piece behind it.
+     *
+     * A king is never the piece behind — it counts as worth 0, so a piece held
+     * in front of its own king would otherwise be reported here as well, and
+     * that is a pin. [findPin] owns the case.
      */
     fun findSkewer(board: ChessBoard, square: Square, byWhite: Boolean): Square? {
         val piece = board.pieceAt(square)
@@ -240,6 +244,7 @@ object MotifDetector {
             val backPiece = board.pieceAt(back)
             if (Pieces.colorOf(frontPiece) != us &&
                 Pieces.colorOf(backPiece) != us &&
+                Pieces.typeOf(backPiece) != Pieces.KING &&
                 Pieces.value(frontPiece) > Pieces.value(backPiece)
             ) {
                 return front
@@ -248,12 +253,19 @@ object MotifDetector {
         return null
     }
 
-    /** True when the move uncovers an attack from a friendly slider. */
+    /**
+     * True when the move uncovers an attack from a friendly slider.
+     *
+     * The slider that moved is left out on purpose: an attack the mover itself
+     * gains on arrival is not a discovery, it is simply the move. A real one is
+     * another piece — a bishop behind a pawn, say — whose line the move opened.
+     */
     fun discoversAttack(board: ChessBoard, move: ChessMove): Boolean {
         val us = board.sideToMove
         val after = MoveGenerator.applyMove(board, move)
         for (index in 0..63) {
             val slider = Square.of(index)
+            if (index == move.to.index) continue
             val type = Pieces.typeOf(after.pieceAt(slider))
             if (Pieces.colorOf(after.pieceAt(slider)) != us) continue
             if (type != Pieces.QUEEN && type != Pieces.BISHOP && type != Pieces.ROOK) continue
