@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.HorizontalScrollView
@@ -417,8 +418,15 @@ class PuzzleActivity : UiActivity() {
             deckIndex = 0
             deckBook = puzzles
             deckDifficulty = difficulty
+            Log.d(
+                "SahAi",
+                "deal redeal: level=$difficulty bucket=${puzzles.byDifficulty(difficulty).size} " +
+                    "all=${puzzles.all().size} deck=${deck.size} spent=$spent",
+            )
         }
-        return deck[deckIndex++]
+        val puzzle = deck[deckIndex++]
+        Log.d("SahAi", "deal -> ${deckIndex - 1}/${deck.size} dif=${puzzle.difficulty} src=${puzzle.source}")
+        return puzzle
     }
 
     /** Re-opens the puzzle that was on screen before a configuration change. */
