@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.HorizontalScrollView
@@ -17,6 +18,7 @@ import com.sah.chess.Pieces
 import com.sah.content.GeneratedPuzzlesStore
 import com.sah.content.Puzzle
 import com.sah.content.PuzzleBook
+import com.sah.play.HintReason
 import com.sah.play.PuzzleOutcome
 import com.sah.play.PuzzleRun
 import com.sah.play.PuzzleSession
@@ -98,6 +100,16 @@ class PuzzleActivity : UiActivity() {
     private var startedAt = 0L
 
     private val random = Random(System.currentTimeMillis())
+
+    /** Shuffled puzzles still unspent at the current book and difficulty. */
+    private var deck: List<Puzzle> = emptyList()
+
+    /** Entries of [deck] already handed out; reaching its size forces a re-deal. */
+    private var deckIndex = 0
+
+    /** Book and difficulty [deck] was dealt for, so a change re-deals at once. */
+    private var deckBook: PuzzleBook? = null
+    private var deckDifficulty = 0
 
     /** Set when the activity is re-created and the open puzzle has to be resumed. */
     private var pending: PuzzleState? = null
@@ -241,7 +253,7 @@ class PuzzleActivity : UiActivity() {
         val actions = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         hintButton = button("Indiciu") { showHint() }
         val retry = button("Reia") { restartPuzzle() }
-        nextButton = button("Următorul") { newPuzzle(keepCurrent = false) }.apply { isEnabled = false }
+        nextButton = button("Următorul") { newPuzzle(keepCurrent = false) }
         actions.addView(hintButton, weightParams())
         actions.addView(retry, weightParams())
         actions.addView(nextButton, weightParams())
@@ -271,7 +283,8 @@ class PuzzleActivity : UiActivity() {
             label(
                 "Rezolvă poziția: mută piesa, adversarul răspunde singur.\n" +
                     "„Indiciu” îți arată cu săgeata mutarea de făcut.\n" +
-                    "„Reia” pornește același puzzle de la capăt; „Linie” revede soluția.",
+                    "„Reia” pornește același puzzle de la capăt; „Linie” revede soluția.\n" +
+                    "„Următorul” trece la alt puzzle oricând, fără să-l rezolvi pe cel curent.",
                 12f,
                 mutedColor,
             ),
@@ -362,9 +375,9 @@ class PuzzleActivity : UiActivity() {
         if (keepCurrent && session != null) return
         val puzzles = book ?: return
         cancelReplay()
-        val puzzle = puzzles.random(difficulty, random) ?: puzzles.all().firstOrNull()
+        val puzzle = deal(puzzles)
         if (puzzle == null) {
-            messageLabel.text = "Nu există puzzle-uri pentru dificultatea asta."
+            messageLabel.text = "Nu există puzzle-uri."
             return
         }
         session = PuzzleSession(puzzle)
@@ -377,13 +390,43 @@ class PuzzleActivity : UiActivity() {
         hintArrow = null
         replaying = false
         offerHintButton(enabled = true)
-        nextButton.isEnabled = false
+        // "Următorul" stays live: skipping a puzzle must not require solving it.
         messageLabel.text = ""
         messageLabel.setTextColor(mutedColor)
         movesLabel.text = ""
         statusLabel.text = statusLine(puzzle)
         Effects.start()
         render()
+    }
+
+    /**
+     * The next puzzle to open, dealt from a shuffled bag.
+     *
+     * The puzzles generated from the player's own games only ever land on a few
+     * difficulties, so at most levels there is nothing to match and the old
+     * fallback — the first entry of the book — pinned the screen on a single
+     * puzzle forever. The bag walks an entire level before repeating, and falls
+     * back to the whole book when that level is empty, so even a small set is
+     * fully seen instead of bouncing between the same one or two entries.
+     */
+    private fun deal(puzzles: PuzzleBook): Puzzle? {
+        val spent = deckIndex >= deck.size
+        if (spent || deckBook !== puzzles || deckDifficulty != difficulty) {
+            val candidates = puzzles.byDifficulty(difficulty).ifEmpty { puzzles.all() }
+            if (candidates.isEmpty()) return null
+            deck = candidates.shuffled(random)
+            deckIndex = 0
+            deckBook = puzzles
+            deckDifficulty = difficulty
+            Log.d(
+                "SahAi",
+                "deal redeal: level=$difficulty bucket=${puzzles.byDifficulty(difficulty).size} " +
+                    "all=${puzzles.all().size} deck=${deck.size} spent=$spent",
+            )
+        }
+        val puzzle = deck[deckIndex++]
+        Log.d("SahAi", "deal -> ${deckIndex - 1}/${deck.size} dif=${puzzle.difficulty} src=${puzzle.source}")
+        return puzzle
     }
 
     /** Re-opens the puzzle that was on screen before a configuration change. */
@@ -410,7 +453,7 @@ class PuzzleActivity : UiActivity() {
         statusLabel.text = statusLine(state.puzzle)
         replaying = false
         if (restored.isSolved) offerLineButton() else offerHintButton(enabled = false)
-        nextButton.isEnabled = restored.isSolved
+        nextButton.isEnabled = true
         render()
     }
 
@@ -428,7 +471,6 @@ class PuzzleActivity : UiActivity() {
         hintArrow = null
         replaying = false
         offerHintButton(enabled = true)
-        nextButton.isEnabled = false
         messageLabel.text = ""
         messageLabel.setTextColor(mutedColor)
         movesLabel.text = ""
@@ -464,7 +506,6 @@ class PuzzleActivity : UiActivity() {
         hintArrow = null
         lastMove = active.lastApplied?.let { it.from to it.to }
         hintButton.isEnabled = false
-        nextButton.isEnabled = false
         messageLabel.setTextColor(mutedColor)
         messageLabel.text = "Se redă linia…"
         movesLabel.text = ""
@@ -652,7 +693,8 @@ class PuzzleActivity : UiActivity() {
         selected = move.from
         hintArrow = BoardArrow(move.from, move.to, hintColor)
         messageLabel.setTextColor(accentColor)
-        messageLabel.text = "Indiciu: ${session.hint()} — fără puncte pe acest puzzle."
+        messageLabel.text = "Indiciu: ${session.hint()} — ${HintReason.explain(session.board, move)}. " +
+            "Fără puncte pe acest puzzle."
         Effects.hint()
         render()
     }
