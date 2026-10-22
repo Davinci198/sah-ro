@@ -161,4 +161,31 @@ class UciEngineTest {
             engine?.close()
         }
     }
+
+    @Test
+    fun castlingRightsThatMatchTheBoardArePassedOn() {
+        assertEquals(
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+            UciEngine.engineFen(com.sah.chess.ChessBoard.START),
+        )
+        // Kings and every rook home: all four rights are real.
+        val fide = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1"
+        assertEquals(fide, UciEngine.engineFen(com.sah.chess.ChessBoard.fromFen(fide)))
+    }
+
+    @Test
+    fun staleCastlingRightsAreStrippedBeforeTheEngineSeesThem() {
+        // The arm64 Stockfish 11 in this APK exits with signal 11 on this board:
+        // the rights name four rooks that are not on the table.
+        val stale = com.sah.chess.ChessBoard.fromFen("4k3/8/8/8/8/8/8/4K3 w KQkq - 0 1")
+        assertEquals("4k3/8/8/8/8/8/8/4K3 w - - 0 1", UciEngine.engineFen(stale))
+    }
+
+    @Test
+    fun aRightSurvivesOnlyWhileItsOwnPiecesAreHome() {
+        // Black's kingside right names a rook missing from h8, while white's
+        // queenside right still has both the king and the rook it needs.
+        val mixed = com.sah.chess.ChessBoard.fromFen("4k3/8/8/8/8/8/8/R3K3 w Qk - 0 1")
+        assertEquals("4k3/8/8/8/8/8/8/R3K3 w Q - 0 1", UciEngine.engineFen(mixed))
+    }
 }
