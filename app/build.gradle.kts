@@ -81,8 +81,3 @@ android {
 dependencies {
     testImplementation("junit:junit:4.13.2")
 }
-
-// Temporary: show the full failure message on CI, not just the exception type.
-tasks.withType<Test>().configureEach {
-    testLogging.exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-}
