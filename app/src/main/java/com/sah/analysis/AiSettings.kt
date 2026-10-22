@@ -75,6 +75,17 @@ data class AiSettings(
                 .apply()
         }
 
+        /**
+         * The switch on its own. Toggling it must take effect the moment it is
+         * tapped, so it writes its own key instead of waiting for Salvează:
+         * a switch that still needs saving is a switch that reports being off
+         * while every game still calls the model. Only this one key is touched,
+         * so endpoint, key and model keep whatever the text fields last saved.
+         */
+        fun saveEnabled(context: Context, enabled: Boolean) {
+            preferences(context).edit().putBoolean(KEY_ENABLED, enabled).apply()
+        }
+
         private fun preferences(context: Context): SharedPreferences =
             context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     }

@@ -39,9 +39,16 @@ class SettingsActivity : UiActivity() {
         keyField.setText(saved.apiKey)
         modelField.setText(saved.model)
         enabledSwitch.isChecked = saved.enabled
-        // Wired after the text fields so the first call to the listener has
-        // something to read; it also applies the initial enabled/disabled state.
-        enabledSwitch.setOnCheckedChangeListener { _, checked -> onEnabledChanged(checked) }
+        // The switch writes itself the moment it is tapped, so "off" means off
+        // without a second trip through Salvează — a switch that still needs
+        // saving is one that reports being off while every game keeps calling
+        // the model. Wired after the text fields so the listener has something
+        // to read; the call below only paints the enabled/disabled state.
+        enabledSwitch.setOnCheckedChangeListener { _, checked ->
+            AiSettings.saveEnabled(this, checked)
+            Log.i(TAG, "switch enabled=$checked persisted")
+            onEnabledChanged(checked)
+        }
         onEnabledChanged(saved.enabled)
     }
 
@@ -74,7 +81,8 @@ class SettingsActivity : UiActivity() {
         root.addView(
             label(
                 "Oprit înseamnă niciun apel de rețea: fiecare „Analizează” merge direct la " +
-                    "Stockfish-ul local. Setările de mai jos rămân salvate.",
+                    "Stockfish-ul local. Comutatorul se aplică imediat; câmpurile de mai " +
+                    "jos cer „Salvează”.",
                 11f,
                 mutedColor,
             ),
