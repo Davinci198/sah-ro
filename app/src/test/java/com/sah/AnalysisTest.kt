@@ -186,6 +186,14 @@ class AnalysisTest {
         assertTrue(MotifType.FORK in motifsOf("4k3/1q6/8/8/2N5/8/8/6K1 w - - 0 1", "c4d6"))
         assertFalse(MotifType.FORK in motifsOf("4k3/8/8/8/2N5/8/8/6K1 w - - 0 1", "c4d6"))
 
+        // Bb5 holds the knight on c6 to the king on e8: the knight has no legal
+        // move at all, which is what a pin means.
+        assertTrue(MotifType.PIN in motifsOf("4k3/8/2n5/8/B7/8/8/4K3 w - - 0 1", "a4b5"))
+        // The same bishop going the other way attacks nothing, so no pin.
+        assertFalse(MotifType.PIN in motifsOf("4k3/8/2n5/8/B7/8/8/4K3 w - - 0 1", "a4b3"))
+        // A piece held in front of its own king is a pin, never a skewer.
+        assertFalse(MotifType.SKEWER in motifsOf("4k3/8/2n5/8/B7/8/8/4K3 w - - 0 1", "a4b5"))
+
         assertTrue(
             MotifType.ALLOWED_MATE in concessionsOf(
                 "rnbqkbnr/pppp1ppp/8/4p3/8/5P2/PPPPP1PP/RNBQKBNR w KQkq e6 0 2",

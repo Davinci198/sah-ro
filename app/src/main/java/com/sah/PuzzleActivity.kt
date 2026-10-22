@@ -17,6 +17,7 @@ import com.sah.chess.Pieces
 import com.sah.content.GeneratedPuzzlesStore
 import com.sah.content.Puzzle
 import com.sah.content.PuzzleBook
+import com.sah.play.HintReason
 import com.sah.play.PuzzleOutcome
 import com.sah.play.PuzzleRun
 import com.sah.play.PuzzleSession
@@ -652,7 +653,8 @@ class PuzzleActivity : UiActivity() {
         selected = move.from
         hintArrow = BoardArrow(move.from, move.to, hintColor)
         messageLabel.setTextColor(accentColor)
-        messageLabel.text = "Indiciu: ${session.hint()} — fără puncte pe acest puzzle."
+        messageLabel.text = "Indiciu: ${session.hint()} — ${HintReason.explain(session.board, move)}. " +
+            "Fără puncte pe acest puzzle."
         Effects.hint()
         render()
     }
