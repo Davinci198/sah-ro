@@ -193,7 +193,7 @@ class GamesImporter(private val store: GamesStore, private val book: OpeningBook
         Platform.LICHESS -> importLichess(username, progress, cancelled)
         // Pasted games never travel through a username: the paste dialog
         // appends them straight to the store, so there is nothing to fetch.
-        Platform.MANUAL -> ImportSummary(0, 0)
+        Platform.MANUAL, Platform.CHECKMATE -> ImportSummary(0, 0)
     }
 
     /**

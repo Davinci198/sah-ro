@@ -137,8 +137,10 @@ class GamesActivity : UiActivity() {
         root.addView(space(8))
 
         val toggle = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        // Pasted games have no account behind them, so they stay out of the username row.
-        val platforms = Platform.values().filter { it != Platform.MANUAL }
+        // Pasted games have no account behind them — that is what the paste
+        // dialog is for — so both of them stay out of the username row.
+        val pasted = setOf(Platform.MANUAL, Platform.CHECKMATE)
+        val platforms = Platform.values().filter { it !in pasted }
         platforms.forEachIndexed { index, option ->
             val chip = button(option.label) { pickPlatform(option) }.apply {
                 if (index < platforms.size - 1) layoutParams = weightParams()
