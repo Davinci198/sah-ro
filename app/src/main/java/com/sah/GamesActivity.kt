@@ -98,6 +98,9 @@ class GamesActivity : UiActivity() {
     private lateinit var selectionBar: LinearLayout
     private lateinit var selectionCount: TextView
 
+    /** Held so [renderList] can hide it when the list has nothing left to pick. */
+    private lateinit var bulkRow: LinearLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = GamesStore(File(filesDir, "games"))
@@ -238,6 +241,8 @@ class GamesActivity : UiActivity() {
 
         countLabel = label("", 12f, mutedColor)
         root.addView(countLabel, fullWidth())
+        bulkRow = buildBulkRow()
+        root.addView(bulkRow, fullWidth())
         selectionBar = buildSelectionBar()
         root.addView(selectionBar, fullWidth())
         root.addView(space(4))
@@ -659,6 +664,11 @@ class GamesActivity : UiActivity() {
             generatedStore.markAnalyzed(listOf(game.id))
             found += puzzles.size
         }
+        // Scanning is also when a pasted game learns its opening: the book is
+        // already parsed here, and English is what the lichess and chess.com
+        // imports store, so every row ends up labelled the same way. The pass is
+        // idempotent — once every blank game is filled it rewrites no file.
+        if (pending.isNotEmpty()) store.backfillOpenings(book, onProgress = report)
         return pending.size to found
     }
 
@@ -723,6 +733,8 @@ class GamesActivity : UiActivity() {
 
     private fun renderList() {
         listContainer.removeAllViews()
+        // Picking a batch needs a list to pick from.
+        bulkRow.visibility = if (filtered.isEmpty()) View.GONE else View.VISIBLE
         if (filtered.isEmpty()) {
             val message = if (refs.isEmpty()) {
                 "Nu ai jocuri importate încă. Introdu username-ul de pe Chess.com sau Lichess și " +
@@ -951,10 +963,63 @@ class GamesActivity : UiActivity() {
         renderList()
     }
 
-    /** Drops the chosen games from storage, then re-reads what is left. */
+    /**
+     * The row of bulk sizes: one tap marks the first games of the current filter
+     * that still need mining, up to [MAX_SELECTION] at once, so a big import is
+     * worked through a batch at a time instead of one long-press per game.
+     */
+    private fun buildBulkRow(): LinearLayout {
+        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        row.addView(
+            label("Selecție pentru analiză:", 11f, mutedColor),
+            LinearLayout.LayoutParams(-2, -2, 0f).apply { marginEnd = dp(6) },
+        )
+        listOf(25, 50, 100).forEach { size ->
+            row.addView(button("$size") { selectForAnalysis(size) }.apply {
+                minHeight = dp(38)
+                minimumHeight = dp(38)
+                layoutParams = weightParams()
+            })
+        }
+        return row
+    }
+
+    /**
+     * Takes the next [size] games of the current filter that have not been mined
+     * yet — the already-scanned are skipped, so the batch after this one is not
+     * this one again — and hands them to the usual Șterge / Analizează bar.
+     */
+    private fun selectForAnalysis(size: Int) {
+        val pending = filtered.filter { it.id !in analyzed }
+        if (pending.isEmpty()) {
+            statusLabel.setTextColor(errorColor)
+            statusLabel.text = "Toate ${gameCountWord(filtered.size)} din listă sunt deja scanate."
+            return
+        }
+        selection.clear()
+        pending.take(size).forEach { selection.add(it.id) }
+        statusLabel.setTextColor(mutedColor)
+        statusLabel.text = "${gameCountWord(selection.size)} pregătite pentru analiză."
+        renderSelectionBar()
+        renderList()
+    }
+
+    /**
+     * Drops the chosen games from storage, after asking: removal has no undo, and
+     * the bulk row now puts a hundred games one tap away from it.
+     */
     private fun deleteSelection() {
         val ids = HashSet(selection)
         if (ids.isEmpty()) return
+        AlertDialog.Builder(this)
+            .setTitle("Ștergi jocurile?")
+            .setMessage("Se șterg ${gameCountWord(ids.size)} definitiv. Nu pot fi readuse.")
+            .setNegativeButton("Renunță", null)
+            .setPositiveButton("Șterge") { _, _ -> reallyDelete(ids) }
+            .show()
+    }
+
+    private fun reallyDelete(ids: Set<String>) {
         clearSelection()
         Thread {
             val removed = runCatching { store.remove(ids) }.getOrDefault(0)
@@ -986,7 +1051,7 @@ class GamesActivity : UiActivity() {
         /** Games mined per generation run; each tap walks one batch further back. */
         const val BATCH_PER_RUN = 30
 
-        /** Long-press picks at most this many games before the bar has to be used. */
-        const val MAX_SELECTION = 20
+        /** A long-press or the bulk row picks at most this many games at a time. */
+        const val MAX_SELECTION = 100
     }
 }

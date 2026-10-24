@@ -160,11 +160,14 @@ class GamesStore(private val directory: File) {
     }
 
     /**
-     * One-time pass that fills the opening of every stored game whose field is
-     * empty, detecting it from the moves with the bundled [book]. Chess.com games
-     * arrive without an opening header (only lichess is asked for one), so without
-     * this their rows would stay blank. A platform file is rewritten only when at
-     * least one game changed; the work streams line by line so thirty thousand
+     * Fills the opening of every stored game whose field is empty, detecting it
+     * from the moves with the bundled [book]. Chess.com games arrive without an
+     * opening header (only lichess is asked for one), and pasted ones are not
+     * given one either, so without this their rows would stay blank. Runs at the
+     * first open of the list and again after every analysis — the freshly scanned
+     * games are the ones that benefit — and is idempotent, so the repeat finds
+     * nothing left to fill. A platform file is rewritten only when at least one
+     * game changed; the work streams line by line so thirty thousand
      * PGNs are never all held in memory, corrupt lines are copied through
      * untouched, and the swap onto the real file is an atomic rename. Returns how
      * many openings were filled.
