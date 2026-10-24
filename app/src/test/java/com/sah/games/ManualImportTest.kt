@@ -34,6 +34,17 @@ class ManualImportTest {
         1. d4 d5 2. c4 0-1
     """.trimIndent()
 
+    /** What a Checkmate export looks like: a real game that never says who won. */
+    private val checkmatePgn = """
+        [Event "Checkmate contra calculatorului"]
+        [Date "2026.10.20"]
+        [White "Eu"]
+        [Black "Calculator"]
+        [Result "*"]
+
+        1. e4 e5 2. Qh5 Nc6 3. Bc4 *
+    """.trimIndent()
+
     @Test
     fun fenIsDetectedByShapeNotByContent() {
         assertTrue(ManualImport.looksLikeFen(startFen))
@@ -109,5 +120,45 @@ class ManualImportTest {
         // A position without both kings is not worth storing.
         assertNull(ManualImport.game("8/8/8/8/8/8/8/8 w - -", "white", "id", "2026-01-01"))
         assertNull(ManualImport.game("4k3/8/8/8/8/8/8/8 w - -", "white", "id", "2026-01-01"))
+    }
+
+    @Test
+    fun aCheckmatePasteKeepsItsOwnPlatform() {
+        val game = ManualImport.game(
+            checkmatePgn,
+            "white",
+            "id-5",
+            "2026-01-01",
+            platform = Platform.CHECKMATE,
+        )
+
+        assertNotNull(game)
+        assertEquals("checkmate", game!!.platform) // not filed as a Lichess game
+        assertEquals("Calculator", game.opponent)
+    }
+
+    @Test
+    fun anExportThatSaysNothingIsADrawOnlyUntilThePlayerAnswers() {
+        // A Checkmate export carries no result worth trusting: alone it would be
+        // a draw, however the game really ended.
+        val asImported = ManualImport.game(checkmatePgn, "white", "id-6", "2026-01-01")
+        assertNotNull(asImported)
+        assertEquals("D", asImported!!.outcome)
+
+        // The player's answer wins — over the empty header and over a real one.
+        val claimed = ManualImport.game(checkmatePgn, "white", "id-7", "2026-01-01", outcome = "W")
+        assertEquals("W", claimed!!.outcome)
+
+        val againstHeader = ManualImport.game(twoGamePgn, "white", "id-8", "2026-01-01", outcome = "L")
+        assertEquals("L", againstHeader!!.outcome) // the header said 1-0
+    }
+
+    @Test
+    fun outcomeOfReadsTheHeaderFromTheChosenSide() {
+        assertEquals("W", ManualImport.outcomeOf(twoGamePgn, "white"))
+        assertEquals("L", ManualImport.outcomeOf(twoGamePgn, "black"))
+        assertNull(ManualImport.outcomeOf(checkmatePgn, "white")) // `*` is not an answer
+        assertNull(ManualImport.outcomeOf(startFen, "white")) // a position has no result
+        assertNull(ManualImport.outcomeOf("", "white"))
     }
 }
