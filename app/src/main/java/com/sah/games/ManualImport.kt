@@ -53,12 +53,39 @@ object ManualImport {
         .format(java.util.Date())
 
     /**
+     * The pasted game's result from the player's side, or null when the text
+     * leaves it unknown (`*` or no header at all — what a Checkmate export looks
+     * like). The list uses it to preselect the result the player is about to
+     * confirm, [myColor] being the side they name in the same dialog.
+     */
+    fun outcomeOf(text: String, myColor: String): String? {
+        val trimmed = text.trim()
+        if (trimmed.isEmpty() || looksLikeFen(trimmed)) return null
+        val header = Pgn.parse(firstGame(trimmed)).headers["Result"]?.trim().orEmpty()
+        if (header != "1-0" && header != "0-1" && header != "1/2-1/2") return null
+        return outcomeFor(header, myColor)
+    }
+
+    /**
      * The pasted text as a stored game, or null when it is neither a position
      * nor a game with moves. [myColor] is the side the player took (the pasted
      * game carries no notion of "me"), [id] a fresh id for the store and
      * [today] the fallback date.
+     *
+     * [platform] is where the game really came from — a pasted Checkmate export
+     * is not a Lichess game. [outcome] is the player's own answer to what the
+     * PGN cannot say: exports carry `[Result "*"]` or no header at all, which
+     * would otherwise file every one of them as a draw. It wins over the header
+     * whenever the player gave it.
      */
-    fun game(text: String, myColor: String, id: String, today: String): ImportedGame? {
+    fun game(
+        text: String,
+        myColor: String,
+        id: String,
+        today: String,
+        platform: Platform = Platform.MANUAL,
+        outcome: String? = null,
+    ): ImportedGame? {
         val trimmed = text.trim()
         if (trimmed.isEmpty()) return null
         val isPosition = looksLikeFen(trimmed)
@@ -79,12 +106,12 @@ object ManualImport {
         val opponent = if (myColor == "white") parsed.headers["Black"] else parsed.headers["White"]
         return ImportedGame(
             id = id,
-            platform = Platform.MANUAL.fileName,
+            platform = platform.fileName,
             opponent = opponent?.takeIf { it.isNotBlank() } ?: "Adversar",
             opponentRating = elo(if (myColor == "white") parsed.headers["BlackElo"] else parsed.headers["WhiteElo"]),
             myRating = elo(if (myColor == "white") parsed.headers["WhiteElo"] else parsed.headers["BlackElo"]),
             myColor = myColor,
-            outcome = outcomeFor(parsed.headers["Result"] ?: "*", myColor),
+            outcome = outcome ?: outcomeFor(parsed.headers["Result"] ?: "*", myColor),
             date = normalizeDate(parsed.headers["Date"]?.takeIf { it.isNotBlank() } ?: today),
             timeControl = parsed.headers["TimeControl"] ?: "",
             timeClass = "",

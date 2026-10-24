@@ -16,6 +16,9 @@ enum class Platform(val label: String, val fileName: String) {
 
     /** Games pasted by hand as PGN or FEN, with no account behind them. */
     MANUAL("Lipite", "manual"),
+
+    /** Games exported from the Checkmate app and pasted by hand. */
+    CHECKMATE("Checkmate", "checkmate"),
 }
 
 /**
@@ -113,6 +116,47 @@ class GamesStore(private val directory: File) {
 
     fun clear(platform: Platform) {
         synchronized(LOCK) { fileFor(platform).delete() }
+    }
+
+    /**
+     * Drops exactly [ids] from every platform file, returning how many games were
+     * removed. A file is rewritten only when it actually held one of them — the
+     * untouched keep their bytes, corrupt lines included — and the swap onto the
+     * real file is an atomic rename, the same move [backfillOpenings] makes, so an
+     * interrupted delete can never leave a half-written store behind.
+     */
+    fun remove(ids: Set<String>): Int {
+        if (ids.isEmpty()) return 0
+        var removed = 0
+        for (platform in Platform.values()) {
+            val file = fileFor(platform)
+            if (!file.exists()) continue
+            val temp = File(directory, platform.fileName + ".ndjson.tmp")
+            var changed = false
+            synchronized(LOCK) {
+                file.bufferedReader().use { reader ->
+                    temp.bufferedWriter().use { writer ->
+                        while (true) {
+                            val raw = reader.readLine() ?: break
+                            val game = gameFromJson(raw.trim())
+                            if (game != null && game.id in ids) {
+                                changed = true
+                                removed++
+                                continue
+                            }
+                            writer.write(raw)
+                            writer.newLine()
+                        }
+                    }
+                }
+                if (changed) {
+                    Files.move(temp.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                } else {
+                    temp.delete()
+                }
+            }
+        }
+        return removed
     }
 
     /**

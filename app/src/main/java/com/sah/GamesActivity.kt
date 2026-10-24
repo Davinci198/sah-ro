@@ -86,6 +86,18 @@ class GamesActivity : UiActivity() {
     private val yearButtons = LinkedHashMap<String, Button>()
     private lateinit var yearChipsRow: LinearLayout
 
+    /**
+     * Games picked by a long-press, capped at [MAX_SELECTION]; an empty set means
+     * the list is idle and a tap opens the replay as it always did.
+     */
+    private val selection = LinkedHashSet<String>()
+
+    /** Ids already mined into puzzles — these rows carry the green dot. */
+    private var analyzed: Set<String> = emptySet()
+
+    private lateinit var selectionBar: LinearLayout
+    private lateinit var selectionCount: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = GamesStore(File(filesDir, "games"))
@@ -125,8 +137,10 @@ class GamesActivity : UiActivity() {
         root.addView(space(8))
 
         val toggle = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-        // Pasted games have no account behind them, so they stay out of the username row.
-        val platforms = Platform.values().filter { it != Platform.MANUAL }
+        // Pasted games have no account behind them — that is what the paste
+        // dialog is for — so both of them stay out of the username row.
+        val pasted = setOf(Platform.MANUAL, Platform.CHECKMATE)
+        val platforms = Platform.values().filter { it !in pasted }
         platforms.forEachIndexed { index, option ->
             val chip = button(option.label) { pickPlatform(option) }.apply {
                 if (index < platforms.size - 1) layoutParams = weightParams()
@@ -202,7 +216,13 @@ class GamesActivity : UiActivity() {
         root.addView(
             buildChipRow(
                 platformFilterButtons,
-                listOf("all" to "Toate", "chesscom" to "Chess.com", "lichess" to "Lichess", "manual" to "Lipite"),
+                listOf(
+                    "all" to "Toate",
+                    "chesscom" to "Chess.com",
+                    "lichess" to "Lichess",
+                    "checkmate" to "Checkmate",
+                    "manual" to "Lipite",
+                ),
                 fill = true,
             ) { platformFilter = it },
             fullWidth(),
@@ -218,6 +238,8 @@ class GamesActivity : UiActivity() {
 
         countLabel = label("", 12f, mutedColor)
         root.addView(countLabel, fullWidth())
+        selectionBar = buildSelectionBar()
+        root.addView(selectionBar, fullWidth())
         root.addView(space(4))
 
         listContainer = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
@@ -365,12 +387,24 @@ class GamesActivity : UiActivity() {
             background = controlBackground(cardColor, strokeColor = Color.rgb(86, 86, 86))
         }
         clipboardText()?.takeIf { it.isNotBlank() }?.let { input.setText(it) }
+        val pasted = clipboardText().orEmpty()
 
-        // The paste itself carries no notion of "me": the player says which side.
+        // The paste itself carries no notion of "me": the player says which side,
+        // and the result follows from that answer until they override it.
         var isWhite = true
+        var chosenOutcome: String? = ManualImport.outcomeOf(pasted, "white")
+        var resultTouched = false
         var repaint: () -> Unit = {}
-        val whiteChip = button("Cu albul") { isWhite = true; repaint() }
-        val blackChip = button("Cu negrul") { isWhite = false; repaint() }
+        val whiteChip = button("Cu albul") {
+            isWhite = true
+            if (!resultTouched) chosenOutcome = ManualImport.outcomeOf(input.text.toString(), "white")
+            repaint()
+        }
+        val blackChip = button("Cu negrul") {
+            isWhite = false
+            if (!resultTouched) chosenOutcome = ManualImport.outcomeOf(input.text.toString(), "black")
+            repaint()
+        }
         repaint = {
             whiteChip.setTextColor(if (isWhite) Color.BLACK else textColor)
             whiteChip.background = controlBackground(if (isWhite) accentColor else cardColor)
@@ -384,11 +418,40 @@ class GamesActivity : UiActivity() {
             addView(blackChip, weightParams())
         }
 
+        // Where the game came from: a Checkmate export is not a Lichess game, and
+        // Checkmate is the default because that is where these pastes come from.
+        var chosenPlatform = Platform.CHECKMATE.name
+        val platformRow = choiceRow(
+            listOf(
+                Platform.CHECKMATE.name to Platform.CHECKMATE.label,
+                Platform.CHESSCOM.name to Platform.CHESSCOM.label,
+                Platform.LICHESS.name to Platform.LICHESS.label,
+            ),
+            selected = { chosenPlatform },
+        ) { chosenPlatform = it }
+
+        // How it ended. The header is trusted only when it says so: a `*` or a
+        // missing Result leaves the answer blank until the player fills it in,
+        // rather than filing a won game as a draw.
+        val resultRow = choiceRow(
+            listOf("W" to "Câștigat", "L" to "Pierdut", "D" to "Egal"),
+            selected = { chosenOutcome.orEmpty() },
+        ) {
+            chosenOutcome = it
+            resultTouched = true
+        }
+
         val panel = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(20), dp(8), dp(20), 0)
             addView(label("Ai jucat cu…", 12f, mutedColor), fullWidth())
             addView(colorRow, fullWidth())
+            addView(space(8))
+            addView(label("Jocul vine de la…", 12f, mutedColor), fullWidth())
+            addView(platformRow, fullWidth())
+            addView(space(8))
+            addView(label("S-a terminat cu…", 12f, mutedColor), fullWidth())
+            addView(resultRow, fullWidth())
             addView(space(10))
             addView(input, fullWidth())
         }
@@ -397,18 +460,68 @@ class GamesActivity : UiActivity() {
             .setTitle("Adaugă joc lipit")
             .setView(panel)
             .setNegativeButton("Renunță", null)
-            .setPositiveButton("Adaugă") { _, _ -> addPastedGame(input.text.toString(), isWhite) }
+            .setPositiveButton("Adaugă") { _, _ ->
+                addPastedGame(
+                    input.text.toString(),
+                    if (isWhite) "white" else "black",
+                    Platform.valueOf(chosenPlatform),
+                    chosenOutcome,
+                )
+            }
             .show()
     }
 
-    /** Validates the pasted text off the UI thread, stores it, then refreshes the list. */
-    private fun addPastedGame(text: String, isWhite: Boolean) {
+    /**
+     * A dialog row of single-choice chips: [options] as key-to-label pairs laid
+     * side by side, the one whose key equals [selected] filled in, and every tap
+     * reported through [onPick]. The caller owns the state — this only repaints
+     * it, the way the colour row above always has.
+     */
+    private fun choiceRow(
+        options: List<Pair<String, String>>,
+        selected: () -> String,
+        onPick: (String) -> Unit,
+    ): LinearLayout {
+        val chips = LinkedHashMap<String, Button>()
+        var repaint: () -> Unit = {}
+        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        options.forEach { (key, text) ->
+            val chip = button(text) {
+                onPick(key)
+                repaint()
+            }.apply { layoutParams = weightParams() }
+            chips[key] = chip
+            row.addView(chip)
+        }
+        repaint = {
+            val active = selected()
+            chips.forEach { (key, chip) ->
+                val on = key == active
+                chip.setTextColor(if (on) Color.BLACK else textColor)
+                chip.background = controlBackground(if (on) accentColor else cardColor)
+            }
+        }
+        repaint()
+        return row
+    }
+
+    /**
+     * Validates the pasted text off the UI thread, stores it under the platform
+     * and outcome the player chose, then refreshes the list.
+     */
+    private fun addPastedGame(text: String, myColor: String, platform: Platform, outcome: String?) {
         statusLabel.setTextColor(mutedColor)
         statusLabel.text = "Se adaugă jocul lipit…"
         Thread {
-            val color = if (isWhite) "white" else "black"
-            val game = ManualImport.game(text, color, UUID.randomUUID().toString(), ManualImport.today())
-            if (game != null) runCatching { store.append(Platform.MANUAL, game) }
+            val game = ManualImport.game(
+                text,
+                myColor,
+                UUID.randomUUID().toString(),
+                ManualImport.today(),
+                platform = platform,
+                outcome = outcome,
+            )
+            if (game != null) runCatching { store.append(platform, game) }
             runOnUiThread {
                 if (cancelled || isFinishing) return@runOnUiThread
                 if (game == null) {
@@ -416,7 +529,8 @@ class GamesActivity : UiActivity() {
                     statusLabel.text = "Textul nu conține nici o poziție validă și nici mutări de șah."
                 } else {
                     statusLabel.setTextColor(mutedColor)
-                    statusLabel.text = "Joc adăugat: ${game.opponent} (${outcomeWord(game.outcome)})."
+                    statusLabel.text =
+                        "Joc adăugat la ${platform.label}: ${game.opponent} (${outcomeWord(game.outcome)})."
                     reloadList()
                 }
             }
@@ -485,7 +599,8 @@ class GamesActivity : UiActivity() {
         }
     }
 
-    private fun startGenerate() {
+    /** Analyses every game still awaiting it, or only [ids] when a selection named them. */
+    private fun startGenerate(ids: Set<String>? = null) {
         if (importing || generating) return
         generating = true
         generateButton.isEnabled = false
@@ -493,7 +608,11 @@ class GamesActivity : UiActivity() {
         progressLabel.setTextColor(mutedColor)
         progressLabel.text = "Se pregătește analiza jocurilor…"
         Thread {
-            val result = runCatching { generatePuzzles { message -> runOnUiThread { if (!cancelled && !isFinishing) progressLabel.text = message } } }
+            val result = runCatching {
+                generatePuzzles(ids) { message ->
+                    runOnUiThread { if (!cancelled && !isFinishing) progressLabel.text = message }
+                }
+            }
             runOnUiThread {
                 if (cancelled || isFinishing) return@runOnUiThread
                 generating = false
@@ -501,11 +620,14 @@ class GamesActivity : UiActivity() {
                 importButton.isEnabled = true
                 val total = runCatching { generatedStore.load().size }.getOrDefault(0)
                 if (result.isSuccess) {
-                    val (analyzed, found) = result.getOrThrow()
+                    val (analyzedCount, found) = result.getOrThrow()
                     progressLabel.setTextColor(successColor)
                     progressLabel.text =
-                        "Gata: $found puzzle-uri din $analyzed jocuri analizate · $total în total. " +
+                        "Gata: $found puzzle-uri din $analyzedCount jocuri analizate · $total în total. " +
                             "Mergi la „Puzzle-uri” și alege „Jocurile tale”."
+                    if (ids != null) clearSelection()
+                    // The fresh green dots come from this run's marks.
+                    reloadList()
                 } else {
                     progressLabel.setTextColor(errorColor)
                     progressLabel.text = "Analiza a eșuat: ${result.exceptionOrNull()?.message}"
@@ -515,17 +637,20 @@ class GamesActivity : UiActivity() {
     }
 
     /**
-     * Mines the most recent not-yet-analyzed games for the player's mistakes and
-     * appends the puzzles they yield. Each run walks one batch further back through
-     * history (analyzed ids are skipped), so repeated taps grow the set gradually.
+     * Mines games for the player's mistakes and appends the puzzles they yield.
+     * Without [ids] each run walks one batch further back through history
+     * (analyzed ids are skipped), so repeated taps grow the set gradually; with
+     * [ids] only those games are considered, which is what analysing a selection
+     * means. Either way an already-mined game is left alone, or its puzzles would
+     * be appended a second time.
      */
-    private fun generatePuzzles(report: (String) -> Unit): Pair<Int, Int> {
+    private fun generatePuzzles(ids: Set<String>?, report: (String) -> Unit): Pair<Int, Int> {
         val book = OpeningRepository.parse(readAsset("openings/openings.csv"))
-        val analyzed = generatedStore.analyzedIds()
+        val mined = generatedStore.analyzedIds()
         val pending = store.loadAll()
-            .filter { it.id !in analyzed }
+            .filter { it.id !in mined && (ids == null || it.id in ids) }
             .sortedWith(compareByDescending { it.date })
-            .take(BATCH_PER_RUN)
+            .let { if (ids == null) it.take(BATCH_PER_RUN) else it }
         var found = 0
         pending.forEachIndexed { index, game ->
             report("Se analizează jocul ${index + 1}/${pending.size} · $found puzzle-uri…")
@@ -541,9 +666,14 @@ class GamesActivity : UiActivity() {
         Thread {
             val loaded = runCatching { GamesIndex(store).load().sortedWith(compareByDescending { it.date }) }
                 .getOrDefault(emptyList())
+            val scanned = runCatching { generatedStore.analyzedIds() }.getOrDefault(emptySet())
             runOnUiThread {
                 if (cancelled || isFinishing) return@runOnUiThread
                 refs = loaded
+                analyzed = scanned
+                // A deleted or reloaded game cannot stay picked.
+                selection.retainAll(loaded.mapTo(HashSet()) { it.id })
+                renderSelectionBar()
                 statusLabel.text = if (loaded.isEmpty()) "" else "${loaded.size} jocuri salvate"
                 populateTimeChips()
                 populateYearChips()
@@ -595,7 +725,9 @@ class GamesActivity : UiActivity() {
         listContainer.removeAllViews()
         if (filtered.isEmpty()) {
             val message = if (refs.isEmpty()) {
-                "Nu ai jocuri importate încă. Introdu username-ul de pe Chess.com sau Lichess și apasă „Importă toate jocurile”, sau lipește un joc PGN/FEN cu „Adaugă joc lipit”."
+                "Nu ai jocuri importate încă. Introdu username-ul de pe Chess.com sau Lichess și " +
+                    "apasă „Importă toate jocurile”, sau lipește un joc PGN — exportat din Checkmate " +
+                    "sau de oriunde altundeva — cu „Adaugă joc lipit”."
             } else {
                 "Niciun joc nu corespunde filtrelor."
             }
@@ -637,35 +769,62 @@ class GamesActivity : UiActivity() {
     }
 
     private fun gameRow(ref: GameRef): View {
+        val picked = selection.contains(ref.id)
         val row = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(14), dp(12), dp(14), dp(12))
-            background = controlBackground(cardColor, strokeColor = Color.rgb(86, 86, 86))
+            background = controlBackground(
+                if (picked) accentColor else cardColor,
+                strokeColor = Color.rgb(86, 86, 86),
+            )
             isClickable = true
             isFocusable = true
-            setOnClickListener { openReplay(ref) }
+            // A long-press starts a selection; once one exists a tap joins or
+            // leaves it, and only an idle tap opens the replay as it always did.
+            setOnClickListener {
+                if (selection.isEmpty()) openReplay(ref) else toggleSelection(ref)
+            }
+            setOnLongClickListener {
+                toggleSelection(ref)
+                true
+            }
             contentDescription = buildString {
+                if (analyzed.contains(ref.id)) append("Scanat, ")
                 append(outcomeWord(ref.outcome))
                 append(" contra ")
                 append(ref.opponent)
                 append(", ")
                 append(ref.date)
-                append(". Deschide redarea jocului.")
+                if (picked) append(", selectat")
+                append(". ")
+                append(if (selection.isEmpty()) "Deschide redarea jocului." else "Comută selecția.")
             }
         }
         val title = SpannableStringBuilder()
+        if (analyzed.contains(ref.id)) {
+            // The green dot: this game has already been mined for puzzles.
+            title.append("● ")
+            title.setSpan(
+                ForegroundColorSpan(if (picked) Color.rgb(20, 120, 60) else successColor),
+                0,
+                title.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
         title.append(outcomeWord(ref.outcome))
-        title.setSpan(
-            ForegroundColorSpan(outcomeColor(ref.outcome)),
-            0,
-            title.length,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-        )
+        if (!picked) {
+            title.setSpan(
+                ForegroundColorSpan(outcomeColor(ref.outcome)),
+                title.length - outcomeWord(ref.outcome).length,
+                title.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
         title.append(" vs ${ref.opponent}")
         ref.opponentRating?.let { title.append(" ($it)") }
         row.addView(TextView(this).apply {
             text = title
-            setTextColor(textColor)
+            setTextColor(if (picked) Color.BLACK else textColor)
             setTextSize(14f)
             setTypeface(typeface, Typeface.BOLD)
         }, fullWidth())
@@ -679,26 +838,36 @@ class GamesActivity : UiActivity() {
         ).filter { it.isNotBlank() }.joinToString(" · ")
         val detailText = if (rest.isEmpty()) platformName else "$platformName · $rest"
         val detail = SpannableStringBuilder(detailText)
-        detail.setSpan(
-            ForegroundColorSpan(platformColor(ref.platform)),
-            0,
-            platformName.length,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-        )
+        if (!picked) {
+            detail.setSpan(
+                ForegroundColorSpan(platformColor(ref.platform)),
+                0,
+                platformName.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
         row.addView(TextView(this).apply {
             text = detail
-            setTextColor(mutedColor)
+            setTextColor(if (picked) Color.BLACK else mutedColor)
             setTextSize(12f)
             setPadding(0, dp(2), 0, 0)
         }, fullWidth())
         return row
     }
 
-    private fun platformDisplayName(platform: String): String =
-        if (platform.equals("chesscom", ignoreCase = true)) "Chess.com" else "Lichess"
+    private fun platformDisplayName(platform: String): String = when (platform.lowercase()) {
+        "chesscom" -> Platform.CHESSCOM.label
+        "lichess" -> Platform.LICHESS.label
+        "checkmate" -> Platform.CHECKMATE.label
+        else -> Platform.MANUAL.label
+    }
 
-    private fun platformColor(platform: String): Int =
-        if (platform.equals("chesscom", ignoreCase = true)) Color.rgb(120, 170, 110) else Color.rgb(160, 150, 220)
+    private fun platformColor(platform: String): Int = when (platform.lowercase()) {
+        "chesscom" -> Color.rgb(120, 170, 110)
+        "lichess" -> Color.rgb(160, 150, 220)
+        "checkmate" -> Color.rgb(220, 170, 120)
+        else -> Color.rgb(150, 150, 150)
+    }
 
     private fun outcomeColor(outcome: String): Int = when (outcome) {
         "W" -> successColor
@@ -738,6 +907,77 @@ class GamesActivity : UiActivity() {
         }.start()
     }
 
+    /** The bar that appears while games are picked: the count, then what to do. */
+    private fun buildSelectionBar(): LinearLayout {
+        return LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            setPadding(dp(10), dp(4), dp(10), dp(4))
+            background = controlBackground(cardColor, strokeColor = Color.rgb(86, 86, 86))
+            visibility = View.GONE
+            selectionCount = label("", 12f, accentColor, bold = true).apply { gravity = Gravity.START }
+            addView(selectionCount, LinearLayout.LayoutParams(0, -2, 1f))
+            addView(button("Șterge") { deleteSelection() }.apply { layoutParams = weightParams() })
+            addView(button("Analizează") { analyzeSelection() }.apply { layoutParams = weightParams() })
+            addView(button("Renunță") { clearSelection() }.apply { layoutParams = weightParams() })
+        }
+    }
+
+    private fun renderSelectionBar() {
+        selectionBar.visibility = if (selection.isEmpty()) View.GONE else View.VISIBLE
+        if (selection.isNotEmpty()) {
+            selectionCount.text =
+                if (selection.size == 1) "1 joc ales" else "${selection.size} jocuri alese"
+        }
+    }
+
+    /** Adds or drops one game; the [MAX_SELECTION]th is the last that fits. */
+    private fun toggleSelection(ref: GameRef) {
+        if (!selection.remove(ref.id)) {
+            if (selection.size >= MAX_SELECTION) {
+                statusLabel.setTextColor(errorColor)
+                statusLabel.text = "Poți alege cel mult $MAX_SELECTION de jocuri odată."
+                return
+            }
+            selection.add(ref.id)
+        }
+        renderSelectionBar()
+        renderList()
+    }
+
+    private fun clearSelection() {
+        selection.clear()
+        renderSelectionBar()
+        renderList()
+    }
+
+    /** Drops the chosen games from storage, then re-reads what is left. */
+    private fun deleteSelection() {
+        val ids = HashSet(selection)
+        if (ids.isEmpty()) return
+        clearSelection()
+        Thread {
+            val removed = runCatching { store.remove(ids) }.getOrDefault(0)
+            runOnUiThread {
+                if (cancelled || isFinishing) return@runOnUiThread
+                statusLabel.setTextColor(mutedColor)
+                statusLabel.text =
+                    if (removed == ids.size) {
+                        "Au fost șterse $removed jocuri."
+                    } else {
+                        "Au fost șterse $removed din ${ids.size} jocuri."
+                    }
+                reloadList()
+            }
+        }.start()
+    }
+
+    /** Mines only the chosen games; the already-mined are skipped, as ever. */
+    private fun analyzeSelection() {
+        if (selection.isEmpty()) return
+        startGenerate(HashSet(selection))
+    }
+
     private companion object {
         const val PREFS = "games"
         const val PAGE_SIZE = 150
@@ -745,5 +985,8 @@ class GamesActivity : UiActivity() {
 
         /** Games mined per generation run; each tap walks one batch further back. */
         const val BATCH_PER_RUN = 30
+
+        /** Long-press picks at most this many games before the bar has to be used. */
+        const val MAX_SELECTION = 20
     }
 }
